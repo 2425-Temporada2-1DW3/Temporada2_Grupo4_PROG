@@ -4,6 +4,7 @@ import java.awt.EventQueue;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
 public class Main extends JFrame {
@@ -15,6 +16,12 @@ public class Main extends JFrame {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+	    try {
+	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	    
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
