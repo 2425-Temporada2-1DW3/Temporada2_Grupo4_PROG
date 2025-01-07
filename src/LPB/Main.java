@@ -7,6 +7,10 @@ import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.border.EmptyBorder;
 
+import LPBCLASES.Equipo;
+import LPBCLASES.Jugador;
+
+
 public class Main extends JFrame {
 
 	private static final long serialVersionUID = 1L;
@@ -32,6 +36,9 @@ public class Main extends JFrame {
 				}
 			}
 		});
+		
+		Equipo p1 = new Equipo();
+		System.out.println(p1);
 	}
 
 	/**
@@ -44,6 +51,7 @@ public class Main extends JFrame {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 
 		setContentPane(contentPane);
+		
 	}
 
 }
