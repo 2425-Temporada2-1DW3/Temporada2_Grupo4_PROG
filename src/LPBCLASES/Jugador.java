@@ -1,9 +1,14 @@
 package LPBCLASES;
 
 import java.util.Objects;
+import java.io.Serializable;
 
-public class Jugador implements Comparable<Jugador> {
-  // Atributos de la clase Jugador
+public class Jugador implements Comparable<Jugador>,Serializable {
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -1748708748101586932L;
+	// Atributos de la clase Jugador
   private String nombre; // Nombre del jugador
   private String posicion; // Posición en el campo (base, escolta, etc.)
   private int numeroCamiseta; // Número de camiseta del jugador
