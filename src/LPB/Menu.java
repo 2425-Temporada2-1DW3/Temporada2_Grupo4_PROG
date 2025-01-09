@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 
-	public Menu(String rol) {
+	public Menu(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/imagenes/basketball.png"));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -33,6 +33,11 @@ public class Menu extends JFrame {
 		labelLogo.setBounds(10, 55, 400, 400);
 		panelIzquierdo.add(labelLogo);
 		getContentPane().add(panelIzquierdo);
+		
+		JLabel labelUsuario = new JLabel("Usuario: " + usuario);
+		labelUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		labelUsuario.setBounds(10, 470, 200, 20);
+		panelIzquierdo.add(labelUsuario);
 
 		JPanel panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));
@@ -71,7 +76,7 @@ public class Menu extends JFrame {
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
 		
-		if (!"admin".equals(rol)) {
+		if (!"Administrador".equals(rol)) {
 			btnUsuarios.setEnabled(false);
 		}
 		

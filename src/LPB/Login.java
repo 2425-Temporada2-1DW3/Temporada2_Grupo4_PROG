@@ -85,21 +85,21 @@ public class Login extends JFrame {
 		        String password = new String(txtPassword.getPassword()).trim();
 		        String rol = "";
 
-		        if ("admin".equals(usuario) && "admin".equals(password)) {
-		            rol = "admin";
+		        if ("Administrador".equals(usuario) && "1234".equals(password)) {
+		            rol = "Administrador";
 		            JOptionPane.showMessageDialog(null, "Bienvenido Administrador.");
-		        } else if ("arbitro".equals(usuario) && "arbitro".equals(password)) {
-		            rol = "arbitro";
+		        } else if ("Arbitro".equals(usuario) && "1234".equals(password)) {
+		            rol = "Arbitro";
 		            JOptionPane.showMessageDialog(null, "Bienvenido Árbitro.");
-		        } else if ("entrenador".equals(usuario) && "entrenador".equals(password)) {
-		            rol = "entrenador";
+		        } else if ("Entrenador".equals(usuario) && "1234".equals(password)) {
+		            rol = "Entrenador";
 		            JOptionPane.showMessageDialog(null, "Bienvenido Entrenador.");
 		        } else {
 		            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
 		            return;
 		        }
 
-		        new Menu(rol).setVisible(true);
+		        new Menu(rol, usuario).setVisible(true);
 		        dispose();
 		    }
 		});
@@ -115,7 +115,7 @@ public class Login extends JFrame {
 
 		btnInvitado.addActionListener(_ -> {
 		    JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-		    new Menu("invitado").setVisible(true);
+		    new Menu("invitado", "Invitado").setVisible(true);
 		    dispose();
 		});
 
