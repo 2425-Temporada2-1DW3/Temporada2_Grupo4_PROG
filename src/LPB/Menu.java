@@ -12,6 +12,8 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import LPBCLASES.BotonRedondeado;
+
 public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 
@@ -33,11 +35,11 @@ public class Menu extends JFrame {
 		labelLogo.setBounds(10, 55, 400, 400);
 		panelIzquierdo.add(labelLogo);
 		getContentPane().add(panelIzquierdo);
-		
+
 		JLabel labelUsuario = new JLabel("Usuario: " + usuario);
 		labelUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		labelUsuario.setForeground(new Color(0x545454));
-		labelUsuario.setBounds(10, 470, 200, 20);
+		labelUsuario.setBounds(20, 470, 200, 20);
 		panelIzquierdo.add(labelUsuario);
 
 		JPanel panelDerecho = new JPanel();
@@ -57,33 +59,42 @@ public class Menu extends JFrame {
 		subtitulo.setBounds(50, 146, 200, 20);
 		panelDerecho.add(subtitulo);
 
-		JButton btnTemporadas = new JButton("Temporadas");
+		JButton btnTemporadas = new BotonRedondeado("Temporadas");
 		btnTemporadas.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas.setBackground(new Color(0x13427E));
 		btnTemporadas.setForeground(Color.WHITE);
 		btnTemporadas.setBounds(50, 191, 200, 40);
 		panelDerecho.add(btnTemporadas);
 
-		JButton btnEquipos = new JButton("Equipos");
+		btnTemporadas.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new MenuTemporadas(usuario, usuario).setVisible(true);
+				dispose();
+			}
+		});
+
+		JButton btnEquipos = new BotonRedondeado("Equipos");
 		btnEquipos.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnEquipos.setBackground(new Color(0xf46b20));
 		btnEquipos.setForeground(Color.WHITE);
 		btnEquipos.setBounds(50, 251, 200, 40);
 		panelDerecho.add(btnEquipos);
 
-		JButton btnUsuarios = new JButton("Usuarios");
+		JButton btnUsuarios = new BotonRedondeado("Usuarios");
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
-		
+
 		if (!"Administrador".equals(rol)) {
 			btnUsuarios.setEnabled(false);
 		}
-		
+
 		panelDerecho.add(btnUsuarios);
 
-		JButton btnCerrarSesion = new JButton("Cerrar Sesión");
+		JButton btnCerrarSesion = new BotonRedondeado("Cerrar Sesión");
 		btnCerrarSesion.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnCerrarSesion.setBackground(new Color(64, 64, 64));
 		btnCerrarSesion.setForeground(Color.WHITE);
