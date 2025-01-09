@@ -15,7 +15,7 @@ import javax.swing.JPanel;
 public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 
-	public Menu() {
+	public Menu(String rol) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("src/imagenes/basketball.png"));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -70,6 +70,11 @@ public class Menu extends JFrame {
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
+		
+		if (!"admin".equals(rol)) {
+			btnUsuarios.setEnabled(false);
+		}
+		
 		panelDerecho.add(btnUsuarios);
 
 		JButton btnCerrarSesion = new JButton("Cerrar Sesión");

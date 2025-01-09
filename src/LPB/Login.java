@@ -80,26 +80,28 @@ public class Login extends JFrame {
 		panel.add(btnIniciarSesion);
 
 		btnIniciarSesion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String usuario = txtUsuario.getText().trim();
-				String password = new String(txtPassword.getPassword()).trim();
+		    public void actionPerformed(ActionEvent e) {
+		        String usuario = txtUsuario.getText().trim();
+		        String password = new String(txtPassword.getPassword()).trim();
+		        String rol = "";
 
-				if ("admin".equals(usuario) && "admin".equals(password)) {
-					JOptionPane.showMessageDialog(null, "Bienvenido Administrador.");
-					new Menu().setVisible(true);
-					dispose();
-				} else if ("arbitro".equals(usuario) && "arbitro".equals(password)) {
-					JOptionPane.showMessageDialog(null, "Bienvenido Árbitro.");
-					new Menu().setVisible(true);
-					dispose();
-				} else if ("entrenador".equals(usuario) && "entrenador".equals(password)) {
-					JOptionPane.showMessageDialog(null, "Bienvenido Entrenador.");
-					new Menu().setVisible(true);
-					dispose();
-				} else {
-					JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
-				}
-			}
+		        if ("admin".equals(usuario) && "admin".equals(password)) {
+		            rol = "admin";
+		            JOptionPane.showMessageDialog(null, "Bienvenido Administrador.");
+		        } else if ("arbitro".equals(usuario) && "arbitro".equals(password)) {
+		            rol = "arbitro";
+		            JOptionPane.showMessageDialog(null, "Bienvenido Árbitro.");
+		        } else if ("entrenador".equals(usuario) && "entrenador".equals(password)) {
+		            rol = "entrenador";
+		            JOptionPane.showMessageDialog(null, "Bienvenido Entrenador.");
+		        } else {
+		            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+		            return;
+		        }
+
+		        new Menu(rol).setVisible(true);
+		        dispose();
+		    }
 		});
 
 		txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
@@ -112,9 +114,9 @@ public class Login extends JFrame {
 		panel.add(btnInvitado);
 
 		btnInvitado.addActionListener(_ -> {
-			JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-			new Menu().setVisible(true);
-			dispose();
+		    JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
+		    new Menu("invitado").setVisible(true);
+		    dispose();
 		});
 
 		setVisible(true);
