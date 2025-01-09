@@ -36,6 +36,7 @@ public class Menu extends JFrame {
 		
 		JLabel labelUsuario = new JLabel("Usuario: " + usuario);
 		labelUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		labelUsuario.setForeground(new Color(0x545454));
 		labelUsuario.setBounds(10, 470, 200, 20);
 		panelIzquierdo.add(labelUsuario);
 
