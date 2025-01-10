@@ -16,6 +16,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import LPBCLASES.BotonRedondeado;
+
 public class Login extends JFrame {
 	private static final long serialVersionUID = -410820418148204249L;
 
@@ -72,7 +74,7 @@ public class Login extends JFrame {
 		txtPassword.setBounds(376, 312, 200, 35);
 		panel.add(txtPassword);
 
-		JButton btnIniciarSesion = new JButton("Iniciar Sesión");
+		JButton btnIniciarSesion = new BotonRedondeado("Iniciar Sesión");
 		btnIniciarSesion.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnIniciarSesion.setBounds(327, 395, 200, 40);
 		btnIniciarSesion.setBackground(new Color(0x13427E));
@@ -83,28 +85,30 @@ public class Login extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				String usuario = txtUsuario.getText().trim();
 				String password = new String(txtPassword.getPassword()).trim();
+				String rol = "";
 
-				if ("admin".equals(usuario) && "admin".equals(password)) {
+				if ("Administrador".equals(usuario) && "1234".equals(password)) {
+					rol = "Administrador";
 					JOptionPane.showMessageDialog(null, "Bienvenido Administrador.");
-					new Menu().setVisible(true);
-					dispose();
-				} else if ("arbitro".equals(usuario) && "arbitro".equals(password)) {
+				} else if ("Arbitro".equals(usuario) && "1234".equals(password)) {
+					rol = "Arbitro";
 					JOptionPane.showMessageDialog(null, "Bienvenido Árbitro.");
-					new Menu().setVisible(true);
-					dispose();
-				} else if ("entrenador".equals(usuario) && "entrenador".equals(password)) {
+				} else if ("Entrenador".equals(usuario) && "1234".equals(password)) {
+					rol = "Entrenador";
 					JOptionPane.showMessageDialog(null, "Bienvenido Entrenador.");
-					new Menu().setVisible(true);
-					dispose();
 				} else {
 					JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+					return;
 				}
+
+				new Menu(rol, usuario).setVisible(true);
+				dispose();
 			}
 		});
 
 		txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
-		JButton btnInvitado = new JButton("Entrar como Invitado");
+		JButton btnInvitado = new BotonRedondeado("Entrar como Invitado");
 		btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnInvitado.setBounds(327, 445, 200, 40);
 		btnInvitado.setBackground(new Color(0xf46b20));
@@ -113,7 +117,7 @@ public class Login extends JFrame {
 
 		btnInvitado.addActionListener(_ -> {
 			JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-			new Menu().setVisible(true);
+			new Menu("invitado", "Invitado").setVisible(true);
 			dispose();
 		});
 
