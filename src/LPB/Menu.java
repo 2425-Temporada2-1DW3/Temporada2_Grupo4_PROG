@@ -18,7 +18,7 @@ public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 
 	public Menu(String rol, String usuario) {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("src/imagenes/basketball.png"));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(850, 550);
@@ -30,7 +30,7 @@ public class Menu extends JFrame {
 		panelIzquierdo.setBounds(0, 0, 425, 513);
 		panelIzquierdo.setLayout(null);
 
-		ImageIcon logo = new ImageIcon("src/imagenes/logo500.png");
+		ImageIcon logo = new ImageIcon(getClass().getResource("/imagenes/logo500.png"));
 		JLabel labelLogo = new JLabel(logo);
 		labelLogo.setBounds(10, 55, 400, 400);
 		panelIzquierdo.add(labelLogo);
@@ -88,11 +88,9 @@ public class Menu extends JFrame {
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
 
-		if (!"Administrador".equals(rol)) {
-			btnUsuarios.setEnabled(false);
+		if ("Administrador".equals(rol)) {
+			panelDerecho.add(btnUsuarios);
 		}
-
-		panelDerecho.add(btnUsuarios);
 
 		JButton btnCerrarSesion = new BotonRedondeado("Cerrar Sesión");
 		btnCerrarSesion.setFont(new Font("SansSerif", Font.PLAIN, 16));
