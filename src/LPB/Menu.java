@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -12,10 +14,23 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 
-public class Menu extends JFrame {
+public class Menu extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -1200889095902166795L;
+	private JButton btnTemporadas;
+	private JButton btnEquipos;
+	private JButton btnUsuarios;
+	private JButton btnCerrarSesion;
+	private JPanel panelIzquierdo;
+	private JLabel labelLogo;
+	private JLabel labelUsuario;
+	private JPanel panelDerecho;
+	private JLabel titulo;
+	private JLabel subtitulo;
+	private ImageIcon logo;
+	private BackgroundFader fader;
 
 	public Menu(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -25,49 +40,52 @@ public class Menu extends JFrame {
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 
-		JPanel panelIzquierdo = new JPanel();
+		fader = new BackgroundFader();
+
+		panelIzquierdo = new JPanel();
 		panelIzquierdo.setBackground(new Color(255, 243, 205));
 		panelIzquierdo.setBounds(0, 0, 425, 513);
 		panelIzquierdo.setLayout(null);
 
-		ImageIcon logo = new ImageIcon(getClass().getResource("/imagenes/logo500.png"));
-		JLabel labelLogo = new JLabel(logo);
+		logo = new ImageIcon(getClass().getResource("/imagenes/logo500.png"));
+		labelLogo = new JLabel(logo);
 		labelLogo.setBounds(10, 55, 400, 400);
 		panelIzquierdo.add(labelLogo);
-		getContentPane().add(panelIzquierdo);
 
-		JLabel labelUsuario = new JLabel("Usuario: " + usuario);
+		labelUsuario = new JLabel("Usuario: " + usuario);
 		labelUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		labelUsuario.setForeground(new Color(0x545454));
 		labelUsuario.setBounds(20, 470, 200, 20);
 		panelIzquierdo.add(labelUsuario);
 
-		JPanel panelDerecho = new JPanel();
+		getContentPane().add(panelIzquierdo);
+
+		panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));
 		panelDerecho.setBounds(425, 0, 411, 513);
 		panelDerecho.setLayout(null);
 
-		JLabel titulo = new JLabel("Menú");
+		titulo = new JLabel("Menú");
 		titulo.setFont(new Font("SansSerif", Font.BOLD, 50));
 		titulo.setForeground(new Color(255, 243, 205));
 		titulo.setBounds(50, 40, 200, 47);
 		panelDerecho.add(titulo);
 
-		JLabel subtitulo = new JLabel("Seleccione una opción:");
+		subtitulo = new JLabel("Seleccione una opción:");
 		subtitulo.setForeground(Color.WHITE);
 		subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		subtitulo.setBounds(50, 146, 200, 20);
 		panelDerecho.add(subtitulo);
 
-		JButton btnTemporadas = new BotonRedondeado("Temporadas");
+		btnTemporadas = new BotonRedondeado("Temporadas");
 		btnTemporadas.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas.setBackground(new Color(0x13427E));
 		btnTemporadas.setForeground(Color.WHITE);
 		btnTemporadas.setBounds(50, 191, 200, 40);
+		btnTemporadas.addMouseListener(this);
 		panelDerecho.add(btnTemporadas);
-
+		
 		btnTemporadas.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				new MenuTemporadas(usuario, usuario).setVisible(true);
@@ -75,28 +93,31 @@ public class Menu extends JFrame {
 			}
 		});
 
-		JButton btnEquipos = new BotonRedondeado("Equipos");
+		btnEquipos = new BotonRedondeado("Equipos");
 		btnEquipos.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnEquipos.setBackground(new Color(0xf46b20));
 		btnEquipos.setForeground(Color.WHITE);
 		btnEquipos.setBounds(50, 251, 200, 40);
+		btnEquipos.addMouseListener(this);
 		panelDerecho.add(btnEquipos);
 
-		JButton btnUsuarios = new BotonRedondeado("Usuarios");
+		btnUsuarios = new BotonRedondeado("Usuarios");
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
+		btnUsuarios.addMouseListener(this);
 
 		if ("Administrador".equals(rol)) {
 			panelDerecho.add(btnUsuarios);
 		}
 
-		JButton btnCerrarSesion = new BotonRedondeado("Cerrar Sesión");
+		btnCerrarSesion = new BotonRedondeado("Cerrar Sesión");
 		btnCerrarSesion.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnCerrarSesion.setBackground(new Color(64, 64, 64));
 		btnCerrarSesion.setForeground(Color.WHITE);
 		btnCerrarSesion.setBounds(250, 461, 140, 30);
+		btnCerrarSesion.addMouseListener(this);
 		panelDerecho.add(btnCerrarSesion);
 
 		btnCerrarSesion.addActionListener(new ActionListener() {
@@ -108,5 +129,47 @@ public class Menu extends JFrame {
 		});
 
 		getContentPane().add(panelDerecho);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent ae) {
+		Object o = ae.getSource();
+
+		if (o == btnTemporadas) {
+			fader.fadeBackground(btnTemporadas, btnTemporadas.getBackground(), new Color(0x1a5bae));
+		} else if (o == btnEquipos) {
+			fader.fadeBackground(btnEquipos, btnEquipos.getBackground(), new Color(0xff7f50));
+		} else if (o == btnUsuarios) {
+			fader.fadeBackground(btnUsuarios, btnUsuarios.getBackground(), new Color(0x6a6a6a));
+		} else if (o == btnCerrarSesion) {
+			fader.fadeBackground(btnCerrarSesion, btnCerrarSesion.getBackground(), new Color(0x646464));
+		}
+	}
+
+	@Override
+	public void mouseExited(MouseEvent ae) {
+		Object o = ae.getSource();
+
+		if (o == btnTemporadas) {
+			fader.fadeBackground(btnTemporadas, btnTemporadas.getBackground(), new Color(0x13427E));
+		} else if (o == btnEquipos) {
+			fader.fadeBackground(btnEquipos, btnEquipos.getBackground(), new Color(0xf46b20));
+		} else if (o == btnUsuarios) {
+			fader.fadeBackground(btnUsuarios, btnUsuarios.getBackground(), new Color(0x545454));
+		} else if (o == btnCerrarSesion) {
+			fader.fadeBackground(btnCerrarSesion, btnCerrarSesion.getBackground(), new Color(0x404040));
+		}
 	}
 }

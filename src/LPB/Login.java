@@ -63,6 +63,8 @@ public class Login extends JFrame implements MouseListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("LPB Basketball - Inicio de Sesión");
+		
+		fader = new BackgroundFader();
 
 		panel = new JPanel();
 		panel.setLayout(null);
@@ -147,8 +149,6 @@ public class Login extends JFrame implements MouseListener {
 			new Menu("invitado", "Invitado").setVisible(true);
 			dispose();
 		});
-		
-		fader = new BackgroundFader();
 	}
 	
     @Override
