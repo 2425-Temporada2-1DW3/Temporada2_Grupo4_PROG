@@ -182,9 +182,9 @@ public class Login extends JFrame implements MouseListener {
         Object o = ae.getSource();
 
         if (o == btnIniciarSesion) {
-            fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), btnIniciarSesion.getBackground().brighter());
+            fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
         } else if (o == btnInvitado) {
-            fadeBackground(btnInvitado, btnInvitado.getBackground(), btnInvitado.getBackground().brighter());
+            fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
         }
     }
 
