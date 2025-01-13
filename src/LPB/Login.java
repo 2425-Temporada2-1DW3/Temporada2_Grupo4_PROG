@@ -8,8 +8,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,9 +19,10 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
+import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
-import LPBCLASES.TextoRedondeado;
 import LPBCLASES.PasswordRedondeado;
+import LPBCLASES.TextoRedondeado;
 
 public class Login extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -410820418148204249L;
@@ -36,9 +35,7 @@ public class Login extends JFrame implements MouseListener {
 	private JPasswordField txtPassword;
 	private JButton btnIniciarSesion;
     private JButton btnInvitado;
-    private int step;
-    private static final int FADE_DURATION = 300;
-    private static final int FADE_STEPS = 10;
+    private BackgroundFader fader;
 
 	public static void main(String[] args) {
 	    try {
@@ -150,41 +147,18 @@ public class Login extends JFrame implements MouseListener {
 			new Menu("invitado", "Invitado").setVisible(true);
 			dispose();
 		});
+		
+		fader = new BackgroundFader();
 	}
-
-	private void fadeBackground(JButton button, Color startColor, Color endColor) {
-	    Timer timer = new Timer();
-	    step = 0;
-
-	    TimerTask task = new TimerTask() {
-	        @Override
-	        public void run() {
-	            if (step >= FADE_STEPS) {
-	                timer.cancel();
-	                return;
-	            }
-
-	            float ratio = (float) step / FADE_STEPS;
-	            int red = (int) (startColor.getRed() + ratio * (endColor.getRed() - startColor.getRed()));
-	            int green = (int) (startColor.getGreen() + ratio * (endColor.getGreen() - startColor.getGreen()));
-	            int blue = (int) (startColor.getBlue() + ratio * (endColor.getBlue() - startColor.getBlue()));
-
-	            button.setBackground(new Color(red, green, blue));
-	            step++;
-	        }
-	    };
-
-	    timer.scheduleAtFixedRate(task, 0, FADE_DURATION / FADE_STEPS);
-	}
-
+	
     @Override
     public void mouseEntered(MouseEvent ae) {
         Object o = ae.getSource();
 
         if (o == btnIniciarSesion) {
-            fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
+            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
         } else if (o == btnInvitado) {
-            fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
+            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
         }
     }
 
@@ -193,9 +167,9 @@ public class Login extends JFrame implements MouseListener {
         Object o = ae.getSource();
 
         if (o == btnIniciarSesion) {
-            fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
+            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
         } else if (o == btnInvitado) {
-            fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
+            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
         }
     }
 
