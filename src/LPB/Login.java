@@ -99,7 +99,7 @@ public class Login extends JFrame implements MouseListener {
 		txtPassword.setBounds(376, 312, 200, 35);
 		panel.add(txtPassword);
 
-		btnIniciarSesion = new BotonRedondeado("Iniciar Sesión");
+		btnIniciarSesion = new BotonRedondeado("Iniciar Sesión", null);
 		btnIniciarSesion.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnIniciarSesion.setBounds(327, 395, 200, 40);
 		btnIniciarSesion.setBackground(new Color(0x13427E));
@@ -135,7 +135,7 @@ public class Login extends JFrame implements MouseListener {
 
 		txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
-		btnInvitado = new BotonRedondeado("Entrar como Invitado");
+		btnInvitado = new BotonRedondeado("Entrar como Invitado", null);
 		btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnInvitado.setBounds(327, 445, 200, 40);
 		btnInvitado.setBackground(new Color(0xf46b20));
