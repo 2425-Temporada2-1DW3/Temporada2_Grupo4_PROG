@@ -42,7 +42,7 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 	private JButton btnNuevo;
 	private JButton btnVolverMenu;
 	private BackgroundFader fader;
-	private JComboBox<Object> comboBox;
+	private JComboBox<Object> SelectTemporadas;
 
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -82,9 +82,15 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 		labelUsuario.setBounds(20, 360, 200, 20);
 		panelInferior.add(labelUsuario);
 
-		comboBox = new JComboBox<Object>();
-		comboBox.setBounds(545, 27, 200, 40);
-		panelInferior.add(comboBox);
+		SelectTemporadas = new JComboBox<Object>();
+		SelectTemporadas.setBackground(new Color(0x13427e));
+		SelectTemporadas.setForeground(Color.black);
+		SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		SelectTemporadas.setBounds(545, 27, 200, 40);
+		SelectTemporadas.addItem("Temporada 23-24");
+		SelectTemporadas.addItem("Temporada 24-25");
+		SelectTemporadas.addItem("Temporada 25-26");
+		panelInferior.add(SelectTemporadas);
 
 		btnNuevo = new BotonRedondeado("+", null);
 		btnNuevo.setForeground(Color.WHITE);
@@ -101,7 +107,7 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 		btnEquipo1.setFont(new Font("SansSerif", Font.BOLD, 18));
 		btnEquipo1.setBackground(new Color(0xf46b20));
 		btnEquipo1.setForeground(Color.WHITE);
-		btnEquipo1.setBounds(97, 118, 255, 50);
+		btnEquipo1.setBounds(97, 118, 146, 50);
 		btnEquipo1.addMouseListener(this);
 		panelInferior.add(btnEquipo1);
 
