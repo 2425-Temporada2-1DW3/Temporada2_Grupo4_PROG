@@ -1,0 +1,5 @@
+package LPBCLASES;
+
+public enum Rol {
+    ADMINISTRADOR, ENTRENADOR, ARBITRO, INVITADO
+}

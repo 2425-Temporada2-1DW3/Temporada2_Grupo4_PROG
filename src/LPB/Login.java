@@ -4,10 +4,9 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -21,8 +20,10 @@ import javax.swing.UIManager;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.GestorUsuarios;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.Usuario;
 
 public class Login extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -410820418148204249L;
@@ -108,49 +109,40 @@ public class Login extends JFrame implements MouseListener {
 		btnIniciarSesion.addMouseListener(this);
 		panel.add(btnIniciarSesion);
 
-		btnIniciarSesion.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				String usuario = txtUsuario.getText().trim();
-				String password = new String(txtPassword.getPassword()).trim();
-				String rol = "";
+		GestorUsuarios.cargarUsuarios();
+		
+        btnIniciarSesion.addActionListener(e -> {
+            String usuario = txtUsuario.getText().trim();
+            String contrasena = new String(txtPassword.getPassword()).trim();
 
-				if ("Administrador".equals(usuario) && "1234".equals(password)) {
-					rol = "Administrador";
-					JOptionPane.showMessageDialog(null, "Bienvenido Administrador.");
-				} else if ("Arbitro".equals(usuario) && "1234".equals(password)) {
-					rol = "Arbitro";
-					JOptionPane.showMessageDialog(null, "Bienvenido Árbitro.");
-				} else if ("Entrenador".equals(usuario) && "1234".equals(password)) {
-					rol = "Entrenador";
-					JOptionPane.showMessageDialog(null, "Bienvenido Entrenador.");
-				} else {
-					JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
-					return;
-				}
+            Usuario user = GestorUsuarios.validarUsuario(usuario, contrasena);
+            if (user != null) {
+                JOptionPane.showMessageDialog(null, "Bienvenido, " + user.getRol() + ".");
+                new Menu(user.getRol(), user.getUsuario()).setVisible(true);
+                dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+            }
+        });
 
-				new Menu(rol, usuario).setVisible(true);
-				dispose();
-			}
-		});
+        txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
-		txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
+        btnInvitado = new BotonRedondeado("Entrar como Invitado");
+        btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnInvitado.setBounds(327, 445, 200, 40);
+        btnInvitado.setBackground(new Color(0xf46b20));
+        btnInvitado.setForeground(Color.WHITE);
+        btnInvitado.setFocusPainted(false);
+        btnInvitado.addMouseListener(this);
+        panel.add(btnInvitado);
 
-		btnInvitado = new BotonRedondeado("Entrar como Invitado");
-		btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnInvitado.setBounds(327, 445, 200, 40);
-		btnInvitado.setBackground(new Color(0xf46b20));
-		btnInvitado.setForeground(Color.WHITE);
-		btnInvitado.setFocusPainted(false);
-		btnInvitado.addMouseListener(this);
-		panel.add(btnInvitado);
+        btnInvitado.addActionListener(_ -> {
+            JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
+            new Menu("invitado", "Invitado").setVisible(true);
+            dispose();
+        });
+    }
 
-		btnInvitado.addActionListener(_ -> {
-			JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-			new Menu("invitado", "Invitado").setVisible(true);
-			dispose();
-		});
-	}
-	
     @Override
     public void mouseEntered(MouseEvent ae) {
         Object o = ae.getSource();
@@ -173,18 +165,15 @@ public class Login extends JFrame implements MouseListener {
         }
     }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		
-	}
+    @Override
+    public void mousePressed(MouseEvent e) {
+    }
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+    }
 }

@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Usuario.Rol;
 
 public class Menu extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -1200889095902166795L;
@@ -32,7 +33,7 @@ public class Menu extends JFrame implements MouseListener {
 	private ImageIcon logo;
 	private BackgroundFader fader;
 
-	public Menu(String rol, String usuario) {
+	public Menu(Rol rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -129,6 +130,10 @@ public class Menu extends JFrame implements MouseListener {
 		});
 
 		getContentPane().add(panelDerecho);
+	}
+
+	public Menu(String string, String usuario) {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
