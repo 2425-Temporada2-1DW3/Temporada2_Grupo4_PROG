@@ -16,7 +16,7 @@ public class BotonRedondeado extends JButton {
 		setContentAreaFilled(false);
 		setHorizontalTextPosition(JButton.RIGHT); // Texto a la derecha del icono
         setVerticalTextPosition(JButton.CENTER); // Alinear verticalmente el texto
-        setIconTextGap(0); // Espacio entre icono y texto
+        setIconTextGap(4); // Espacio entre icono y texto
 	}
 
 	@Override

@@ -2,24 +2,26 @@
 package LPB;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-
+import javax.swing.SwingConstants;
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 
 public class EquiposTemporada extends JFrame implements MouseListener {
+
 	private static final long serialVersionUID = -1200889095902166795L;
 	private JPanel panelSuperior;
 	private ImageIcon logo;
@@ -27,23 +29,10 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 	private JLabel labelUsuario;
 	private JPanel panelInferior;
 	private JLabel titulo;
-	private JButton btnEquipo1;
-	private JButton btnEquipo2;
-	private JButton btnEquipo3;
-	private JButton btnEquipo4;
-	private JButton btnEquipo5;
-	private JButton btnEquipo6;
-	private JButton btnEliminar1;
-	private JButton btnEliminar2;
-	private JButton btnEliminar3;
-	private JButton btnEliminar4;
-	private JButton btnEliminar5;
-	private JButton btnEliminar6;
 	private JButton btnNuevo;
 	private JButton btnVolverMenu;
 	private BackgroundFader fader;
-	private JComboBox<Object> SelectTemporadas;
-
+	private JComboBox<String> SelectTemporadas;
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
@@ -63,6 +52,7 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 		labelLogo = new JLabel(logo);
 		labelLogo.setBounds(686, -20, 150, 150);
 		panelSuperior.add(labelLogo);
+
 		getContentPane().add(panelSuperior);
 
 		titulo = new JLabel("Equipos");
@@ -82,146 +72,22 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 		labelUsuario.setBounds(20, 360, 200, 20);
 		panelInferior.add(labelUsuario);
 
-		SelectTemporadas = new JComboBox<Object>();
+		SelectTemporadas = new JComboBox<>();
 		SelectTemporadas.setBackground(new Color(0x13427e));
 		SelectTemporadas.setForeground(Color.black);
 		SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		SelectTemporadas.setBounds(545, 27, 200, 40);
-		SelectTemporadas.addItem("Temporada 23-24");
-		SelectTemporadas.addItem("Temporada 24-25");
-		SelectTemporadas.addItem("Temporada 25-26");
+		cargarTemporadas();
 		panelInferior.add(SelectTemporadas);
 
 		btnNuevo = new BotonRedondeado("+", null);
 		btnNuevo.setForeground(Color.WHITE);
 		btnNuevo.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevo.setBackground(new Color(0x545454));
-		btnNuevo.setBounds(755, 27, 45, 40);
-
+		btnNuevo.setBounds(755, 25, 45, 45);
 		if ("Administrador".equals(rol)) {
 			panelInferior.add(btnNuevo);
 		}
-
-		ImageIcon icon1 = new ImageIcon(getClass().getResource("/imagenes/BostonCeltics50.png"));
-		btnEquipo1 = new BotonRedondeado("Boston Celtics", icon1);
-		btnEquipo1.setFont(new Font("SansSerif", Font.BOLD, 18));
-		btnEquipo1.setBackground(new Color(0xf46b20));
-		btnEquipo1.setForeground(Color.WHITE);
-		btnEquipo1.setBounds(97, 118, 146, 50);
-		btnEquipo1.addMouseListener(this);
-		panelInferior.add(btnEquipo1);
-
-		ImageIcon icon2 = new ImageIcon(getClass().getResource("/imagenes/AtlantaHawks50.png"));
-		btnEquipo2 = new BotonRedondeado("Atlanta Hawks", icon2);
-		btnEquipo2.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEquipo2.setBackground(new Color(0xf46b20));
-		btnEquipo2.setForeground(Color.WHITE);
-		btnEquipo2.setBounds(97, 178, 255, 50);
-		btnEquipo2.addMouseListener(this);
-		panelInferior.add(btnEquipo2);
-
-		ImageIcon icon3 = new ImageIcon(getClass().getResource("/imagenes/MiamiHeat50.png"));
-		btnEquipo3 = new BotonRedondeado("Miami Heat", icon3);
-		btnEquipo3.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEquipo3.setBackground(new Color(0xf46b20));
-		btnEquipo3.setForeground(Color.WHITE);
-		btnEquipo3.setBounds(97, 238, 255, 50);
-		btnEquipo3.addMouseListener(this);
-		btnEquipo3.addMouseListener(this);
-		panelInferior.add(btnEquipo3);
-
-		ImageIcon icon4 = new ImageIcon(getClass().getResource("/imagenes/ChicagoBulls50.png"));
-		btnEquipo4 = new BotonRedondeado("Chicago Bulls", icon4);
-		btnEquipo4.setForeground(Color.WHITE);
-		btnEquipo4.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEquipo4.setBackground(new Color(244, 107, 32));
-		btnEquipo4.setBounds(478, 118, 200, 50);
-		btnEquipo4.addMouseListener(this);
-		panelInferior.add(btnEquipo4);
-
-		ImageIcon icon5 = new ImageIcon(getClass().getResource("/imagenes/GoldenStateWarriors50.png"));
-		btnEquipo5 = new BotonRedondeado("Golden State Warriors", icon5);
-		btnEquipo5.setForeground(Color.WHITE);
-		btnEquipo5.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEquipo5.setBackground(new Color(244, 107, 32));
-		btnEquipo5.setBounds(478, 178, 255, 50);
-		btnEquipo5.addMouseListener(this);
-		panelInferior.add(btnEquipo5);
-
-		ImageIcon icon6 = new ImageIcon(getClass().getResource("/imagenes/LosAngelesLakers50.png"));
-		btnEquipo6 = new BotonRedondeado("Los Angeles Lakers", icon6);
-		btnEquipo6.setForeground(Color.WHITE);
-		btnEquipo6.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEquipo6.setBackground(new Color(244, 107, 32));
-		btnEquipo6.setBounds(478, 238, 200, 50);
-		btnEquipo6.addMouseListener(this);
-		panelInferior.add(btnEquipo6);
-
-		btnEliminar1 = new BotonRedondeado("-", null);
-		btnEliminar1.setForeground(Color.WHITE);
-		btnEliminar1.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar1.setBackground(new Color(0x545454));
-		btnEliminar1.setBounds(352, 118, 50, 50);
-		btnEliminar1.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar1);
-//		}
-
-		btnEliminar2 = new BotonRedondeado("-", null);
-		btnEliminar2.setForeground(Color.WHITE);
-		btnEliminar2.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar2.setBackground(new Color(0x545454));
-		btnEliminar2.setBounds(362, 208, 40, 40);
-		btnEliminar2.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar2);
-//		}
-
-		btnEliminar3 = new BotonRedondeado("-", null);
-		btnEliminar3.setForeground(Color.WHITE);
-		btnEliminar3.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar3.setBackground(new Color(0x545454));
-		btnEliminar3.setBounds(362, 273, 40, 40);
-		btnEliminar3.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar3);
-//		}
-
-		btnEliminar4 = new BotonRedondeado("-", null);
-		btnEliminar4.setForeground(Color.WHITE);
-		btnEliminar4.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar4.setBackground(new Color(0x545454));
-		btnEliminar4.setBounds(727, 118, 50, 50);
-		btnEliminar4.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar4);
-//		}
-
-		btnEliminar5 = new BotonRedondeado("-", null);
-		btnEliminar5.setForeground(Color.WHITE);
-		btnEliminar5.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar5.setBackground(new Color(0x545454));
-		btnEliminar5.setBounds(737, 208, 40, 40);
-		btnEliminar5.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar5);
-//		}
-
-		btnEliminar6 = new BotonRedondeado("-", null);
-		btnEliminar6.setForeground(Color.WHITE);
-		btnEliminar6.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar6.setBackground(new Color(0x545454));
-		btnEliminar6.setBounds(737, 273, 40, 40);
-		btnEliminar6.addMouseListener(this);
-
-//		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnEliminar6);
-//		}
 
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -234,12 +100,149 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 		btnVolverMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Menu(usuario, usuario).setVisible(true);
+				new Menu(usuario, rol).setVisible(true);
 				dispose();
 			}
 		});
 
 		getContentPane().add(panelInferior);
+
+		SelectTemporadas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
+				generarEquiposPorTemporada(temporadaSeleccionada, rol);
+			}
+		});
+
+		for (int i = 0; i < SelectTemporadas.getItemCount(); i++) {
+			if ("Temporada 2024-25".equals(SelectTemporadas.getItemAt(i))) {
+				SelectTemporadas.setSelectedIndex(i);
+				generarEquiposPorTemporada((String) SelectTemporadas.getSelectedItem(), rol);
+				break;
+			}
+		}
+	}
+
+	private void cargarTemporadas() {
+		int[] años = { 2023, 2024, 2025 };
+		for (int año : años) {
+			String temporada = año + "-" + ((año + 1) % 100);
+			SelectTemporadas.addItem("Temporada " + temporada);
+		}
+	}
+
+	private void generarEquiposPorTemporada(String temporada, String rol) {
+		panelInferior.removeAll();
+		panelInferior.add(labelUsuario);
+		panelInferior.add(SelectTemporadas);
+		panelInferior.add(btnVolverMenu);
+		if ("Administrador".equals(rol)) {
+			panelInferior.add(btnNuevo);
+		}
+
+		if ("Temporada 2025-26".equals(temporada)) {
+			JLabel proximamenteLabel = new JLabel("No hay equipos disponibles.");
+			proximamenteLabel.setFont(new Font("SansSerif", Font.PLAIN, 21));
+			proximamenteLabel.setForeground(new Color(0x13427e));
+			proximamenteLabel.setBounds(290, 180, 500, 50);
+			panelInferior.add(proximamenteLabel);
+		} else {
+			String[][] equipos = obtenerEquiposPorTemporada(temporada);
+			for (int i = 0; i < equipos.length; i++) {
+				ImageIcon icono = new ImageIcon(getClass().getResource(equipos[i][1]));
+				JButton botonEquipo = crearBotonEquipo(equipos[i][0], icono, i);
+				panelInferior.add(botonEquipo);
+
+				if ("Administrador".equals(rol)) {
+					JButton botonEliminar = crearBotonEliminar(i);
+					panelInferior.add(botonEliminar);
+				}
+			}
+		}
+
+		panelInferior.revalidate();
+		panelInferior.repaint();
+	}
+
+	private String[][] obtenerEquiposPorTemporada(String temporada) {
+		switch (temporada) {
+		case "Temporada 2023-24":
+			return new String[][] { { "New York Knicks", "/imagenes/NewYorkKnicks50.png" },
+					{ "Brooklyn Nets", "/imagenes/BrooklynNets50.png" },
+					{ "Philadelphia 76ers", "/imagenes/Philadelphia76ers50.png" },
+					{ "Toronto Raptors", "/imagenes/TorontoRaptors50.png" },
+					{ "Cleveland Cavaliers", "/imagenes/ClevelandCavaliers50.png" },
+					{ "Detroit Pistons", "/imagenes/DetroitPistons50.png" } };
+		case "Temporada 2024-25":
+			return new String[][] { { "Boston Celtics", "/imagenes/BostonCeltics50.png" },
+					{ "Atlanta Hawks", "/imagenes/AtlantaHawks50.png" }, { "Miami Heat", "/imagenes/MiamiHeat50.png" },
+					{ "Chicago Bulls", "/imagenes/ChicagoBulls50.png" },
+					{ "Golden State Warriors", "/imagenes/GoldenStateWarriors50.png" },
+					{ "Los Angeles Lakers", "/imagenes/LosAngelesLakers50.png" } };
+		case "Temporada 2025-26":
+
+		default:
+			return new String[0][0];
+		}
+	}
+
+	private JButton crearBotonEquipo(String nombreEquipo, ImageIcon icono, int indice) {
+		JButton boton = new BotonRedondeado(nombreEquipo, icono);
+		boton.setHorizontalAlignment(SwingConstants.LEFT);
+		boton.setFont(new Font("SansSerif", Font.BOLD, 16));
+		boton.setBackground(new Color(0xf46b20));
+		boton.setForeground(Color.WHITE);
+		int x = (indice % 2 == 0) ? 71 : 452;
+		int y = 118 + (indice / 2) * 60;
+		boton.setBounds(x, y, 255, 50);
+		boton.addMouseListener(this);
+		return boton;
+	}
+
+	private JButton crearBotonEliminar(int indice) {
+		JButton boton = new BotonRedondeado("-", null);
+		boton.setForeground(Color.WHITE);
+		boton.setFont(new Font("SansSerif", Font.BOLD, 16));
+		boton.setBackground(new Color(0x545454));
+		int x = (indice % 2 == 0) ? 336 : 717;
+		int y = 118 + (indice / 2) * 60;
+		boton.setBounds(x, y, 50, 50);
+		boton.addMouseListener(this);
+		boton.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				eliminarEquipo(indice, e);
+			}
+		});
+		return boton;
+	}
+
+	private void eliminarEquipo(int indice, ActionEvent e) {
+		// Lógica para eliminar el equipo de la temporada
+		String equipoEliminado = ""; // Variable para almacenar el nombre del equipo eliminado
+		int equipoX = (indice % 2 == 0) ? 71 : 452;
+		int equipoY = 118 + (indice / 2) * 60;
+		for (Component comp : panelInferior.getComponents()) {
+			if (comp instanceof JButton) {
+				JButton btn = (JButton) comp;
+				if (btn.getBounds().x == equipoX && btn.getBounds().y == equipoY) {
+					equipoEliminado = btn.getText(); // Obtener el nombre del equipo eliminado
+					panelInferior.remove(btn);
+					break;
+				}
+			}
+		}
+
+		// Eliminar el botón de eliminar
+		panelInferior.remove((JButton) e.getSource());
+
+		// Mostrar mensaje de alerta
+		JOptionPane.showMessageDialog(null, "Equipo \"" + equipoEliminado + "\" ha sido eliminado.");
+
+		// Actualizar la interfaz
+		panelInferior.revalidate();
+		panelInferior.repaint();
 	}
 
 	@Override
@@ -257,71 +260,30 @@ public class EquiposTemporada extends JFrame implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent ae) {
 		Object o = ae.getSource();
-
-		if (o == btnNuevo) {
-			fader.fadeBackground(btnNuevo, btnNuevo.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEquipo1) {
-			fader.fadeBackground(btnEquipo1, btnEquipo1.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEquipo2) {
-			fader.fadeBackground(btnEquipo2, btnEquipo2.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEquipo3) {
-			fader.fadeBackground(btnEquipo3, btnEquipo3.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEquipo4) {
-			fader.fadeBackground(btnEquipo4, btnEquipo4.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEquipo5) {
-			fader.fadeBackground(btnEquipo5, btnEquipo5.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEquipo6) {
-			fader.fadeBackground(btnEquipo6, btnEquipo6.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEliminar1) {
-			fader.fadeBackground(btnEliminar1, btnEliminar1.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEliminar2) {
-			fader.fadeBackground(btnEliminar2, btnEliminar2.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEliminar3) {
-			fader.fadeBackground(btnEliminar3, btnEliminar3.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEliminar4) {
-			fader.fadeBackground(btnEliminar4, btnEliminar4.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEliminar5) {
-			fader.fadeBackground(btnEliminar5, btnEliminar5.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnEliminar6) {
-			fader.fadeBackground(btnEliminar6, btnEliminar6.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x646464));
+		if (o instanceof JButton) {
+			JButton btn = (JButton) o;
+			if (btn == btnNuevo || btn.getText().equals("-")) {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0x6a6a6a));
+			} else if (btn == btnVolverMenu) {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0x646464));
+			} else {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0xff7f50));
+			}
 		}
-
 	}
 
 	@Override
 	public void mouseExited(MouseEvent ae) {
 		Object o = ae.getSource();
-
-		if (o == btnNuevo) {
-			fader.fadeBackground(btnNuevo, btnNuevo.getBackground(), new Color(0x545454));
-		} else if (o == btnEquipo1) {
-			fader.fadeBackground(btnEquipo1, btnEquipo1.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEquipo2) {
-			fader.fadeBackground(btnEquipo2, btnEquipo2.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEquipo3) {
-			fader.fadeBackground(btnEquipo3, btnEquipo3.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEquipo4) {
-			fader.fadeBackground(btnEquipo4, btnEquipo4.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEquipo5) {
-			fader.fadeBackground(btnEquipo5, btnEquipo5.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEquipo6) {
-			fader.fadeBackground(btnEquipo6, btnEquipo6.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEliminar1) {
-			fader.fadeBackground(btnEliminar1, btnEliminar1.getBackground(), new Color(0x545454));
-		} else if (o == btnEliminar2) {
-			fader.fadeBackground(btnEliminar2, btnEliminar2.getBackground(), new Color(0x545454));
-		} else if (o == btnEliminar3) {
-			fader.fadeBackground(btnEliminar3, btnEliminar3.getBackground(), new Color(0x545454));
-		} else if (o == btnEliminar4) {
-			fader.fadeBackground(btnEliminar4, btnEliminar4.getBackground(), new Color(0x545454));
-		} else if (o == btnEliminar5) {
-			fader.fadeBackground(btnEliminar5, btnEliminar5.getBackground(), new Color(0x545454));
-		} else if (o == btnEliminar6) {
-			fader.fadeBackground(btnEliminar6, btnEliminar6.getBackground(), new Color(0x545454));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x404040));
+		if (o instanceof JButton) {
+			JButton btn = (JButton) o;
+			if (btn == btnNuevo || btn.getText().equals("-")) {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0x545454));
+			} else if (btn == btnVolverMenu) {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0x404040));
+			} else {
+				fader.fadeBackground(btn, btn.getBackground(), new Color(0xf46b20));
+			}
 		}
 	}
 }
