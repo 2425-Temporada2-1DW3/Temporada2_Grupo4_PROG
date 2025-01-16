@@ -2,7 +2,6 @@
 package LPB;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,15 +12,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,6 +36,7 @@ import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Equipo;
 
 public class EquiposTemporada extends JFrame implements WindowListener {
 
@@ -45,6 +52,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
 	private Boolean datosModificados;
+	private Map<String, List<Equipo>> equiposPorTemporada;
 
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -152,13 +160,25 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 			public void actionPerformed(ActionEvent e) {
 				String nombreEquipo = JOptionPane.showInputDialog("Ingrese el nombre del equipo:");
 				if (nombreEquipo != null && !nombreEquipo.trim().isEmpty()) {
-					agregarEquipo(nombreEquipo);
-					datosModificados = true;
+					// File chooser para seleccionar el logo del equipo
+					JFileChooser fileChooser = new JFileChooser();
+					fileChooser.setDialogTitle("Seleccione el logo del equipo");
+					int result = fileChooser.showOpenDialog(null);
+					if (result == JFileChooser.APPROVE_OPTION) {
+						File selectedFile = fileChooser.getSelectedFile();
+						ImageIcon teamLogo = new ImageIcon(selectedFile.getAbsolutePath());
+						agregarEquipo(nombreEquipo, teamLogo);
+						datosModificados = true;
+					}
 				}
 			}
 		});
 
 		datosModificados = false;
+		equiposPorTemporada = new HashMap<>();
+		for (String temporada : temporadas) {
+			equiposPorTemporada.put(temporada, new ArrayList<>());
+		}
 		cargarDatos();
 		datosModificados = false;
 		actualizarPanelEquipos((String) SelectTemporadas.getSelectedItem());
@@ -166,38 +186,16 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	private void actualizarPanelEquipos(String temporada) {
 		panelEquipos.removeAll();
+		List<Equipo> equipos = equiposPorTemporada.get(temporada);
 
-		String[] nombresEquipos;
-		String[] rutaLogo;
-
-		// Define equipos based on the selected season
-		switch (temporada) {
-		case "Temporada 2023-24":
-			nombresEquipos = new String[] { "Brooklyn Nets", "Cleveland Cavaliers", "Detroit Pistons", "NewYork Knicks",
-					"Philadelphia 76ers", "Toronto Raptors" };
-			rutaLogo = new String[] { "/imagenes/BrooklynNets50.png", "/imagenes/ClevelandCavaliers50.png",
-					"/imagenes/DetroitPistons50.png", "/imagenes/NewYorkKnicks50.png",
-					"/imagenes/Philadelphia76ers50.png", "/imagenes/TorontoRaptors50.png" };
-			break;
-		case "Temporada 2024-25":
-			nombresEquipos = new String[] { "Chicago Bulls", "Golden State Warriors", "Miami Heat", "Boston Celtics",
-					"Los Angeles Lakers", "Atlanta Hawks" };
-			rutaLogo = new String[] { "/imagenes/ChicagoBulls50.png", "/imagenes/GoldenStateWarriors50.png",
-					"/imagenes/MiamiHeat50.png", "/imagenes/BostonCeltics50.png", "/imagenes/LosAngelesLakers50.png",
-					"/imagenes/AtlantaHawks50.png" };
-			break;
-		case "Temporada 2025-26":
-			JLabel aviso = new JLabel("La temporada 2025-26 no ha sido empezada.");
+		if (equipos == null || equipos.isEmpty()) {
+			JLabel aviso = new JLabel("No hay equipos disponibles para la temporada seleccionada.");
 			aviso.setFont(new Font("SansSerif", Font.BOLD, 20));
 			aviso.setForeground(Color.RED);
 			panelEquipos.add(aviso);
 			panelEquipos.revalidate();
 			panelEquipos.repaint();
 			return;
-		default:
-			nombresEquipos = new String[] {};
-			rutaLogo = new String[] {};
-			break;
 		}
 
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -206,12 +204,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		gbc.insets = new Insets(10, 10, 10, 10);
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		for (int i = 0; i < nombresEquipos.length; i++) {
+		for (Equipo equipo : equipos) {
 			JPanel equipoPanel = new JPanel(new GridBagLayout());
 			equipoPanel.setBackground(new Color(204, 153, 102));
 
-			JButton btnEquipo = new BotonRedondeado(nombresEquipos[i], null);
-			btnEquipo.setIcon(new ImageIcon(getClass().getResource(rutaLogo[i])));
+			JButton btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
+			btnEquipo.setIcon(new ImageIcon(equipo.getLogoPath()));
 			btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
 			btnEquipo.setBackground(new Color(0xf46b20));
 			btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
@@ -237,11 +235,10 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 			btnEliminar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					panelEquipos.remove(equipoPanel);
-					panelEquipos.revalidate();
-					panelEquipos.repaint();
-					reorganizarEquipos(panelEquipos);
+					equipos.remove(equipo);
+					actualizarPanelEquipos(temporada);
 					datosModificados = true;
+					guardarDatos();
 				}
 			});
 
@@ -259,96 +256,22 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		panelEquipos.repaint();
 	}
 
-	private void reorganizarEquipos(JPanel panelEquipos) {
-		Component[] components = panelEquipos.getComponents();
-		panelEquipos.removeAll();
+	private void agregarEquipo(String nombreEquipo, ImageIcon teamLogo) {
+		String temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
+		List<Equipo> equipos = equiposPorTemporada.get(temporadaSeleccionada);
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 10, 10, 10);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+		Equipo nuevoEquipo = new Equipo(nombreEquipo, "", new ArrayList<>(), teamLogo.getDescription());
+		equipos.add(nuevoEquipo);
 
-		for (Component component : components) {
-			panelEquipos.add(component, gbc);
-			if (gbc.gridx == 0) {
-				gbc.gridx = 1;
-			} else {
-				gbc.gridx = 0;
-				gbc.gridy++;
-			}
-		}
-
-		panelEquipos.revalidate();
-		panelEquipos.repaint();
-	}
-
-	private void agregarEquipo(String nombreEquipo) {
-		// Add the new team to the panel
-		// This method can be expanded to include more details about the team
-		JPanel equipoPanel = new JPanel(new GridBagLayout());
-		equipoPanel.setBackground(new Color(204, 153, 102));
-
-		JButton btnEquipo = new BotonRedondeado(nombreEquipo, null);
-		btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnEquipo.setBackground(new Color(0xf46b20));
-		btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
-		btnEquipo.setForeground(Color.WHITE);
-		GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
-		gbcBtnEquipo.gridx = 0;
-		gbcBtnEquipo.gridy = 0;
-		gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
-		btnEquipo.setPreferredSize(new Dimension(290, 60));
-		equipoPanel.add(btnEquipo, gbcBtnEquipo);
-
-		JButton btnEliminar = new BotonRedondeado("-", null);
-		btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
-		btnEliminar.setBackground(new Color(0x545454));
-		btnEliminar.setForeground(Color.WHITE);
-		GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
-		gbcBtnEliminar.gridx = 1;
-		gbcBtnEliminar.gridy = 0;
-		gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
-		btnEliminar.setPreferredSize(new Dimension(60, 60));
-		equipoPanel.add(btnEliminar, gbcBtnEliminar);
-
-		btnEliminar.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				panelEquipos.remove(equipoPanel);
-				panelEquipos.revalidate();
-				panelEquipos.repaint();
-				reorganizarEquipos(panelEquipos);
-				datosModificados = true;
-			}
-		});
-
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = panelEquipos.getComponentCount() / 2;
-		gbc.insets = new Insets(10, 10, 10, 10);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-
-		panelEquipos.add(equipoPanel, gbc);
-		panelEquipos.revalidate();
-		panelEquipos.repaint();
+		actualizarPanelEquipos(temporadaSeleccionada);
+		datosModificados = true;
+		guardarDatos();
 	}
 
 	private void guardarDatos() {
 		try (FileOutputStream fos = new FileOutputStream("equipos.ser");
 				ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-			for (Component component : panelEquipos.getComponents()) {
-				if (component instanceof JPanel) {
-					JPanel equipoPanel = (JPanel) component;
-					for (Component subComponent : equipoPanel.getComponents()) {
-						if (subComponent instanceof JButton) {
-							JButton btnEquipo = (JButton) subComponent;
-							oos.writeObject(btnEquipo.getText());
-						}
-					}
-				}
-			}
+			oos.writeObject(equiposPorTemporada);
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error",
 					JOptionPane.INFORMATION_MESSAGE);
@@ -357,22 +280,25 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void cargarDatos() {
-		try (FileInputStream fis = new FileInputStream("equipos.ser");
-				ObjectInputStream ois = new ObjectInputStream(fis)) {
-
-			while (fis.available() > 0) {
-				String nombreEquipo = (String) ois.readObject();
-				agregarEquipo(nombreEquipo);
-			}
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error",
-					JOptionPane.INFORMATION_MESSAGE);
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "Error de entrada/salida", "Error", JOptionPane.INFORMATION_MESSAGE);
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Error: clase no encontrada", "Error", JOptionPane.INFORMATION_MESSAGE);
-		}
+	    try (FileInputStream fis = new FileInputStream("equipos.ser");
+	         ObjectInputStream ois = new ObjectInputStream(fis)) {
+	        Object obj = ois.readObject();
+	        if (obj instanceof Map) {
+	            equiposPorTemporada = (Map<String, List<Equipo>>) obj;
+	        } else {
+	            throw new ClassCastException("The deserialized object is not of type Map<String, List<Equipo>>");
+	        }
+	    } catch (FileNotFoundException e) {
+	        JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error", JOptionPane.INFORMATION_MESSAGE);
+	    } catch (IOException e) {
+	        JOptionPane.showMessageDialog(this, "Error de entrada/salida", "Error", JOptionPane.INFORMATION_MESSAGE);
+	    } catch (ClassNotFoundException e) {
+	        JOptionPane.showMessageDialog(this, "Error: clase no encontrada", "Error", JOptionPane.INFORMATION_MESSAGE);
+	    } catch (ClassCastException e) {
+	        JOptionPane.showMessageDialog(this, "Error: " + e.getMessage(), "Error", JOptionPane.INFORMATION_MESSAGE);
+	    }
 	}
 
 	@Override
