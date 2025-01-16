@@ -11,18 +11,27 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 
 import LPBCLASES.BotonRedondeado;
 
-public class EquiposTemporada extends JFrame {
+public class EquiposTemporada extends JFrame implements WindowListener {
 
 	private static final long serialVersionUID = -2296678961838970996L;
 	private JPanel panelSuperior;
@@ -35,11 +44,13 @@ public class EquiposTemporada extends JFrame {
 	private JButton btnVolverMenu;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
+	private Boolean datosModificados;
 
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(this);
 		setSize(850, 550);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
@@ -136,6 +147,20 @@ public class EquiposTemporada extends JFrame {
 			}
 		});
 
+		btnNuevo.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String nombreEquipo = JOptionPane.showInputDialog("Ingrese el nombre del equipo:");
+				if (nombreEquipo != null && !nombreEquipo.trim().isEmpty()) {
+					agregarEquipo(nombreEquipo);
+					datosModificados = true;
+				}
+			}
+		});
+
+		datosModificados = false;
+		cargarDatos();
+		datosModificados = false;
 		actualizarPanelEquipos((String) SelectTemporadas.getSelectedItem());
 	}
 
@@ -148,9 +173,11 @@ public class EquiposTemporada extends JFrame {
 		// Define equipos based on the selected season
 		switch (temporada) {
 		case "Temporada 2023-24":
-			nombresEquipos = new String[] { "Brooklyn Nets", "Cleveland Cavaliers", "Detroit Pistons", "NewYork Knicks", "Philadelphia 76ers", "Toronto Raptors" };
-			rutaLogo = new String[] { "/imagenes/BrooklynNets50.png", "/imagenes/ClevelandCavaliers50.png", "/imagenes/DetroitPistons50.png",
-					"/imagenes/NewYorkKnicks50.png", "/imagenes/Philadelphia76ers50.png", "/imagenes/TorontoRaptors50.png" };
+			nombresEquipos = new String[] { "Brooklyn Nets", "Cleveland Cavaliers", "Detroit Pistons", "NewYork Knicks",
+					"Philadelphia 76ers", "Toronto Raptors" };
+			rutaLogo = new String[] { "/imagenes/BrooklynNets50.png", "/imagenes/ClevelandCavaliers50.png",
+					"/imagenes/DetroitPistons50.png", "/imagenes/NewYorkKnicks50.png",
+					"/imagenes/Philadelphia76ers50.png", "/imagenes/TorontoRaptors50.png" };
 			break;
 		case "Temporada 2024-25":
 			nombresEquipos = new String[] { "Chicago Bulls", "Golden State Warriors", "Miami Heat", "Boston Celtics",
@@ -214,6 +241,7 @@ public class EquiposTemporada extends JFrame {
 					panelEquipos.revalidate();
 					panelEquipos.repaint();
 					reorganizarEquipos(panelEquipos);
+					datosModificados = true;
 				}
 			});
 
@@ -253,6 +281,152 @@ public class EquiposTemporada extends JFrame {
 
 		panelEquipos.revalidate();
 		panelEquipos.repaint();
+	}
+
+	private void agregarEquipo(String nombreEquipo) {
+		// Add the new team to the panel
+		// This method can be expanded to include more details about the team
+		JPanel equipoPanel = new JPanel(new GridBagLayout());
+		equipoPanel.setBackground(new Color(204, 153, 102));
+
+		JButton btnEquipo = new BotonRedondeado(nombreEquipo, null);
+		btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		btnEquipo.setBackground(new Color(0xf46b20));
+		btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
+		btnEquipo.setForeground(Color.WHITE);
+		GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
+		gbcBtnEquipo.gridx = 0;
+		gbcBtnEquipo.gridy = 0;
+		gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
+		btnEquipo.setPreferredSize(new Dimension(290, 60));
+		equipoPanel.add(btnEquipo, gbcBtnEquipo);
+
+		JButton btnEliminar = new BotonRedondeado("-", null);
+		btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
+		btnEliminar.setBackground(new Color(0x545454));
+		btnEliminar.setForeground(Color.WHITE);
+		GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
+		gbcBtnEliminar.gridx = 1;
+		gbcBtnEliminar.gridy = 0;
+		gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
+		btnEliminar.setPreferredSize(new Dimension(60, 60));
+		equipoPanel.add(btnEliminar, gbcBtnEliminar);
+
+		btnEliminar.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				panelEquipos.remove(equipoPanel);
+				panelEquipos.revalidate();
+				panelEquipos.repaint();
+				reorganizarEquipos(panelEquipos);
+				datosModificados = true;
+			}
+		});
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = panelEquipos.getComponentCount() / 2;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+
+		panelEquipos.add(equipoPanel, gbc);
+		panelEquipos.revalidate();
+		panelEquipos.repaint();
+	}
+
+	private void guardarDatos() {
+		try (FileOutputStream fos = new FileOutputStream("equipos.ser");
+				ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+
+			for (Component component : panelEquipos.getComponents()) {
+				if (component instanceof JPanel) {
+					JPanel equipoPanel = (JPanel) component;
+					for (Component subComponent : equipoPanel.getComponents()) {
+						if (subComponent instanceof JButton) {
+							JButton btnEquipo = (JButton) subComponent;
+							oos.writeObject(btnEquipo.getText());
+						}
+					}
+				}
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Error de entrada/salida", "Error", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	private void cargarDatos() {
+		try (FileInputStream fis = new FileInputStream("equipos.ser");
+				ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+			while (fis.available() > 0) {
+				String nombreEquipo = (String) ois.readObject();
+				agregarEquipo(nombreEquipo);
+			}
+		} catch (FileNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error",
+					JOptionPane.INFORMATION_MESSAGE);
+		} catch (IOException e) {
+			JOptionPane.showMessageDialog(this, "Error de entrada/salida", "Error", JOptionPane.INFORMATION_MESSAGE);
+		} catch (ClassNotFoundException e) {
+			JOptionPane.showMessageDialog(this, "Error: clase no encontrada", "Error", JOptionPane.INFORMATION_MESSAGE);
+		}
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// No implementation needed
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		if (datosModificados) {
+			int opcion = JOptionPane.showConfirmDialog(this,
+					"Los datos han sido modificados. ¿Desea guardar antes de salir?", "Información",
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+			switch (opcion) {
+			case JOptionPane.YES_OPTION:
+				guardarDatos();
+				System.exit(0);
+				break;
+			case JOptionPane.NO_OPTION:
+				System.exit(0);
+				break;
+			case JOptionPane.CANCEL_OPTION:
+			case JOptionPane.CLOSED_OPTION:
+				return;
+			}
+		} else {
+			System.exit(0);
+		}
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// No implementation needed
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// No implementation needed
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// No implementation needed
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// No implementation needed
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// No implementation needed
 	}
 
 	public static void main(String[] args) {
