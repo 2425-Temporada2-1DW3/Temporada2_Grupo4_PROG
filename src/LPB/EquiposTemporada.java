@@ -2,15 +2,15 @@
 package LPB;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
 
 import LPBCLASES.BotonRedondeado;
 
@@ -33,6 +34,7 @@ public class EquiposTemporada extends JFrame {
 	private JButton btnNuevo;
 	private JButton btnVolverMenu;
 	private JComboBox<String> SelectTemporadas;
+	private JPanel panelEquipos;
 
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -105,9 +107,10 @@ public class EquiposTemporada extends JFrame {
 		});
 
 		// Panel de equipos con JScrollPane
-		JPanel panelEquipos = new JPanel(new GridBagLayout());
+		panelEquipos = new JPanel(new GridBagLayout());
 		panelEquipos.setBorder(null);
 		panelEquipos.setBackground(new Color(204, 153, 102));
+
 		JScrollPane scrollPane = new JScrollPane(panelEquipos);
 		scrollPane.setBounds(10, 200, 800, 220);
 		scrollPane.setBorder(null);
@@ -127,36 +130,79 @@ public class EquiposTemporada extends JFrame {
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 
 		for (int i = 0; i < nombresEquipos.length; i++) {
-			JPanel equipoPanel = new JPanel(new GridLayout(0, 2, 10, 10));
+			JPanel equipoPanel = new JPanel(new GridBagLayout());
 			equipoPanel.setBackground(new Color(204, 153, 102));
 
 			JButton btnEquipo = new JButton(nombresEquipos[i]);
 			btnEquipo.setIcon(new ImageIcon(getClass().getResource(rutaLogo[i])));
 			btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
 			btnEquipo.setBackground(new Color(0xf46b20));
+			btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
 			btnEquipo.setForeground(Color.WHITE);
-			equipoPanel.add(btnEquipo);
+			GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
+			gbcBtnEquipo.gridx = 0;
+			gbcBtnEquipo.gridy = 0;
+			gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
+			btnEquipo.setPreferredSize(new Dimension(290, 60));
+			equipoPanel.add(btnEquipo, gbcBtnEquipo);
 
-			JButton btnEliminar = new JButton("Eliminar");
-			btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 16));
-			btnEliminar.setBackground(new Color(0xff0000));
+			JButton btnEliminar = new JButton("-");
+			btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
+			btnEliminar.setBackground(new Color(0x545454));
 			btnEliminar.setForeground(Color.WHITE);
+			GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
+			gbcBtnEliminar.gridx = 1;
+			gbcBtnEliminar.gridy = 0;
+			gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
+			btnEliminar.setPreferredSize(new Dimension(60, 60));
+			equipoPanel.add(btnEliminar, gbcBtnEliminar);
+
 			btnEliminar.addActionListener(new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent e) {
 					panelEquipos.remove(equipoPanel);
 					panelEquipos.revalidate();
 					panelEquipos.repaint();
+					reorganizarEquipos(panelEquipos);
 				}
 			});
-			equipoPanel.add(btnEliminar);
 
 			panelEquipos.add(equipoPanel, gbc);
-			gbc.gridy++;
+
+			if (gbc.gridx == 0) {
+				gbc.gridx = 1;
+			} else {
+				gbc.gridx = 0;
+				gbc.gridy++;
+			}
 		}
 
 		getContentPane().add(scrollPane);
 		getContentPane().add(panelInferior);
+	}
+
+	private void reorganizarEquipos(JPanel panelEquipos) {
+		Component[] components = panelEquipos.getComponents();
+		panelEquipos.removeAll();
+
+		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.insets = new Insets(10, 10, 10, 10);
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+
+		for (Component component : components) {
+			panelEquipos.add(component, gbc);
+			if (gbc.gridx == 0) {
+				gbc.gridx = 1;
+			} else {
+				gbc.gridx = 0;
+				gbc.gridy++;
+			}
+		}
+
+		panelEquipos.revalidate();
+		panelEquipos.repaint();
 	}
 
 	public static void main(String[] args) {
