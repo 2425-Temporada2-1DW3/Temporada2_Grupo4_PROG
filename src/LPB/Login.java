@@ -20,7 +20,6 @@ import javax.swing.UIManager;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
-import LPBCLASES.GestorUsuarios;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
@@ -109,13 +108,13 @@ public class Login extends JFrame implements MouseListener {
 		btnIniciarSesion.addMouseListener(this);
 		panel.add(btnIniciarSesion);
 
-		GestorUsuarios.cargarUsuarios();
+		MenuUsuarios.cargarUsuarios();
 		
         btnIniciarSesion.addActionListener(e -> {
             String usuario = txtUsuario.getText().trim();
             String contrasena = new String(txtPassword.getPassword()).trim();
 
-            Usuario user = GestorUsuarios.validarUsuario(usuario, contrasena);
+            Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
             if (user != null) {
                 JOptionPane.showMessageDialog(null, "Bienvenido, " + user.getRol() + ".");
                 new Menu(user.getRol(), user.getUsuario()).setVisible(true);

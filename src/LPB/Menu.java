@@ -33,6 +33,14 @@ public class Menu extends JFrame implements MouseListener {
 	private ImageIcon logo;
 	private BackgroundFader fader;
 
+	
+	
+
+	/**
+	 * Create the frame.
+	 * @wbp.parser.constructor
+	 */
+	@SuppressWarnings({ "static-access" })
 	public Menu(Rol rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
@@ -103,13 +111,19 @@ public class Menu extends JFrame implements MouseListener {
 		panelDerecho.add(btnEquipos);
 
 		btnUsuarios = new BotonRedondeado("Usuarios");
+		btnUsuarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new MenuUsuarios().setVisible(true);
+				dispose();
+			}
+		});
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
 		btnUsuarios.addMouseListener(this);
 
-		if ("Administrador".equals(rol)) {
+		if (rol.ADMINISTRADOR.equals(rol)) {
 			panelDerecho.add(btnUsuarios);
 		}
 
