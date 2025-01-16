@@ -86,7 +86,7 @@ public class EquiposTemporada extends JFrame {
 		btnNuevo.setForeground(Color.WHITE);
 		btnNuevo.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevo.setBackground(new Color(0x545454));
-		btnNuevo.setBounds(755, 25, 45, 45);
+		btnNuevo.setBounds(755, 22, 50, 50);
 		if ("Administrador".equals(rol)) {
 			panelInferior.add(btnNuevo);
 		}
@@ -133,7 +133,7 @@ public class EquiposTemporada extends JFrame {
 			JPanel equipoPanel = new JPanel(new GridBagLayout());
 			equipoPanel.setBackground(new Color(204, 153, 102));
 
-			JButton btnEquipo = new JButton(nombresEquipos[i]);
+			JButton btnEquipo = new BotonRedondeado(nombresEquipos[i], null);
 			btnEquipo.setIcon(new ImageIcon(getClass().getResource(rutaLogo[i])));
 			btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
 			btnEquipo.setBackground(new Color(0xf46b20));
@@ -146,7 +146,7 @@ public class EquiposTemporada extends JFrame {
 			btnEquipo.setPreferredSize(new Dimension(290, 60));
 			equipoPanel.add(btnEquipo, gbcBtnEquipo);
 
-			JButton btnEliminar = new JButton("-");
+			JButton btnEliminar = new BotonRedondeado("-", null);
 			btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
 			btnEliminar.setBackground(new Color(0x545454));
 			btnEliminar.setForeground(Color.WHITE);
