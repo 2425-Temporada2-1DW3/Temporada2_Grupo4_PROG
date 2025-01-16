@@ -75,11 +75,20 @@ public class EquiposTemporada extends JFrame {
 		labelUsuario.setBounds(20, 360, 200, 20);
 		panelInferior.add(labelUsuario);
 
-		SelectTemporadas = new JComboBox<>();
+		// Define las temporadas
+		String[] temporadas = { "Temporada 2023-24", "Temporada 2024-25", "Temporada 2025-26" };
+
+		// Inicializa el JComboBox con las temporadas
+		SelectTemporadas = new JComboBox<>(temporadas);
 		SelectTemporadas.setBackground(new Color(0x13427e));
 		SelectTemporadas.setForeground(Color.WHITE);
 		SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		SelectTemporadas.setBounds(545, 27, 200, 40);
+
+		// Establece el elemento seleccionado a la temporada actual
+		SelectTemporadas.setSelectedItem("Temporada 2024-25");
+
+		// Añade el JComboBox al panel
 		panelInferior.add(SelectTemporadas);
 
 		btnNuevo = new BotonRedondeado("+", null);
@@ -116,12 +125,53 @@ public class EquiposTemporada extends JFrame {
 		scrollPane.setBorder(null);
 		scrollPane.setVisible(true);
 
-		String[] nombresEquipos = { "Chicago Bulls", "Golden State Warriors", "Miami Heat", "Boston Celtics",
-				"Los Angeles Lakers", "Atlanta Hawks" };
+		getContentPane().add(scrollPane);
+		getContentPane().add(panelInferior);
 
-		String[] rutaLogo = { "/imagenes/ChicagoBulls50.png", "/imagenes/GoldenStateWarriors50.png",
-				"/imagenes/MiamiHeat50.png", "/imagenes/BostonCeltics50.png", "/imagenes/LosAngelesLakers50.png",
-				"/imagenes/AtlantaHawks50.png" };
+		SelectTemporadas.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
+				actualizarPanelEquipos(selectedTemporada);
+			}
+		});
+
+		actualizarPanelEquipos((String) SelectTemporadas.getSelectedItem());
+	}
+
+	private void actualizarPanelEquipos(String temporada) {
+		panelEquipos.removeAll();
+
+		String[] nombresEquipos;
+		String[] rutaLogo;
+
+		// Define equipos based on the selected season
+		switch (temporada) {
+		case "Temporada 2023-24":
+			nombresEquipos = new String[] { "Brooklyn Nets", "Cleveland Cavaliers", "Detroit Pistons", "NewYork Knicks", "Philadelphia 76ers", "Toronto Raptors" };
+			rutaLogo = new String[] { "/imagenes/BrooklynNets50.png", "/imagenes/ClevelandCavaliers50.png", "/imagenes/DetroitPistons50.png",
+					"/imagenes/NewYorkKnicks50.png", "/imagenes/Philadelphia76ers50.png", "/imagenes/TorontoRaptors50.png" };
+			break;
+		case "Temporada 2024-25":
+			nombresEquipos = new String[] { "Chicago Bulls", "Golden State Warriors", "Miami Heat", "Boston Celtics",
+					"Los Angeles Lakers", "Atlanta Hawks" };
+			rutaLogo = new String[] { "/imagenes/ChicagoBulls50.png", "/imagenes/GoldenStateWarriors50.png",
+					"/imagenes/MiamiHeat50.png", "/imagenes/BostonCeltics50.png", "/imagenes/LosAngelesLakers50.png",
+					"/imagenes/AtlantaHawks50.png" };
+			break;
+		case "Temporada 2025-26":
+			JLabel aviso = new JLabel("La temporada 2025-26 no ha sido empezada.");
+			aviso.setFont(new Font("SansSerif", Font.BOLD, 20));
+			aviso.setForeground(Color.RED);
+			panelEquipos.add(aviso);
+			panelEquipos.revalidate();
+			panelEquipos.repaint();
+			return;
+		default:
+			nombresEquipos = new String[] {};
+			rutaLogo = new String[] {};
+			break;
+		}
 
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.gridx = 0;
@@ -177,8 +227,8 @@ public class EquiposTemporada extends JFrame {
 			}
 		}
 
-		getContentPane().add(scrollPane);
-		getContentPane().add(panelInferior);
+		panelEquipos.revalidate();
+		panelEquipos.repaint();
 	}
 
 	private void reorganizarEquipos(JPanel panelEquipos) {
