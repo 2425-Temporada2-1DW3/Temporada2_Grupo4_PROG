@@ -150,6 +150,10 @@ public class Menu extends JFrame implements MouseListener {
 		// TODO Auto-generated constructor stub
 	}
 
+	public Menu() {
+		// TODO Auto-generated constructor stub
+	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	}

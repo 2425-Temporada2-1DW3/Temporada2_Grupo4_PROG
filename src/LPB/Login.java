@@ -58,7 +58,6 @@ public class Login extends JFrame implements MouseListener {
 
 	public Login() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
-		
 		setSize(850, 550);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);

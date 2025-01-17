@@ -11,7 +11,6 @@ import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
-import LPBCLASES.Usuario.Rol;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
@@ -75,7 +74,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 	private ImageIcon logo;
 	private BackgroundFader fader;
 	private JScrollPane scrollPane;
-
+	private int usuarioSeleccionadoIndex = -1; // Índice del usuario seleccionado
 	
 	
 	//metodos de guardar y cargar usuarios
@@ -86,7 +85,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     public static void guardarUsuarios(ArrayList<Usuario> usuarios) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))) {
             oos.writeObject(usuarios);
-            JOptionPane.showMessageDialog(  null, "Usuarios guardados correctamente en " + ARCHIVO_USUARIOS, "Información", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(  null, "Usuario guardado correctamente. ", "Información", JOptionPane.INFORMATION_MESSAGE);
         } catch (IOException e) {
         	 JOptionPane.showMessageDialog(  null,"Error al guardar los usuarios: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
         
@@ -153,6 +152,8 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 	/**
 	 * Create the frame.
 	 */
+	
+	
 	public MenuUsuarios() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú de Usuarios");
@@ -199,6 +200,18 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		listUsuarios.setModel(dlm); // ASOCIAR EL MODELO A LA LISTA
 		scrollPane.setViewportView(listUsuarios);
 		panelUsuarios.setLayout(gl_panelUsuarios);
+		 // Agregar un ListSelectionListener a la lista de usuarios
+		listUsuarios.addListSelectionListener(e -> {
+		    if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
+		        Usuario usuarioSeleccionado = listUsuarios.getSelectedValue();
+		        usuarioSeleccionadoIndex = listUsuarios.getSelectedIndex(); // Guardar el índice del usuario seleccionado
+		        if (usuarioSeleccionado != null) {
+		            textUsuario.setText(usuarioSeleccionado.getUsuario());
+		            passwordField.setText(usuarioSeleccionado.getContrasena());
+		            comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol().name());
+		        }
+		    }
+		});
 		
 		panelCampos = new JPanel();
 		contentPane.add(panelCampos, BorderLayout.EAST);
@@ -253,7 +266,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		
 		// Generar opciones del ComboBox a partir del enum
         comboBoxRol = new JComboBox<>();
-        for (Rol rol : Rol.values()) {
+        for (Usuario.Rol rol : Usuario.Rol.values()) {
             comboBoxRol.addItem(rol.name());
         }
 		panel_2.add(comboBoxRol);
@@ -318,32 +331,45 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     public void actionPerformed(ActionEvent e) {
     	 Object source = e.getSource();
 
-    	    if (source == btnGuardar) {
-    	        String usuario = textUsuario.getText().trim();
-    	        String contrasena = new String(passwordField.getPassword());
-    	        String rolNombre = (String) comboBoxRol.getSelectedItem();	
+    	 if (source == btnGuardar) {
+    		    String usuario = textUsuario.getText().trim();
+    		    String contrasena = new String(passwordField.getPassword());
+    		    String rol = (String) comboBoxRol.getSelectedItem();
 
-    	        if (usuario.isEmpty() || contrasena.isEmpty()) {
-    	            JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-    	            return;
-    	        }
+    		    if (usuario.isEmpty() || contrasena.isEmpty()) {
+    		        JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    		        return;
+    		    }
 
-    	       
-    	     // Crear el usuario y agregarlo a la lista
-    	        Usuario nuevoUsuario = new Usuario(
-    	            usuario,
-    	            contrasena,
-    	            Rol.valueOf(rolNombre.toUpperCase()) // Convertir a Rol
-    	        );
-    	        listaUsuarios.add(nuevoUsuario);
-    	        
-    	        
-    	        // Actualizar la lista y guardar cambios
-    	        actualizarLista();
-    	        guardarUsuarios(listaUsuarios);
+    		    // Si hay un usuario seleccionado, actualizamos sus datos
+    		    if (usuarioSeleccionadoIndex >= 0) {
+    		        Usuario usuarioExistente = listaUsuarios.get(usuarioSeleccionadoIndex);
+    		        usuarioExistente.setUsuario(usuario);
+    		        usuarioExistente.setContrasena(contrasena);
+    		        usuarioExistente.setRol(Usuario.Rol.valueOf(rol));
 
-    	        JOptionPane.showMessageDialog(this, "Usuario guardado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
-    	    }
+    		        // Actualizar la lista visual
+    		        actualizarLista();
+
+    		        JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+
+    		    } else {
+    		        // Si no hay un usuario seleccionado, se crea uno nuevo
+    		        Usuario nuevoUsuario = new Usuario(usuario, contrasena, Usuario.Rol.valueOf(rol));
+    		        listaUsuarios.add(nuevoUsuario);
+    		        actualizarLista();
+    		    }
+
+    		    // Guardar los cambios en el archivo
+    		    guardarUsuarios(listaUsuarios);
+
+    		    // Limpiar los campos y reiniciar el índice
+    		    textUsuario.setText("");
+    		    passwordField.setText("");
+    		    comboBoxRol.setSelectedIndex(0);
+    		    usuarioSeleccionadoIndex = -1;
+    		}
+
     	    if (source == btnEliminar) {
     	        int index = listUsuarios.getSelectedIndex();
     	        if (index >= 0) {
@@ -353,58 +379,64 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     	            actualizarLista();
     	           guardarUsuarios(listaUsuarios);
 
-    	            JOptionPane.showMessageDialog(this, "Usuario eliminado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
     	        } else {
     	            JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
     	        }
+    	        
+    	     // Limpiar los campos y reiniciar el índice
+    		    textUsuario.setText("");
+    		    passwordField.setText("");
+    		    comboBoxRol.setSelectedIndex(0);
+    		    usuarioSeleccionadoIndex = -1;
+    	    }
+    	    if (source == btnVolver) { 
+    	    	new Menu().setVisible(true);
+    	    	 this.dispose(); // Cierra esta ventana
+    	               
+                }
+                
     	    }
 
+    
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        // No es necesario manejar aquí cambios de color para este caso
     }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-	    Object o = e.getSource();
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // No es necesario manejar aquí cambios de color para este caso
+    }
 
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        // No es necesario manejar aquí cambios de color para este caso
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Object o = e.getSource();
         if (o == btnGuardar) {
-            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x1a5bae));
+            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xfe9f2e)); // Naranja
         } else if (o == btnEliminar) {
-            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xfe9f2e));
+            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xfe9f2e)); // Naranja
         } else if (o == btnVolver) {
-            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0xfe9f2e));
+            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0xfe9f2e)); // Naranja
         }
-	}
+    }
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-	       Object o = e.getSource();
+    @Override
+    public void mouseExited(MouseEvent e) {
+        Object o = e.getSource();
+        if (o == btnGuardar) {
+            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x13427E)); // Azul original
+        } else if (o == btnEliminar) {
+            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0x13427E)); // Azul original
+        } else if (o == btnVolver) {
+            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x13427E)); // Azul original
+        }
+    }
 
-	        if (o == btnGuardar) {
-	            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x13427E));
-	        } else if (o == btnEliminar) {
-	            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xf46b20));
-	        }else if (o == btnVolver) {
-	            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0xf46b20));
-	        }
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	} 
 }
 
