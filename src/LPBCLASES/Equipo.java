@@ -1,86 +1,101 @@
-
 package LPBCLASES;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Equipo implements Serializable {
-	private static final long serialVersionUID = 1L;
-	private String nombre;
-	private String ciudad;
-	private List<Jugador> jugadores;
-	private String logoPath; // Añadir el atributo logoPath
 
-	// Constructor por defecto
-	public Equipo() {
-		this.nombre = "";
-		this.ciudad = "";
-		this.jugadores = new ArrayList<>();
-		this.logoPath = ""; // Inicializar logoPath
-	}
+    private static final long serialVersionUID = 1L;
+    private String nombre;
+    private String entrenador;
+    private List<String> jugadores;
+    private String logoPath;
+    private String entrenadorPath;
+    private String estadio;
+    private String fundacion;
 
-	// Constructor personalizado
-	public Equipo(String nombre, String ciudad, List<Jugador> jugadores, String logoPath) {
-		this.nombre = nombre;
-		this.ciudad = ciudad;
-		this.jugadores = new ArrayList<>(jugadores);
-		this.logoPath = logoPath; // Inicializar logoPath
-	}
+    public Equipo(String nombre, String entrenador, List<String> jugadores, String logoPath, String entrenadorPath, String estadio, String fundacion) {
+        this.nombre = nombre;
+        this.entrenador = entrenador;
+        this.jugadores = jugadores;
+        this.logoPath = logoPath;
+        this.entrenadorPath = entrenadorPath;
+        this.estadio = estadio;
+        this.fundacion = fundacion;
+    }
 
-	// Getters y Setters
-	public String getNombre() {
-		return nombre;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getCiudad() {
-		return ciudad;
-	}
+    public String getEntrenador() {
+        return entrenador;
+    }
 
-	public void setCiudad(String ciudad) {
-		this.ciudad = ciudad;
-	}
+    public void setEntrenador(String entrenador) {
+        this.entrenador = entrenador;
+    }
 
-	public List<Jugador> getJugadores() {
-		return new ArrayList<>(jugadores);
-	}
+    public List<String> getJugadores() {
+        return jugadores;
+    }
 
-	public void setJugadores(List<Jugador> jugadores) {
-		this.jugadores = new ArrayList<>(jugadores);
-	}
+    public void setJugadores(List<String> jugadores) {
+        this.jugadores = jugadores;
+    }
 
-	public String getLogoPath() {
-		return logoPath;
-	}
+    public String getLogoPath() {
+        return logoPath;
+    }
 
-	public void setLogoPath(String logoPath) {
-		this.logoPath = logoPath;
-	}
+    public void setLogoPath(String logoPath) {
+        this.logoPath = logoPath;
+    }
 
-	@Override
-	public String toString() {
-		return "Equipo: " + "nombre= " + nombre + '\'' + ", ciudad= " + ciudad + '\'' + ", jugadores= " + jugadores
-				+ ", logoPath= " + logoPath;
-	}
+    public String getEntrenadorPath() {
+        return entrenadorPath;
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(nombre, ciudad, jugadores, logoPath);
-	}
+    public void setEntrenadorPath(String entrenadorPath) {
+        this.entrenadorPath = entrenadorPath;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null || getClass() != obj.getClass())
-			return false;
-		Equipo equipo = (Equipo) obj;
-		return Objects.equals(nombre, equipo.nombre) && Objects.equals(ciudad, equipo.ciudad)
-				&& Objects.equals(jugadores, equipo.jugadores) && Objects.equals(logoPath, equipo.logoPath);
-	}
+    public String getEstadio() {
+        return estadio;
+    }
+
+    public void setEstadio(String estadio) {
+        this.estadio = estadio;
+    }
+
+    public String getFundacion() {
+        return fundacion;
+    }
+
+    public void setFundacion(String fundacion) {
+        this.fundacion = fundacion;
+    }
+
+    @Override
+    public String toString() {
+        return nombre;
+    }
+
+    // Método equals() y hashCode() (Importantes para la comparación y eliminación en listas)
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Equipo equipo = (Equipo) obj;
+        return nombre.equals(equipo.nombre); // Comparar por nombre (puedes ajustar según tus necesidades)
+    }
+
+    @Override
+    public int hashCode() {
+        return nombre.hashCode(); // Hash basado en el nombre (debe ser consistente con equals())
+    }
 }
