@@ -51,7 +51,20 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JPanel panelInferior;
 	private JLabel titulo;
 	private JButton btnNuevo;
+	private AgregarEquipo agregarEquipoFrame;
+	private JScrollPane scrollPane;
 	private JButton btnVolverMenu;
+	private GridBagConstraints gbc;
+	private JButton btnEquipo;
+	private BufferedImage originalImage;
+	private JPanel equipoPanel;
+	private File logoFile;
+	private GridBagConstraints gbcBtnEliminar;
+	private JButton btnEliminar;
+	private String temporadaSeleccionada;
+	private EditarEquipo editarEquipoFrame;
+	private GridBagConstraints gbcBtnEquipo;
+	private BufferedImage scaledImage;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
 	private Boolean datosModificados;
@@ -66,7 +79,6 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 
-		// Panel superior
 		panelSuperior = new JPanel();
 		panelSuperior.setBackground(new Color(255, 243, 205));
 		panelSuperior.setBounds(0, 0, 836, 110);
@@ -85,7 +97,6 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		titulo.setForeground(new Color(0x13427e));
 		panelSuperior.add(titulo);
 
-		// Panel inferior
 		panelInferior = new JPanel();
 		panelInferior.setBackground(new Color(204, 153, 102));
 		panelInferior.setBounds(0, 110, 836, 403);
@@ -97,20 +108,16 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		labelUsuario.setBounds(20, 360, 200, 20);
 		panelInferior.add(labelUsuario);
 
-		// Define las temporadas
 		String[] temporadas = { "Temporada 2023-24", "Temporada 2024-25", "Temporada 2025-26" };
 
-		// Inicializa el JComboBox con las temporadas
 		SelectTemporadas = new JComboBox<>(temporadas);
 		SelectTemporadas.setBackground(new Color(0x13427e));
 		SelectTemporadas.setForeground(Color.WHITE);
 		SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		SelectTemporadas.setBounds(545, 27, 200, 40);
 
-		// Establece el elemento seleccionado a la temporada actual
 		SelectTemporadas.setSelectedItem("Temporada 2024-25");
 
-		// Añade el JComboBox al panel
 		panelInferior.add(SelectTemporadas);
 
 		btnNuevo = new BotonRedondeado("+", null);
@@ -137,12 +144,11 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 			}
 		});
 
-		// Panel de equipos con JScrollPane
 		panelEquipos = new JPanel(new GridBagLayout());
 		panelEquipos.setBorder(null);
 		panelEquipos.setBackground(new Color(204, 153, 102));
 
-		JScrollPane scrollPane = new JScrollPane(panelEquipos);
+		scrollPane = new JScrollPane(panelEquipos);
 		scrollPane.setBounds(10, 200, 800, 220);
 		scrollPane.setBorder(null);
 		scrollPane.setVisible(true);
@@ -161,8 +167,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnNuevo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				AgregarEquipo agregarEquipoFrame = new AgregarEquipo(EquiposTemporada.this); // Pasar referencia a
-																								// EquiposTemporada
+				agregarEquipoFrame = new AgregarEquipo(EquiposTemporada.this);
 				agregarEquipoFrame.setVisible(true);
 			}
 		});
@@ -191,48 +196,47 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        return;
 	    }
 
-	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc = new GridBagConstraints();
 	    gbc.gridx = 0;
 	    gbc.gridy = 0;
 	    gbc.insets = new Insets(10, 10, 10, 10);
 	    gbc.fill = GridBagConstraints.HORIZONTAL;
 
 	    for (Equipo equipo : equipos) {
-	        JPanel equipoPanel = new JPanel(new GridBagLayout());
+	        equipoPanel = new JPanel(new GridBagLayout());
 	        equipoPanel.setBackground(new Color(204, 153, 102));
 
-	        JButton btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
+	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-	            // Verificar existencia de la imagen
-	            File logoFile = new File(equipo.getLogoPath());
+	            logoFile = new File(equipo.getLogoPath());
 	            if (logoFile.exists() && !logoFile.isDirectory()) {
-	                BufferedImage originalImage = ImageIO.read(logoFile);
+	                originalImage = ImageIO.read(logoFile);
 	                if (originalImage != null) {
-	                    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
+	                    scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
 	                    btnEquipo.setIcon(new ImageIcon(scaledImage));
 	                } else {
-	                    System.err.println("Error: No se pudo procesar la imagen del equipo: " + equipo.getNombre());
+	                    JOptionPane.showMessageDialog(null, "Error: No se pudo procesar la imagen del equipo: " + equipo.getNombre(), "Error de Imagen", JOptionPane.ERROR_MESSAGE);
 	                    btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	                }
 	            } else {
-	                System.err.println("Advertencia: Archivo de imagen no encontrado para el equipo: " + equipo.getNombre());
+	                JOptionPane.showMessageDialog(null, "Advertencia: Archivo de imagen no encontrado para el equipo: " + equipo.getNombre(), "Archivo No Encontrado", JOptionPane.WARNING_MESSAGE);
 	                btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	            }
 	        } catch (IOException e) {
-	            System.err.println("Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getLogoPath());
+	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getLogoPath(), "Error de Lectura", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
 	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	        } catch (NullPointerException e) {
-	            System.err.println("Error: Ruta de imagen nula para el equipo: " + equipo.getNombre());
+	            JOptionPane.showMessageDialog(null, "Error: Ruta de imagen nula para el equipo: " + equipo.getNombre(), "Error de Ruta", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
 	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	        }
-
+	    
 	        btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
 	        btnEquipo.setBackground(new Color(0xf46b20));
 	        btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
 	        btnEquipo.setForeground(Color.WHITE);
-	        GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
+	        gbcBtnEquipo = new GridBagConstraints();
 	        gbcBtnEquipo.gridx = 0;
 	        gbcBtnEquipo.gridy = 0;
 	        gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
@@ -242,18 +246,17 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        btnEquipo.addActionListener(new ActionListener() {
 	            @Override
 	            public void actionPerformed(ActionEvent e) {
-	                EditarEquipo editarEquipoFrame = new EditarEquipo(equipo);
+	                editarEquipoFrame = new EditarEquipo(equipo);
 	                editarEquipoFrame.setVisible(true);
 	            }
 	        });
 
-
 	        if ("Administrador".equals(rol)) {
-	            JButton btnEliminar = new BotonRedondeado("-", null);
+	            btnEliminar = new BotonRedondeado("-", null);
 	            btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
 	            btnEliminar.setBackground(new Color(0x545454));
 	            btnEliminar.setForeground(Color.WHITE);
-	            GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
+	            gbcBtnEliminar = new GridBagConstraints();
 	            gbcBtnEliminar.gridx = 1;
 	            gbcBtnEliminar.gridy = 0;
 	            gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
@@ -265,9 +268,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	                public void actionPerformed(ActionEvent e) {
 	                    if (equipos.remove(equipo)) {
 	                        actualizarPanelEquipos(temporada, rol);
-	                        datosModificados = true; // Marcar los datos como modificados
+	                        datosModificados = true;
 	                    } else {
-	                        System.err.println("No se pudo eliminar el equipo.");
+	                        JOptionPane.showMessageDialog(null, "No se pudo eliminar el equipo. " + equipo.getNombre(), "Error" , JOptionPane.ERROR_MESSAGE);
 	                    }
 	                }
 	            });
@@ -286,29 +289,27 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	    panelEquipos.revalidate();
 	    panelEquipos.repaint();
-	}
-
+}
 
 	public void agregarNuevoEquipoDesdeFormulario(Equipo nuevoEquipo) {
-	    String temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
+	    temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
 	    List<Equipo> equipos = equiposPorTemporada.get(temporadaSeleccionada);
 	    if (equipos != null) {
 	        equipos.add(nuevoEquipo);
 	        actualizarPanelEquipos(temporadaSeleccionada, "Administrador");
-	        datosModificados = true; // Marcar los datos como modificados
+	        datosModificados = true;
 	    } else {
-	        System.err.println("Error: Lista de equipos nula para la temporada: " + temporadaSeleccionada);
+	        JOptionPane.showMessageDialog(null, "Error: No se encontraron equipos para la temporada seleccionada (" + temporadaSeleccionada + ").", "Error", JOptionPane.ERROR_MESSAGE
+	        );
 	    }
 	}
-
 
 	private void guardarDatos() {
 		try (FileOutputStream fos = new FileOutputStream("equipos.ser");
 				ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 			oos.writeObject(equiposPorTemporada);
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error",
-					JOptionPane.INFORMATION_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Error: fichero no encontrado", "Error", JOptionPane.INFORMATION_MESSAGE);
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(this, "Error de entrada/salida", "Error", JOptionPane.INFORMATION_MESSAGE);
 		}
@@ -316,28 +317,23 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	@SuppressWarnings("unchecked")
 	private void cargarDatos() {
-		try (FileInputStream fis = new FileInputStream("equipos.ser");
-				ObjectInputStream ois = new ObjectInputStream(fis)) {
-			Object obj = ois.readObject();
-			if (obj instanceof Map) {
-				equiposPorTemporada = (Map<String, List<Equipo>>) obj;
-			} else {
-				throw new ClassCastException("The deserialized object is not of type Map<String, List<Equipo>>");
-			}
-		} catch (FileNotFoundException e) {
-			// No mostrar mensaje si el archivo no existe la primera vez.
-			System.out.println("Archivo de datos no encontrado. Se creará uno nuevo.");
-		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "Error de entrada/salida al cargar datos", "Error",
-					JOptionPane.ERROR_MESSAGE);
-			e.printStackTrace(); // Imprime la traza para depuración
-		} catch (ClassNotFoundException e) {
-			JOptionPane.showMessageDialog(this, "Error: clase no encontrada al cargar datos", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		} catch (ClassCastException e) {
-			JOptionPane.showMessageDialog(this, "Error: " + e.getMessage() + " al cargar datos", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+	    try (FileInputStream fis = new FileInputStream("equipos.ser");
+	         ObjectInputStream ois = new ObjectInputStream(fis)) {
+	        Object obj = ois.readObject();
+	        if (obj instanceof Map) {
+	            equiposPorTemporada = (Map<String, List<Equipo>>) obj;
+	        } else {
+	            throw new ClassCastException("El archivo de datos tiene un formato incorrecto.");
+	        }
+	    } catch (FileNotFoundException e) {
+	        JOptionPane.showMessageDialog(null, "No se encontró un archivo de datos existente. Se generará un nuevo archivo automáticamente cuando se guarden los datos.", "Información", JOptionPane.INFORMATION_MESSAGE);
+	    } catch (IOException e) {
+	        JOptionPane.showMessageDialog(null, "Hubo un problema al intentar cargar los datos. Por favor, asegúrate de que el archivo no esté dañado.", "Error al cargar datos", JOptionPane.ERROR_MESSAGE);
+	    } catch (ClassNotFoundException e) {
+	        JOptionPane.showMessageDialog(null, "Hubo un problema al cargar los datos porque faltan componentes necesarios en el sistema.", "Error al cargar datos", JOptionPane.ERROR_MESSAGE);
+	    } catch (ClassCastException e) {
+	        JOptionPane.showMessageDialog(null, "El archivo de datos tiene un formato incorrecto y no puede ser cargado.",  "Error al cargar datos", JOptionPane.ERROR_MESSAGE);
+	    }
 	}
 
 	@Override
@@ -347,24 +343,21 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	@Override
 	public void windowClosing(WindowEvent e) {
 	    if (datosModificados) {
-	        int opcion = JOptionPane.showConfirmDialog(this,
-	                "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida",
-	                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-
+	        int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 	        switch (opcion) {
 	        case JOptionPane.YES_OPTION:
-	            guardarDatos(); // Guardar los cambios
+	            guardarDatos(); 
 	            System.exit(0);
 	            break;
 	        case JOptionPane.NO_OPTION:
-	            System.exit(0); // Salir sin guardar
+	            System.exit(0);
 	            break;
 	        case JOptionPane.CANCEL_OPTION:
 	        case JOptionPane.CLOSED_OPTION:
-	            return; // Cancelar el cierre
+	            return;
 	        }
 	    } else {
-	        System.exit(0); // Salir directamente si no hay cambios
+	        System.exit(0);
 	    }
 	}
 

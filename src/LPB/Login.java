@@ -33,10 +33,10 @@ public class Login extends JFrame {
     private JButton btnIniciarSesion;
     private JButton btnInvitado;
     private BackgroundFader fader;
+    private MouseAdapter mouseAdapter;
 
     public static void main(String[] args) {
         try {
-            // Establecer el look and feel del sistema operativo
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception e) {
             e.printStackTrace();
@@ -102,8 +102,8 @@ public class Login extends JFrame {
         btnIniciarSesion.setFocusPainted(false);
         panel.add(btnIniciarSesion);
 
-        btnIniciarSesion.addActionListener(e -> iniciarSesion());
-        txtPassword.addActionListener(e -> btnIniciarSesion.doClick());
+        btnIniciarSesion.addActionListener(_ -> iniciarSesion());
+        txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
         btnInvitado = new BotonRedondeado("Entrar como Invitado", null);
         btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -113,9 +113,9 @@ public class Login extends JFrame {
         btnInvitado.setFocusPainted(false);
         panel.add(btnInvitado);
 
-        btnInvitado.addActionListener(e -> entrarComoInvitado());
+        btnInvitado.addActionListener(_ -> entrarComoInvitado());
 
-        MouseAdapter mouseAdapter = new MouseAdapter() {
+        mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
                 if (e.getSource() == btnIniciarSesion) {

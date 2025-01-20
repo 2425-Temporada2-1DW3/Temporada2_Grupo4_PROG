@@ -115,5 +115,10 @@ public class Equipo implements Serializable {
         public String toString() { 
             return name; 
         }
+
+		public String getPosition() {
+			// TODO Auto-generated method stub
+			return null;
+		}
     }
 }
