@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -179,163 +178,129 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	}
 
 	private void actualizarPanelEquipos(String temporada, String rol) {
-		panelEquipos.removeAll();
-		List<Equipo> equipos = equiposPorTemporada.get(temporada);
+	    panelEquipos.removeAll();
+	    List<Equipo> equipos = equiposPorTemporada.get(temporada);
 
-		if (equipos == null || equipos.isEmpty()) {
-			JLabel aviso = new JLabel("No hay equipos disponibles para la temporada seleccionada.");
-			aviso.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			aviso.setForeground(new Color(0x13427e));
-			panelEquipos.add(aviso);
-			panelEquipos.revalidate();
-			panelEquipos.repaint();
-			return;
-		}
+	    if (equipos == null || equipos.isEmpty()) {
+	        JLabel aviso = new JLabel("No hay equipos disponibles para la temporada seleccionada.");
+	        aviso.setFont(new Font("SansSerif", Font.PLAIN, 20));
+	        aviso.setForeground(new Color(0x13427e));
+	        panelEquipos.add(aviso);
+	        panelEquipos.revalidate();
+	        panelEquipos.repaint();
+	        return;
+	    }
 
-		GridBagConstraints gbc = new GridBagConstraints();
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.insets = new Insets(10, 10, 10, 10);
-		gbc.fill = GridBagConstraints.HORIZONTAL;
+	    GridBagConstraints gbc = new GridBagConstraints();
+	    gbc.gridx = 0;
+	    gbc.gridy = 0;
+	    gbc.insets = new Insets(10, 10, 10, 10);
+	    gbc.fill = GridBagConstraints.HORIZONTAL;
 
-		for (Equipo equipo : equipos) {
-			JPanel equipoPanel = new JPanel(new GridBagLayout());
-			equipoPanel.setBackground(new Color(204, 153, 102));
+	    for (Equipo equipo : equipos) {
+	        JPanel equipoPanel = new JPanel(new GridBagLayout());
+	        equipoPanel.setBackground(new Color(204, 153, 102));
 
-			JButton btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
-			try {
-				BufferedImage originalImage = ImageIO.read(new File(equipo.getLogoPath()));
-				if (originalImage != null) { // Verificar que la imagen se cargo correctamente
-					BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
-					btnEquipo.setIcon(new ImageIcon(scaledImage));
-				} else {
-					System.err.println("Error: No se pudo leer la imagen del equipo: " + equipo.getNombre()
-							+ " en la ruta: " + equipo.getLogoPath());
-					btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-				}
-			} catch (IOException e) {
-				System.err.println("Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: "
-						+ equipo.getLogoPath());
-				e.printStackTrace();
-				btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png"))); // Imagen
-																												// por
-																												// defecto
-																												// en
-																												// caso
-																												// de
-																												// error
-			} catch (NullPointerException e) {
-				System.err.println("Error: Ruta de imagen nula para el equipo: " + equipo.getNombre());
-				e.printStackTrace();
-				btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-			}
+	        JButton btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
+	        try {
+	            // Verificar existencia de la imagen
+	            File logoFile = new File(equipo.getLogoPath());
+	            if (logoFile.exists() && !logoFile.isDirectory()) {
+	                BufferedImage originalImage = ImageIO.read(logoFile);
+	                if (originalImage != null) {
+	                    BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
+	                    btnEquipo.setIcon(new ImageIcon(scaledImage));
+	                } else {
+	                    System.err.println("Error: No se pudo procesar la imagen del equipo: " + equipo.getNombre());
+	                    btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+	                }
+	            } else {
+	                System.err.println("Advertencia: Archivo de imagen no encontrado para el equipo: " + equipo.getNombre());
+	                btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+	            }
+	        } catch (IOException e) {
+	            System.err.println("Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getLogoPath());
+	            e.printStackTrace();
+	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+	        } catch (NullPointerException e) {
+	            System.err.println("Error: Ruta de imagen nula para el equipo: " + equipo.getNombre());
+	            e.printStackTrace();
+	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+	        }
 
-			btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
-			btnEquipo.setBackground(new Color(0xf46b20));
-			btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
-			btnEquipo.setForeground(Color.WHITE);
-			GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
-			gbcBtnEquipo.gridx = 0;
-			gbcBtnEquipo.gridy = 0;
-			gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
-			btnEquipo.setPreferredSize(new Dimension(290, 60));
-			equipoPanel.add(btnEquipo, gbcBtnEquipo);
+	        btnEquipo.setFont(new Font("SansSerif", Font.PLAIN, 20));
+	        btnEquipo.setBackground(new Color(0xf46b20));
+	        btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
+	        btnEquipo.setForeground(Color.WHITE);
+	        GridBagConstraints gbcBtnEquipo = new GridBagConstraints();
+	        gbcBtnEquipo.gridx = 0;
+	        gbcBtnEquipo.gridy = 0;
+	        gbcBtnEquipo.insets = new Insets(5, 5, 5, 5);
+	        btnEquipo.setPreferredSize(new Dimension(290, 60));
+	        equipoPanel.add(btnEquipo, gbcBtnEquipo);
 
-			btnEquipo.addActionListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent e) {
-					JFrame infoFrame = new JFrame("Información del Equipo");
-					infoFrame.setSize(400, 300);
-					infoFrame.setLocationRelativeTo(null);
-					infoFrame.setLayout(new GridLayout(7, 1)); // Ajustado para la imagen
+	        btnEquipo.addActionListener(new ActionListener() {
+	            @Override
+	            public void actionPerformed(ActionEvent e) {
+	                EditarEquipo editarEquipoFrame = new EditarEquipo(equipo);
+	                editarEquipoFrame.setVisible(true);
+	            }
+	        });
 
-					infoFrame.add(new JLabel("Nombre: " + equipo.getNombre()));
-					infoFrame.add(new JLabel("Entrenador: " + equipo.getEntrenador()));
-					infoFrame.add(new JLabel("Estadio: " + equipo.getEstadio()));
-					infoFrame.add(new JLabel("Fundación: " + equipo.getFundacion()));
 
-					StringBuilder jugadoresStr = new StringBuilder("Jugadores: ");
-					if (equipo.getJugadores() != null) { // Verifica si la lista no es nula
-						for (String jugador : equipo.getJugadores()) {
-							jugadoresStr.append(jugador).append(", ");
-						}
-						if (!equipo.getJugadores().isEmpty()) {
-							jugadoresStr.delete(jugadoresStr.length() - 2, jugadoresStr.length());
-						}
-					}
-					infoFrame.add(new JLabel(jugadoresStr.toString()));
+	        if ("Administrador".equals(rol)) {
+	            JButton btnEliminar = new BotonRedondeado("-", null);
+	            btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
+	            btnEliminar.setBackground(new Color(0x545454));
+	            btnEliminar.setForeground(Color.WHITE);
+	            GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
+	            gbcBtnEliminar.gridx = 1;
+	            gbcBtnEliminar.gridy = 0;
+	            gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
+	            btnEliminar.setPreferredSize(new Dimension(60, 60));
+	            equipoPanel.add(btnEliminar, gbcBtnEliminar);
 
-					try {
-						BufferedImage originalImage = ImageIO.read(new File(equipo.getEntrenadorPath()));
-						if (originalImage != null) {
-							BufferedImage scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 100, 100);
-							JLabel imagenLabel = new JLabel(new ImageIcon(scaledImage));
-							infoFrame.add(imagenLabel);
-						} else {
-							infoFrame.add(new JLabel("Imagen del entrenador no encontrada"));
-						}
-					} catch (IOException ex) {
-						infoFrame.add(new JLabel("Error al cargar la imagen del entrenador"));
-					} catch (NullPointerException ex) {
-						infoFrame.add(new JLabel("Ruta de imagen del entrenador nula"));
-					}
+	            btnEliminar.addActionListener(new ActionListener() {
+	                @Override
+	                public void actionPerformed(ActionEvent e) {
+	                    if (equipos.remove(equipo)) {
+	                        actualizarPanelEquipos(temporada, rol);
+	                        datosModificados = true; // Marcar los datos como modificados
+	                    } else {
+	                        System.err.println("No se pudo eliminar el equipo.");
+	                    }
+	                }
+	            });
 
-					infoFrame.setVisible(true);
-				}
-			});
+	        }
 
-			if ("Administrador".equals(rol)) {
-				JButton btnEliminar = new BotonRedondeado("-", null);
-				btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
-				btnEliminar.setBackground(new Color(0x545454));
-				btnEliminar.setForeground(Color.WHITE);
-				GridBagConstraints gbcBtnEliminar = new GridBagConstraints();
-				gbcBtnEliminar.gridx = 1;
-				gbcBtnEliminar.gridy = 0;
-				gbcBtnEliminar.insets = new Insets(5, 5, 5, 5);
-				btnEliminar.setPreferredSize(new Dimension(60, 60));
-				equipoPanel.add(btnEliminar, gbcBtnEliminar);
+	        panelEquipos.add(equipoPanel, gbc);
 
-				btnEliminar.addActionListener(new ActionListener() {
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						if (equipos.remove(equipo)) {
-							actualizarPanelEquipos(temporada, rol);
-							datosModificados = true;
-							guardarDatos();
-						} else {
-							System.err.println("No se pudo eliminar el equipo.");
-						}
-					}
-				});
-			}
+	        if (gbc.gridx == 0) {
+	            gbc.gridx = 1;
+	        } else {
+	            gbc.gridx = 0;
+	            gbc.gridy++;
+	        }
+	    }
 
-			panelEquipos.add(equipoPanel, gbc);
-
-			if (gbc.gridx == 0) {
-				gbc.gridx = 1;
-			} else {
-				gbc.gridx = 0;
-				gbc.gridy++;
-			}
-		}
-
-		panelEquipos.revalidate();
-		panelEquipos.repaint();
+	    panelEquipos.revalidate();
+	    panelEquipos.repaint();
 	}
+
 
 	public void agregarNuevoEquipoDesdeFormulario(Equipo nuevoEquipo) {
-		String temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
-		List<Equipo> equipos = equiposPorTemporada.get(temporadaSeleccionada);
-		if (equipos != null) {
-			equipos.add(nuevoEquipo);
-			actualizarPanelEquipos(temporadaSeleccionada, "Administrador");
-			datosModificados = true;
-			guardarDatos();
-		} else {
-			System.err.println("Error: Lista de equipos nula para la temporada: " + temporadaSeleccionada);
-		}
+	    String temporadaSeleccionada = (String) SelectTemporadas.getSelectedItem();
+	    List<Equipo> equipos = equiposPorTemporada.get(temporadaSeleccionada);
+	    if (equipos != null) {
+	        equipos.add(nuevoEquipo);
+	        actualizarPanelEquipos(temporadaSeleccionada, "Administrador");
+	        datosModificados = true; // Marcar los datos como modificados
+	    } else {
+	        System.err.println("Error: Lista de equipos nula para la temporada: " + temporadaSeleccionada);
+	    }
 	}
+
 
 	private void guardarDatos() {
 		try (FileOutputStream fos = new FileOutputStream("equipos.ser");
@@ -381,27 +346,28 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		if (datosModificados) {
-			int opcion = JOptionPane.showConfirmDialog(this,
-					"Los datos han sido modificados. ¿Desea guardar antes de salir?", "Información",
-					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+	    if (datosModificados) {
+	        int opcion = JOptionPane.showConfirmDialog(this,
+	                "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida",
+	                JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 
-			switch (opcion) {
-			case JOptionPane.YES_OPTION:
-				guardarDatos();
-				System.exit(0);
-				break;
-			case JOptionPane.NO_OPTION:
-				System.exit(0);
-				break;
-			case JOptionPane.CANCEL_OPTION:
-			case JOptionPane.CLOSED_OPTION:
-				return;
-			}
-		} else {
-			System.exit(0);
-		}
+	        switch (opcion) {
+	        case JOptionPane.YES_OPTION:
+	            guardarDatos(); // Guardar los cambios
+	            System.exit(0);
+	            break;
+	        case JOptionPane.NO_OPTION:
+	            System.exit(0); // Salir sin guardar
+	            break;
+	        case JOptionPane.CANCEL_OPTION:
+	        case JOptionPane.CLOSED_OPTION:
+	            return; // Cancelar el cierre
+	        }
+	    } else {
+	        System.exit(0); // Salir directamente si no hay cambios
+	    }
 	}
+
 
 	@Override
 	public void windowClosed(WindowEvent e) {

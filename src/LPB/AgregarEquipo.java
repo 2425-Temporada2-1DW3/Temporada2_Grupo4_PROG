@@ -1,9 +1,11 @@
+
 package LPB;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.io.File;
-import java.util.ArrayList; // Importa ArrayList
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -15,133 +17,174 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.ImageIcon;
 
 import LPBCLASES.Equipo;
+import LPBCLASES.Equipo.PlayerWithImage;
 
 public class AgregarEquipo extends JFrame {
 
-    private static final long serialVersionUID = 4355224767970407050L;
-    private JTextField nombreEquipoField;
-    private JTextField nombreEntrenadorField;
-    private JTextField estadioField;
-    private JTextField fundacionField;
-    private DefaultListModel<String> jugadoresModel;
-    private JLabel logoLabel;
-    private JLabel entrenadorLabel;
-    private File logoFile;
-    private File entrenadorFile;
-    private EquiposTemporada equiposTemporadaFrame; // Referencia a EquiposTemporada
+	private static final long serialVersionUID = 4355224767970407050L;
+	private JTextField nombreEquipoField;
+	private JTextField nombreEntrenadorField;
+	private JTextField estadioField;
+	private JTextField fundacionField;
+	private DefaultListModel<PlayerWithImage> jugadoresModel;
+	private JLabel logoLabel;
+	private JLabel entrenadorLabel;
+	private File logoFile;
+	private File entrenadorFile;
+	private EquiposTemporada equiposTemporadaFrame;
 
-    public AgregarEquipo(EquiposTemporada equiposTemporadaFrame) {
-        this.equiposTemporadaFrame = equiposTemporadaFrame;
-        setTitle("Agregar Nuevo Equipo");
-        setSize(815, 600);
-        getContentPane().setLayout(new BorderLayout());
-        setLocationRelativeTo(null);
+	public AgregarEquipo(EquiposTemporada equiposTemporadaFrame) {
+		this.equiposTemporadaFrame = equiposTemporadaFrame;
+		setTitle("Agregar Nuevo Equipo");
+		setSize(815, 600);
+		getContentPane().setLayout(new BorderLayout());
+		setLocationRelativeTo(null);
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(8, 2, 5, 5));
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridLayout(8, 2, 5, 5));
 
-        logoLabel = new JLabel("Seleccionar Logo");
-        JButton btnLogo = new JButton("Cargar");
-        btnLogo.addActionListener(_ -> seleccionarImagen(logoLabel, true));
+		logoLabel = new JLabel("Seleccionar Logo");
+		JButton btnLogo = new JButton("Cargar");
+		btnLogo.addActionListener(_ -> seleccionarImagen(logoLabel, true));
 
-        nombreEquipoField = new JTextField();
-        nombreEntrenadorField = new JTextField();
-        JButton btnEntrenador = new JButton("Cargar");
+		nombreEquipoField = new JTextField();
+		nombreEntrenadorField = new JTextField();
+		JButton btnEntrenador = new JButton("Cargar");
 
-        estadioField = new JTextField();
-        fundacionField = new JTextField();
+		estadioField = new JTextField();
+		fundacionField = new JTextField();
 
-        panel.add(new JLabel("Logo del Equipo:"));
-        panel.add(btnLogo);
-        panel.add(logoLabel);
+		panel.add(new JLabel("Logo del Equipo:"));
+		panel.add(btnLogo);
+		panel.add(logoLabel);
 
-        panel.add(new JLabel("Nombre del Equipo:"));
-        
-                JLabel label_1 = new JLabel("Entrenador (Nombre):");
-                panel.add(label_1);
-        panel.add(nombreEquipoField);
-        
-                JLabel label = new JLabel("Foto del Entrenador:");
-                panel.add(label);
-        panel.add(nombreEntrenadorField);
-        
-                entrenadorLabel = new JLabel("Seleccionar Foto Entrenador");
-                btnEntrenador.addActionListener(_ -> seleccionarImagen(entrenadorLabel, false));
-                panel.add(entrenadorLabel);
-        panel.add(btnEntrenador);
+		panel.add(new JLabel("Nombre del Equipo:"));
+		panel.add(nombreEquipoField);
 
-        panel.add(new JLabel("Estadio:"));
-        panel.add(estadioField);
+		panel.add(new JLabel("Entrenador (Nombre):"));
+		panel.add(nombreEntrenadorField);
 
-        panel.add(new JLabel("Fundación:"));
-        panel.add(fundacionField);
+		panel.add(new JLabel("Foto del Entrenador:"));
+		panel.add(btnEntrenador);
 
-        getContentPane().add(panel, BorderLayout.CENTER);
+		entrenadorLabel = new JLabel("Seleccionar Foto Entrenador");
+		btnEntrenador.addActionListener(_ -> seleccionarImagen(entrenadorLabel, false));
+		panel.add(entrenadorLabel);
 
-        jugadoresModel = new DefaultListModel<>();
-        JList<String> jugadoresList = new JList<>(jugadoresModel);
-        JScrollPane scrollPane = new JScrollPane(jugadoresList);
+		panel.add(new JLabel("Estadio:"));
+		panel.add(estadioField);
 
-        JPanel panelJugadores = new JPanel();
-        panelJugadores.setLayout(new BorderLayout());
-        panelJugadores.add(new JLabel("Lista de Jugadores"), BorderLayout.NORTH);
-        panelJugadores.add(scrollPane, BorderLayout.CENTER);
+		panel.add(new JLabel("Fundación:"));
+		panel.add(fundacionField);
 
-        JPanel panelBotones = new JPanel();
-        JButton btnAgregarJugador = new JButton("Agregar Jugador");
-        btnAgregarJugador.addActionListener(_ -> agregarJugador());
-        JButton btnGuardar = new JButton("Guardar");
-        btnGuardar.addActionListener(_ -> guardarEquipo());
+		getContentPane().add(panel, BorderLayout.CENTER);
 
-        panelBotones.add(btnAgregarJugador);
-        panelBotones.add(btnGuardar);
+		jugadoresModel = new DefaultListModel<>();
+		JList<PlayerWithImage> jugadoresList = new JList<>(jugadoresModel);
+		jugadoresList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
+			JPanel cellPanel = new JPanel(new BorderLayout());
+			JLabel imageLabel = new JLabel();
+			imageLabel.setIcon(new ImageIcon(
+					new ImageIcon(value.getImagePath()).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
+			JLabel nameLabel = new JLabel(value.getName());
+			cellPanel.add(imageLabel, BorderLayout.WEST);
+			cellPanel.add(nameLabel, BorderLayout.CENTER);
+			return cellPanel;
+		});
 
-        getContentPane().add(panelJugadores, BorderLayout.EAST);
-        getContentPane().add(panelBotones, BorderLayout.SOUTH);
-    }
+		JScrollPane scrollPane = new JScrollPane(jugadoresList);
 
-    private void seleccionarImagen(JLabel label, boolean isLogo) {
-        JFileChooser fileChooser = new JFileChooser();
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            File selectedFile = fileChooser.getSelectedFile();
-            label.setText(selectedFile.getName());
-            if (isLogo) {
-                logoFile = selectedFile;
-            } else {
-                entrenadorFile = selectedFile;
-            }
-        }
-    }
+		JPanel panelJugadores = new JPanel();
+		panelJugadores.setLayout(new BorderLayout());
+		panelJugadores.add(new JLabel("Lista de Jugadores"), BorderLayout.NORTH);
+		panelJugadores.add(scrollPane, BorderLayout.CENTER);
 
-    private void agregarJugador() {
-        String jugador = JOptionPane.showInputDialog("Nombre del jugador:");
-        if (jugador != null && !jugador.trim().isEmpty()) {
-            jugadoresModel.addElement(jugador);
-        }
-    }
+		JPanel panelBotones = new JPanel();
+		JButton btnAgregarJugador = new JButton("Agregar Jugador");
+		btnAgregarJugador.addActionListener(_ -> agregarJugador());
+		JButton btnGuardar = new JButton("Guardar");
+		btnGuardar.addActionListener(_ -> guardarEquipo());
 
-    private void guardarEquipo() {
-        String nombre = nombreEquipoField.getText();
-        String entrenador = nombreEntrenadorField.getText();
-        String estadio = estadioField.getText();
-        String fundacion = fundacionField.getText();
+		panelBotones.add(btnAgregarJugador);
+		panelBotones.add(btnGuardar);
 
-        if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || fundacion.isEmpty() || logoFile == null || entrenadorFile == null) {
-            JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
+		getContentPane().add(panelJugadores, BorderLayout.EAST);
+		getContentPane().add(panelBotones, BorderLayout.SOUTH);
+	}
 
-        ArrayList<String> jugadores = new ArrayList<>();
-        for (int i = 0; i < jugadoresModel.getSize(); i++) {
-            jugadores.add(jugadoresModel.getElementAt(i));
-        }
+	private void seleccionarImagen(JLabel label, boolean isLogo) {
+		JFileChooser fileChooser = new JFileChooser();
+		FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif");
+		fileChooser.setFileFilter(imageFilter);
+		int result = fileChooser.showOpenDialog(this);
+		if (result == JFileChooser.APPROVE_OPTION) {
+			File selectedFile = fileChooser.getSelectedFile();
 
-        Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, logoFile.getAbsolutePath(), entrenadorFile.getAbsolutePath(), estadio, fundacion);
-        equiposTemporadaFrame.agregarNuevoEquipoDesdeFormulario(nuevoEquipo); // Llama al método en EquiposTemporada
-        JOptionPane.showMessageDialog(this, "Equipo agregado correctamente");
-        dispose();
-    }
+			if (selectedFile.exists() && isValidImage(selectedFile)) {
+				label.setText(selectedFile.getName());
+				if (isLogo) {
+					logoFile = selectedFile;
+				} else {
+					entrenadorFile = selectedFile;
+				}
+			} else {
+				JOptionPane.showMessageDialog(this, "El archivo seleccionado no es válido.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
+
+	private boolean isValidImage(File file) {
+		String fileName = file.getName().toLowerCase();
+		return fileName.endsWith(".jpg") || fileName.endsWith(".jpeg") || fileName.endsWith(".png")
+				|| fileName.endsWith(".gif");
+	}
+
+	private void agregarJugador() {
+		String jugador = JOptionPane.showInputDialog("Nombre del jugador:");
+		if (jugador != null && !jugador.trim().isEmpty()) {
+			JFileChooser fileChooser = new JFileChooser();
+			FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif");
+			fileChooser.setFileFilter(imageFilter);
+			int result = fileChooser.showOpenDialog(this);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File selectedFile = fileChooser.getSelectedFile();
+				if (isValidImage(selectedFile)) {
+					jugadoresModel.addElement(new PlayerWithImage(jugador, selectedFile.getAbsolutePath()));
+				} else {
+					JOptionPane.showMessageDialog(this, "El archivo seleccionado no es válido.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+		}
+	}
+
+	private void guardarEquipo() {
+		String nombre = nombreEquipoField.getText();
+		String entrenador = nombreEntrenadorField.getText();
+		String estadio = estadioField.getText();
+		String fundacion = fundacionField.getText();
+
+		if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || fundacion.isEmpty() || logoFile == null
+				|| entrenadorFile == null) {
+			JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error",
+					JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+
+		ArrayList<PlayerWithImage> jugadores = new ArrayList<>();
+		for (int i = 0; i < jugadoresModel.getSize(); i++) {
+			jugadores.add(jugadoresModel.getElementAt(i));
+		}
+
+		Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, logoFile.getAbsolutePath(),
+				entrenadorFile.getAbsolutePath(), estadio, fundacion);
+		equiposTemporadaFrame.agregarNuevoEquipoDesdeFormulario(nuevoEquipo);
+		JOptionPane.showMessageDialog(this, "Equipo agregado correctamente");
+		dispose();
+	}
 }
