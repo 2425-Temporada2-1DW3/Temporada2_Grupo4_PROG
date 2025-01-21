@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import javax.swing.JComboBox;
+//import javax.swing.JFileChooser;
 import javax.swing.JFileChooser;
 
 import java.awt.event.ActionListener;
@@ -36,6 +37,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.EOFException;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -43,6 +45,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -128,7 +132,6 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		contentPane.setBackground(new Color(255, 243, 205));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		
-		// ESTO HAY QUE PONERLO COÑO
 		addWindowListener(this);
 		
 		fader = new BackgroundFader();
@@ -227,7 +230,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		flowLayout_1.setAlignment(FlowLayout.TRAILING);
 		panel_1.add(panel_6);
 		
-		btnEliminar = new BotonRedondeado("Eliminar");
+		btnEliminar = new BotonRedondeado("Eliminar", null);
 		btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnEliminar.setBounds(327, 445, 200, 40);
 		btnEliminar.setBackground(new Color(0xf46b20));
@@ -236,10 +239,10 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
         btnEliminar.addMouseListener(this);
 		btnEliminar.addActionListener(this);
 		
-		btnSeleccionar = new BotonRedondeado("Eliminar");
+		btnSeleccionar = new BotonRedondeado("Eliminar", null);
 		btnSeleccionar.addActionListener(this);
 		
-		btnGuardarSeleccion = new BotonRedondeado("Eliminar");
+		btnGuardarSeleccion = new BotonRedondeado("Eliminar", null);
 		btnGuardarSeleccion.addActionListener(this);
 		
 		btnGuardarSeleccion.setText("Guardar Seleccion");
@@ -258,7 +261,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		panel_6.add(btnSeleccionar);
 		panel_6.add(btnEliminar);
 		
-		btnGuardar = new BotonRedondeado("Guardar");
+		btnGuardar = new BotonRedondeado("Guardar", null);
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnGuardar.setBounds(327, 445, 200, 40);
 		btnGuardar.setBackground(new Color(0xf46b20));
@@ -267,7 +270,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		btnGuardar.addMouseListener(this);
 		btnGuardar.addActionListener(this);
 		
-		btnAgregar = new BotonRedondeado("Agregar");
+		btnAgregar = new BotonRedondeado("Agregar", null);
 		btnAgregar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnAgregar.setBounds(327, 445, 200, 40);
 		btnAgregar.setBackground(new Color(0xf46b20));
@@ -278,7 +281,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		panel_6.add(btnAgregar);
 		panel_6.add(btnGuardar);
 		
-		btnVolver = new BotonRedondeado("Volver");
+		btnVolver = new BotonRedondeado("Volver", null);
 		btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolver.setBounds(327, 445, 200, 40);
 		btnVolver.setBackground(new Color(0xf46b20));
@@ -289,7 +292,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		panel_6.add(btnVolver);
 		
 		
-		btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen");
+		btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen", null);
 		btnSeleccionarImagen.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnSeleccionarImagen.setBounds(327, 445, 100, 20);
 		btnSeleccionarImagen.setBackground(new Color(0xf46b20));
@@ -352,9 +355,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent e) {		
 		Object o = e.getSource();
 		
 		if (o == btnGuardar) {
@@ -402,25 +403,21 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		
 		if (o == btnGuardar) {
@@ -442,7 +439,6 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 
 		if (o == btnGuardar) {
@@ -472,20 +468,19 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 	
 	public void agregarJugador() {
 		
-			// Cojemos los campos necesarios para crear un nuevo objeto Jugador
+		// Cojemos los campos necesarios para crear un nuevo objeto Jugador
 		
 		String nombre = "" + textNombre.getText() + " " + textApellido.getText();
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
-		ImageIcon foto = (ImageIcon) lblFoto.getIcon();
 	
-		Jugador nuevoJugador = new Jugador (nombre , posicion , dorsal , 0, foto);
+		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
 		
 		if (dlm.contains(nuevoJugador)) {
 			
 			// Si ya esta en la lista
 			
-			JOptionPane.showMessageDialog(this,(String)"Error. El valor "+nuevoJugador+" ya esta en la lista","Error",JOptionPane.ERROR_MESSAGE,null);
+			JOptionPane.showMessageDialog(this,(String)"Error. El jugador " + nuevoJugador + " ya esta en la lista","Error",JOptionPane.ERROR_MESSAGE,null);
 		}
 		else {
 			
@@ -521,33 +516,54 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 	
 	
 	public void seleccionarImagen() {
-		
-		 JFileChooser fileChooser = new JFileChooser();
-         fileChooser.setDialogTitle("Seleccionar Imagen del Jugador");
-         fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imagenes JPG & PNG", "jpg", "png"));
-         
-         int resultado = fileChooser.showOpenDialog(null);
+	    JFileChooser fileChooser = new JFileChooser();
+	    fileChooser.setDialogTitle("Seleccionar Imagen del Jugador");
+	    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png"));
 
-         if (resultado == JFileChooser.APPROVE_OPTION) {
-        	 
-             // Obtener el archivo seleccionado
-        	 
-             String rutaArchivo = fileChooser.getSelectedFile().getAbsolutePath();
+	    int resultado = fileChooser.showOpenDialog(null);
 
-             // Crear un ImageIcon con la imagen seleccionada
-             
-             ImageIcon fotoSeleccionada = new ImageIcon(rutaArchivo);
+	    if (resultado == JFileChooser.APPROVE_OPTION) {
+	        // Obtener el archivo seleccionado
+	        File archivoSeleccionado = fileChooser.getSelectedFile();
+	        String rutaArchivo = archivoSeleccionado.getAbsolutePath();
 
-             Jugador jugador = new Jugador();
-             
-			 // Actualizar la foto en el jugador
-             
-             jugador.setFoto(fotoSeleccionada);
+	        // Crear un ImageIcon con la imagen seleccionada
+	        ImageIcon fotoSeleccionada = new ImageIcon(rutaArchivo);
 
-             // Mostrar la foto en el JLabel
-             
-             lblFoto.setIcon(fotoSeleccionada);
-         }
+	        Jugador jugador = new Jugador();
+
+	        // Obtener detalles para construir la ruta de destino
+	        String temporada = "2024-25"; // Cambiar dinámicamente si es necesario
+	        String nombreEquipo = "Nombre_Equipo"; // Obtener el nombre del equipo del jugador
+	        String nombreJugador = "Nombre_Jugador"; // Obtener el nombre del jugador
+
+	        // Crear la ruta de destino
+	        String rutaDestino = "resources/imagenes/" + temporada + "/" + nombreEquipo;
+	        File directorioDestino = new File(rutaDestino);
+
+	        // Crear directorios si no existen
+	        if (!directorioDestino.exists()) {
+	            directorioDestino.mkdirs();
+	        }
+
+	        // Ruta final para la imagen del jugador
+	        File archivoDestino = new File(directorioDestino, nombreJugador + ".png");
+
+	        try {
+	            // Copiar la imagen seleccionada al directorio destino
+	            Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+	            // Actualizar la foto en el jugador
+	            jugador.setPhotoPath(archivoDestino.getAbsolutePath());
+
+	            // Mostrar la foto en el JLabel
+	            lblFoto.setIcon(fotoSeleccionada);
+
+	            JOptionPane.showMessageDialog(null, "Imagen guardada correctamente en " + archivoDestino.getAbsolutePath());
+	        } catch (IOException e) {
+	            JOptionPane.showMessageDialog(null, "Error al guardar la imagen: " + e.getMessage());
+	        }
+	    }
 	}
 
 	
@@ -659,7 +675,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 	     String apellidosSelect = partes[1]; // El segundo valor es el apellido
 		 
 		String posicionSelect = jugadorSeleccionado.getPosicion();
-		int dorsalSelect = jugadorSeleccionado.getNumeroCamiseta();
+		int dorsalSelect = jugadorSeleccionado.getDorsal();
 		
 			// Introducimos los datos en los campos necesarios
 		
@@ -680,11 +696,9 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		String nombre = "" + nombreSelect + " " + apellidoSelect;
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
-		ImageIcon foto = (ImageIcon) lblFoto.getIcon();
 		
-		Jugador nuevoJugador = new Jugador (nombre , posicion , dorsal , 0, foto);
+		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
 		dlm.set(Indice, nuevoJugador);
-		
 	}
 	
 	
@@ -692,13 +706,11 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
 	@Override
 	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
 		   setExtendedState(JFrame.MAXIMIZED_BOTH);
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 		// Compreubo si los datos no han sido modificados
 		
@@ -742,31 +754,26 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 }

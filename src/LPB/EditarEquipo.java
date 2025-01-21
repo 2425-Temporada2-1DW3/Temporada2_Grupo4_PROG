@@ -16,7 +16,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import LPBCLASES.Equipo;
-import LPBCLASES.Equipo.PlayerWithImage;
+import LPBCLASES.Jugador;
 
 public class EditarEquipo extends JFrame {
 
@@ -38,7 +38,7 @@ public class EditarEquipo extends JFrame {
 
 		JPanel infoPanel = new JPanel(new GridLayout(4, 2, 10, 10));
 
-		JLabel logoLabel = new JLabel(new ImageIcon(equipo.getLogoPath()));
+		JLabel logoLabel = new JLabel(new ImageIcon(equipo.getEquipoPath()));
 		infoPanel.add(new JLabel("Logo:"));
 		infoPanel.add(logoLabel);
 
@@ -60,15 +60,15 @@ public class EditarEquipo extends JFrame {
 		infoPanel.add(new JLabel("Fundación:"));
 		infoPanel.add(fundacionField);
 
-		DefaultListModel<PlayerWithImage> jugadoresModel = new DefaultListModel<>();
-		for (PlayerWithImage jugador : equipo.getJugadores()) {
+		DefaultListModel<Jugador> jugadoresModel = new DefaultListModel<>();
+		for (Jugador jugador : equipo.getJugadores()) {
 			jugadoresModel.addElement(jugador);
 		}
-		JList<PlayerWithImage> jugadoresList = new JList<>(jugadoresModel);
+		JList<Jugador> jugadoresList = new JList<>(jugadoresModel);
 		jugadoresList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
 			JPanel playerPanel = new JPanel(new BorderLayout());
-			JLabel playerImage = new JLabel(new ImageIcon(value.getImagePath()));
-			JLabel playerName = new JLabel(value.getName());
+			JLabel playerImage = new JLabel(new ImageIcon(value.getPhotoPath()));
+			JLabel playerName = new JLabel(value.getNombre());
 			playerPanel.add(playerImage, BorderLayout.WEST);
 			playerPanel.add(playerName, BorderLayout.CENTER);
 			return playerPanel;

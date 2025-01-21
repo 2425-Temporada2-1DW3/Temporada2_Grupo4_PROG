@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
-import LPBCLASES.Usuario.Rol;
 
 public class Menu extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -1200889095902166795L;
@@ -33,7 +32,7 @@ public class Menu extends JFrame implements MouseListener {
 	private ImageIcon logo;
 	private BackgroundFader fader;
 
-	public Menu(Rol rol, String usuario) {
+	public Menu(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -78,7 +77,7 @@ public class Menu extends JFrame implements MouseListener {
 		subtitulo.setBounds(50, 146, 200, 20);
 		panelDerecho.add(subtitulo);
 
-		btnTemporadas = new BotonRedondeado("Temporadas");
+		btnTemporadas = new BotonRedondeado("Temporadas", null);
 		btnTemporadas.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas.setBackground(new Color(0x13427E));
 		btnTemporadas.setForeground(Color.WHITE);
@@ -94,15 +93,23 @@ public class Menu extends JFrame implements MouseListener {
 			}
 		});
 
-		btnEquipos = new BotonRedondeado("Equipos");
+		btnEquipos = new BotonRedondeado("Equipos", null);
 		btnEquipos.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnEquipos.setBackground(new Color(0xf46b20));
 		btnEquipos.setForeground(Color.WHITE);
 		btnEquipos.setBounds(50, 251, 200, 40);
 		btnEquipos.addMouseListener(this);
 		panelDerecho.add(btnEquipos);
+		
+		btnEquipos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new EquiposTemporada(usuario, usuario).setVisible(true);
+				dispose();
+			}
+		});
 
-		btnUsuarios = new BotonRedondeado("Usuarios");
+		btnUsuarios = new BotonRedondeado("Usuarios", null);
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
@@ -113,7 +120,7 @@ public class Menu extends JFrame implements MouseListener {
 			panelDerecho.add(btnUsuarios);
 		}
 
-		btnCerrarSesion = new BotonRedondeado("Cerrar Sesión");
+		btnCerrarSesion = new BotonRedondeado("Cerrar Sesión", null);
 		btnCerrarSesion.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnCerrarSesion.setBackground(new Color(64, 64, 64));
 		btnCerrarSesion.setForeground(Color.WHITE);
@@ -130,10 +137,6 @@ public class Menu extends JFrame implements MouseListener {
 		});
 
 		getContentPane().add(panelDerecho);
-	}
-
-	public Menu(String string, String usuario) {
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override

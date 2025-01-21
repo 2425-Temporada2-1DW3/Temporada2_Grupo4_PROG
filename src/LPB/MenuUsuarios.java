@@ -16,6 +16,7 @@ import javax.swing.BoxLayout;
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.UIManager;
 import javax.swing.JComboBox;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
@@ -66,6 +67,12 @@ public class MenuUsuarios extends JFrame implements ActionListener, Serializable
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {

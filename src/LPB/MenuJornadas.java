@@ -53,7 +53,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	
 	private JButton btnAtras;
 	private JButton btnAlante;
-	private JComboBox comboBoxTemporadas;
+	private JComboBox<String> comboBoxTemporadas;
 	private JButton btnGuardar;
 	
 	private JLabel lblTemporada;
@@ -145,7 +145,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		flowLayout.setAlignOnBaseline(true);
 		panel.add(panel_4);
 		
-		btnAtras = new BotonRedondeado("<");
+		btnAtras = new BotonRedondeado("<", null);
 		btnAtras.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnAtras.setBounds(327, 445, 200, 40);
 		btnAtras.setBackground(new Color(0xf46b20));
@@ -154,7 +154,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
         btnAtras.addMouseListener(this);
 		panel_4.add(btnAtras);
 		
-		comboBoxTemporadas = new JComboBox();
+		comboBoxTemporadas = new JComboBox<String>();
 		
 		// añado elementos al combobox
 		comboBoxTemporadas.addItem(" Temporada 23/24");
@@ -163,7 +163,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 				
 		panel_4.add(comboBoxTemporadas);
 		
-		btnAlante = new BotonRedondeado(">");
+		btnAlante = new BotonRedondeado(">", null);
 		btnAlante.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnAlante.setBounds(327, 445, 200, 40);
 		btnAlante.setBackground(new Color(0xf46b20));
@@ -271,7 +271,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		flowLayout_5.setHgap(1);
 		panel_10.setBackground(new Color(255, 243, 205));
 		panel.add(panel_10);
-		btnGuardar = new BotonRedondeado("Guardar");
+		btnGuardar = new BotonRedondeado("Guardar", null);
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnGuardar.setBounds(327, 445, 200, 40);
 		btnGuardar.setBackground(new Color(0xf46b20));
@@ -323,25 +323,21 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		
 		if (o == btnGuardar) {
@@ -356,7 +352,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
 		Object o = e.getSource();
 
 		if (o == btnGuardar) {

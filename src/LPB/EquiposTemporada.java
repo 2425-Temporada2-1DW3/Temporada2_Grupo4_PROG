@@ -125,7 +125,6 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnNuevo.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevo.setBackground(new Color(0x545454));
 		btnNuevo.setBounds(755, 22, 50, 50);
-		btnNuevo.setFocusPainted(false);
 		if ("Administrador".equals(rol)) {
 			panelInferior.add(btnNuevo);
 		}
@@ -135,13 +134,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnVolverMenu.setBackground(new Color(64, 64, 64));
 		btnVolverMenu.setForeground(Color.WHITE);
 		btnVolverMenu.setBounds(673, 351, 140, 30);
-		btnVolverMenu.setFocusPainted(false);
 		panelInferior.add(btnVolverMenu);
 
 		btnVolverMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Menu(rol, usuario).setVisible(true);
+				new Menu(usuario, rol).setVisible(true);
 				dispose();
 			}
 		});
@@ -210,7 +208,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-	            logoFile = new File(equipo.getLogoPath());
+	            logoFile = new File(equipo.getEquipoPath());
 	            if (logoFile.exists() && !logoFile.isDirectory()) {
 	                originalImage = ImageIO.read(logoFile);
 	                if (originalImage != null) {
@@ -225,7 +223,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	                btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	            }
 	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getLogoPath(), "Error de Lectura", JOptionPane.ERROR_MESSAGE);
+	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getEquipoPath(), "Error de Lectura", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
 	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	        } catch (NullPointerException e) {

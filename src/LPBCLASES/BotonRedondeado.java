@@ -5,14 +5,18 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.RoundRectangle2D;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 
 public class BotonRedondeado extends JButton {
 	private static final long serialVersionUID = 5137357109195317030L;
 
-	public BotonRedondeado(String text) {
-		super(text);
+	public BotonRedondeado(String text, ImageIcon icon) {
+		super(text, icon != null ? icon : new ImageIcon());
 		setContentAreaFilled(false);
+		setHorizontalTextPosition(JButton.RIGHT); // Texto a la derecha del icono
+        setVerticalTextPosition(JButton.CENTER); // Alinear verticalmente el texto
+        setIconTextGap(4); // Espacio entre icono y texto
 	}
 
 	@Override

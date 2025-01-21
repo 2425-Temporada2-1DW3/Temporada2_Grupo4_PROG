@@ -78,7 +78,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		subtitulo.setBounds(50, 131, 234, 20);
 		panelDerecho.add(subtitulo);
 
-		btnTemporadas1 = new BotonRedondeado("Temporada 23-24");
+		btnTemporadas1 = new BotonRedondeado("Temporada 23-24", null);
 		btnTemporadas1.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas1.setBackground(new Color(0xf46b20));
 		btnTemporadas1.setForeground(Color.WHITE);
@@ -86,7 +86,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas1.addMouseListener(this);
 		panelDerecho.add(btnTemporadas1);
 
-		btnTemporadas2 = new BotonRedondeado("Temporada 24-25");
+		btnTemporadas2 = new BotonRedondeado("Temporada 24-25", null);
 		btnTemporadas2.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas2.setBackground(new Color(0xf46b20));
 		btnTemporadas2.setForeground(Color.WHITE);
@@ -94,7 +94,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas2.addMouseListener(this);
 		panelDerecho.add(btnTemporadas2);
 
-		btnTemporadas3 = new BotonRedondeado("Temporada 25-26");
+		btnTemporadas3 = new BotonRedondeado("Temporada 25-26", null);
 		btnTemporadas3.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnTemporadas3.setBackground(new Color(0xf46b20));
 		btnTemporadas3.setForeground(Color.WHITE);
@@ -102,7 +102,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas3.addMouseListener(this);
 		panelDerecho.add(btnTemporadas3);
 
-		btnNuevaTemporada = new BotonRedondeado("Nueva Temporada");
+		btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
 		btnNuevaTemporada.setForeground(Color.WHITE);
 		btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevaTemporada.setBackground(new Color(0x545454));
@@ -113,7 +113,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 			panelDerecho.add(btnNuevaTemporada);
 		}
 		
-		btnVolverMenu = new BotonRedondeado("Volver al Menú");
+		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnVolverMenu.setBackground(new Color(64, 64, 64));
 		btnVolverMenu.setForeground(Color.WHITE);

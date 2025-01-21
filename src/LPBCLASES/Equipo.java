@@ -1,111 +1,137 @@
 package LPBCLASES;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Equipo {
-//Atributos de la clase Equipo
-  private String nombre; // Nombre del equipo
-  private String ciudad; // Ciudad del equipo
-  private List<Jugador> jugadores; // Lista de jugadores del equipo
+public class Equipo implements Serializable {
 
-  // Constructor por defecto
-  public Equipo() {
-      // Inicializa los atributos con valores predeterminados
-      this.nombre = "";
-      this.ciudad = "";
-      this.jugadores = new ArrayList<>();
-  }
+    private static final long serialVersionUID = 1L;
+    private String nombre;
+    private String entrenador;
+    private List<Jugador> jugadores;
+    private String estadio;
+    private Fecha fundacion;
+    private String entrenadorPath;
+    private String equipoPath;
+    
+    // Constructor por defecto
+    public Equipo() {
+        // Inicializa los atributos con valores predeterminados
+        this.nombre = "";
+        this.entrenador = "";
+        this.jugadores = new ArrayList<>();
+        this.estadio = "";
+        this.fundacion = new Fecha();
+        this.entrenadorPath = "";
+        this.equipoPath = "";
+    }
+    
+  	// Constructor copia
+  	public Equipo(Equipo e) {
+        this.nombre = e.nombre;
+        this.entrenador = e.entrenador;
+        this.jugadores = e.jugadores;
+        this.estadio = e.estadio;
+        this.fundacion = e.fundacion;
+        this.entrenadorPath = e.entrenadorPath;
+        this.equipoPath = e.equipoPath;
+  	}
 
-  
+    public Equipo(String nombre, String entrenador, List<Jugador> jugadores, String estadio, Fecha fundacion, String entrenadorPath, String equipoPath) {
+        this.nombre = nombre;
+        this.entrenador = entrenador;
+        this.jugadores = jugadores;
+        this.estadio = estadio;
+        this.fundacion = fundacion;
+        this.entrenadorPath = entrenadorPath;
+        this.equipoPath = equipoPath;
+    }
 
-  // Constructor copia
-  public Equipo(Equipo otroEquipo) {
-      // Copia los valores de otro equipo
-      this.nombre = otroEquipo.nombre;
-      this.ciudad = otroEquipo.ciudad;
-      this.jugadores = new ArrayList<>(otroEquipo.jugadores); // Crea una copia de la lista de jugadores
-  }
-  
-//Constructor personalizado
- public Equipo(String nombre, String ciudad, List<Jugador> jugadores) {
-     // Inicializa los atributos con valores proporcionados
-     this.nombre = nombre;
-     this.ciudad = ciudad;
-     this.jugadores = new ArrayList<>(jugadores); // Crea una copia de la lista de jugadores
- }
+    public String getNombre() { 
+        return nombre; 
+    }
 
-  // Getters y Setters
+    public void setNombre(String nombre) { 
+        this.nombre = nombre; 
+    }
 
-  // Obtiene el nombre del equipo
-  public String getNombre() {
-      return nombre;
-  }
+    public String getEntrenador() { 
+        return entrenador; 
+    }
 
-  // Establece el nombre del equipo
-  public void setNombre(String nombre) {
-      this.nombre = nombre;
-  }
+    public void setEntrenador(String entrenador) { 
+        this.entrenador = entrenador; 
+    }
 
-  // Obtiene la ciudad del equipo
-  public String getCiudad() {
-      return ciudad;
-  }
+    public List<Jugador> getJugadores() { 
+        return jugadores; 
+    }
 
-  // Establece la ciudad del equipo
-  public void setCiudad(String ciudad) {
-      this.ciudad = ciudad;
-  }
+    public void setJugadores(List<Jugador> jugadores) { 
+        this.jugadores = jugadores; 
+    }
 
-  // Obtiene la lista de jugadores del equipo
-  public List<Jugador> getJugadores() {
-      return new ArrayList<>(jugadores); // Devuelve una copia para evitar modificaciones externas
-  }
+    public String getEstadio() { 
+        return estadio; 
+    }
 
-  // Establece la lista de jugadores del equipo
-  public void setJugadores(List<Jugador> jugadores) {
-      this.jugadores = new ArrayList<>(jugadores); // Crea una copia de la lista
-  }
+    public void setEstadio(String estadio) { 
+        this.estadio = estadio; 
+    }
 
-  // Añade un jugador al equipo
-  public void agregarJugador(Jugador jugador) {
-      this.jugadores.add(jugador);
-  }
+    public Fecha getFundacion() { 
+        return fundacion; 
+    }
 
-  // Elimina un jugador del equipo
-  public void eliminarJugador(Jugador jugador) {
-      this.jugadores.remove(jugador);
-  }
+    public void setFundacion(Fecha fundacion) { 
+        this.fundacion = fundacion; 
+    }
+    
+    public String getEntrenadorPath() { 
+        return entrenadorPath; 
+    }
 
-  // Representación en formato de cadena (toString)
-  @Override
-  public String toString() {
-      // Devuelve una representación de los atributos del equipo como texto
-      return "Equipo: " +
-              "nombre= " + nombre + '\'' +
-              ", ciudad= " + ciudad + '\'' +
-              ", jugadores= " + jugadores;
-  }
+    public void setEntrenadorPath(String entrenadorPath) { 
+        this.entrenadorPath = entrenadorPath; 
+    }
+    
+    public String getEquipoPath() { 
+        return equipoPath; 
+    }
 
-  // Método hashCode
-  @Override
-  public int hashCode() {
-      // Calcula un código hash basado en los atributos del equipo
-      return Objects.hash(nombre, ciudad, jugadores);
-  }
+    public void setEquipoPath(String equipoPath) { 
+        this.equipoPath = equipoPath; 
+    }
 
-  // Método equals
-  @Override
-  public boolean equals(Object obj) {
-      // Comprueba si dos equipos son iguales comparando sus atributos
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      Equipo equipo = (Equipo) obj;
-      return Objects.equals(nombre, equipo.nombre) &&
-              Objects.equals(ciudad, equipo.ciudad) &&
-              Objects.equals(jugadores, equipo.jugadores);
-  }
+    // toString
+    @Override
+    public String toString() { 
+        return "Equipo: " +
+                "Nombre = " + nombre + '\'' +
+                ", Estadio = " + estadio + '\'' +
+                ", Jugadores = " + jugadores;
+    }
+    
+    // hashCode
+    @Override
+	public int hashCode() {
+		return Objects.hash(nombre, entrenador, jugadores, estadio, fundacion, entrenadorPath, equipoPath);
+	}
+    
+    // equals
+    @Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Equipo other = (Equipo) obj;
+		return Objects.equals(entrenador, other.entrenador) && Objects.equals(estadio, other.estadio)
+				&& Objects.equals(fundacion, other.fundacion) && Objects.equals(jugadores, other.jugadores)
+				&& Objects.equals(nombre, other.nombre);
+	}
 }
-
-
