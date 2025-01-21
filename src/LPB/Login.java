@@ -6,8 +6,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-
-
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,18 +24,19 @@ import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 
-public class Login extends JFrame implements MouseListener {
-	private static final long serialVersionUID = -410820418148204249L;
-	private JPanel panel;
-	private ImageIcon logo;
-	private JLabel labelLogo;
-	private JLabel userLabel;
-	private JLabel passwordLabel;
-	private JTextField  txtUsuario;
-	private JPasswordField txtPassword;
-	private JButton btnIniciarSesion;
+public class Login extends JFrame {
+    private static final long serialVersionUID = -410820418148204249L;
+    private JPanel panel;
+    private ImageIcon logo;
+    private JLabel labelLogo;
+    private JLabel userLabel;
+    private JLabel passwordLabel;
+    private JTextField txtUsuario;
+    private JPasswordField txtPassword;
+    private JButton btnIniciarSesion;
     private JButton btnInvitado;
     private BackgroundFader fader;
+    private MouseAdapter mouseAdapter;
 
 	public static void main(String[] args) {
 	    try {
@@ -149,19 +150,12 @@ public class Login extends JFrame implements MouseListener {
             fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
         } else if (o == btnInvitado) {
             fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
-        }
-    }
-
-    @Override
-    public void mouseExited(MouseEvent ae) {
-        Object o = ae.getSource();
-
-        if (o == btnIniciarSesion) {
-            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
-        } else if (o == btnInvitado) {
-            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
-        }
-    }
+=======
+    public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (Exception e) {
+            e.printStackTrace();
 
     @Override
     public void mouseClicked(MouseEvent e) {
@@ -173,5 +167,27 @@ public class Login extends JFrame implements MouseListener {
 
     @Override
     public void mouseReleased(MouseEvent e) {
+
+        String rol = "";
+        if ("Administrador".equals(usuario) && "1234".equals(password)) {
+            rol = "Administrador";
+        } else if ("Arbitro".equals(usuario) && "1234".equals(password)) {
+            rol = "Arbitro";
+        } else if ("Entrenador".equals(usuario) && "1234".equals(password)) {
+            rol = "Entrenador";
+        } else {
+            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        JOptionPane.showMessageDialog(this, "Bienvenido " + rol + ".");
+        new Menu(rol, usuario).setVisible(true);
+        dispose();
+    }
+
+    private void entrarComoInvitado() {
+        JOptionPane.showMessageDialog(this, "Bienvenido Invitado.");
+        new Menu("invitado", "Invitado").setVisible(true);
+        dispose();
     }
 }
