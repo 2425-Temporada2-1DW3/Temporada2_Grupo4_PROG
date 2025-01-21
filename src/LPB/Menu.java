@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Usuario.Rol;
 
 public class Menu extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -1200889095902166795L;
@@ -32,7 +33,15 @@ public class Menu extends JFrame implements MouseListener {
 	private ImageIcon logo;
 	private BackgroundFader fader;
 
-	public Menu(String rol, String usuario) {
+	
+	
+
+	/**
+	 * Create the frame.
+	 * @wbp.parser.constructor
+	 */
+	@SuppressWarnings({ "static-access" })
+	public Menu(Rol rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -109,14 +118,20 @@ public class Menu extends JFrame implements MouseListener {
 			}
 		});
 
-		btnUsuarios = new BotonRedondeado("Usuarios", null);
+		btnUsuarios = new BotonRedondeado("Usuarios");
+		btnUsuarios.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new MenuUsuarios().setVisible(true);
+				dispose();
+			}
+		});
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
 		btnUsuarios.setBounds(50, 311, 200, 40);
 		btnUsuarios.addMouseListener(this);
 
-		if ("Administrador".equals(rol)) {
+		if (rol.ADMINISTRADOR.equals(rol)) {
 			panelDerecho.add(btnUsuarios);
 		}
 
@@ -137,6 +152,14 @@ public class Menu extends JFrame implements MouseListener {
 		});
 
 		getContentPane().add(panelDerecho);
+	}
+
+	public Menu(String string, String usuario) {
+		// TODO Auto-generated constructor stub
+	}
+
+	public Menu() {
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
