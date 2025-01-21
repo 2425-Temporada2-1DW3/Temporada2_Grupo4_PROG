@@ -125,6 +125,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnNuevo.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevo.setBackground(new Color(0x545454));
 		btnNuevo.setBounds(755, 22, 50, 50);
+		btnNuevo.setFocusPainted(false);
 		if ("Administrador".equals(rol)) {
 			panelInferior.add(btnNuevo);
 		}
@@ -134,12 +135,13 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnVolverMenu.setBackground(new Color(64, 64, 64));
 		btnVolverMenu.setForeground(Color.WHITE);
 		btnVolverMenu.setBounds(673, 351, 140, 30);
+		btnVolverMenu.setFocusPainted(false);
 		panelInferior.add(btnVolverMenu);
 
 		btnVolverMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Menu(usuario, rol).setVisible(true);
+				new Menu(rol, usuario).setVisible(true);
 				dispose();
 			}
 		});

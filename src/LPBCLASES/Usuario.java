@@ -10,13 +10,13 @@ public class Usuario implements Serializable {
 
     private String usuario;
     private String contrasena;
-    private Rol rol; // Usamos el enum Rol
+    private String rol;
 
     // Constructor por defecto
     public Usuario() {
         this.usuario = "";
         this.contrasena = "";
-        this.rol = Rol.USUARIO; // Por defecto, los usuarios son invitados
+        this.rol = "Usuario"; // Por defecto, los usuarios son invitados
     }
 
     // Constructor copia
@@ -30,11 +30,11 @@ public class Usuario implements Serializable {
     public Usuario(String u, String c) {
         this.usuario = u;
         this.contrasena = c;
-        this.rol = Rol.USUARIO; // Por defecto, el rol es Usuario
+        this.rol = "Usuario"; // Por defecto, el rol es Usuario
     }
 
     // Constructor personalizado con rol
-    public Usuario(String u, String c, Rol r) {
+    public Usuario(String u, String c, String r) {
         this.usuario = u;
         this.contrasena = c;
         this.rol = r;
@@ -57,46 +57,12 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
-    public Rol getRol() {
+    public String getRol() {
         return rol;
     }
 
-    public void setRol(Rol rol) {
+    public void setRol(String rol) {
         this.rol = rol;
-    }
-
-    // Enum para los roles
-    public enum Rol {
-        ADMINISTRADOR(1, "Administrador"), 
-        ARBITRO(2, "Árbitro"), 
-        ENTRENADOR(3, "Entrenador"), 
-        USUARIO(4, "Usuario");
-
-        private final int codigo;
-        private final String nombreAmigable;
-
-        Rol(int codigo, String nombreAmigable) {
-            this.codigo = codigo;
-            this.nombreAmigable = nombreAmigable;
-        }
-
-        public int getCodigo() {
-            return codigo;
-        }
-
-        @Override
-        public String toString() {
-            return nombreAmigable; // Devuelve el nombre amigable
-        }
-
-        public static Rol fromCodigo(int codigo) {
-            for (Rol rol : Rol.values()) {
-                if (rol.codigo == codigo) {
-                    return rol;
-                }
-            }
-            throw new IllegalArgumentException("Código de rol inválido: " + codigo);
-        }
     }
 
     // hashCode
@@ -115,9 +81,7 @@ public class Usuario implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Usuario other = (Usuario) obj;
-        return Objects.equals(contrasena, other.contrasena) 
-                && Objects.equals(usuario, other.usuario) 
-                && rol == other.rol;
+        return Objects.equals(contrasena, other.contrasena) && Objects.equals(usuario, other.usuario) && rol == other.rol;
     }
 
     // toString

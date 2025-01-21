@@ -6,8 +6,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,7 +22,7 @@ import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 
-public class Login extends JFrame {
+public class Login extends JFrame implements MouseListener {
     private static final long serialVersionUID = -410820418148204249L;
     private JPanel panel;
     private ImageIcon logo;
@@ -36,8 +34,10 @@ public class Login extends JFrame {
     private JButton btnIniciarSesion;
     private JButton btnInvitado;
     private BackgroundFader fader;
-    private MouseAdapter mouseAdapter;
 
+	/**
+	 * Launch the application.
+	 */
 	public static void main(String[] args) {
 	    try {
 	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -57,6 +57,9 @@ public class Login extends JFrame {
 		});
 	}
 
+	/**
+	 * Create the frame.
+	 */
 	public Login() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setSize(850, 550);
@@ -99,7 +102,7 @@ public class Login extends JFrame {
 		txtPassword.setBounds(376, 312, 200, 35);
 		panel.add(txtPassword);
 
-		btnIniciarSesion = new BotonRedondeado("Iniciar Sesión");
+		btnIniciarSesion = new BotonRedondeado("Iniciar Sesión", null);
 		btnIniciarSesion.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnIniciarSesion.setBounds(327, 395, 200, 40);
 		btnIniciarSesion.setBackground(new Color(0x13427E));
@@ -126,7 +129,7 @@ public class Login extends JFrame {
 
         txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
-        btnInvitado = new BotonRedondeado("Entrar como Invitado");
+        btnInvitado = new BotonRedondeado("Entrar como Invitado", null);
         btnInvitado.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnInvitado.setBounds(327, 445, 200, 40);
         btnInvitado.setBackground(new Color(0xf46b20));
@@ -137,7 +140,7 @@ public class Login extends JFrame {
 
         btnInvitado.addActionListener(_ -> {
             JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-            new Menu("invitado", "Invitado").setVisible(true);
+            new Menu("Invitado", "Invitado").setVisible(true);
             dispose();
         });
     }
@@ -150,44 +153,31 @@ public class Login extends JFrame {
             fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
         } else if (o == btnInvitado) {
             fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
-=======
-    public static void main(String[] args) {
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (Exception e) {
-            e.printStackTrace();
+        }
+    }
+    
+	@Override
+	public void mouseExited(MouseEvent ae) {
+        Object o = ae.getSource();
 
+        if (o == btnIniciarSesion) {
+            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
+        } else if (o == btnInvitado) {
+            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
+        }		
+	}
+    
     @Override
     public void mouseClicked(MouseEvent e) {
     }
 
     @Override
     public void mousePressed(MouseEvent e) {
+    	
     }
 
     @Override
     public void mouseReleased(MouseEvent e) {
-
-        String rol = "";
-        if ("Administrador".equals(usuario) && "1234".equals(password)) {
-            rol = "Administrador";
-        } else if ("Arbitro".equals(usuario) && "1234".equals(password)) {
-            rol = "Arbitro";
-        } else if ("Entrenador".equals(usuario) && "1234".equals(password)) {
-            rol = "Entrenador";
-        } else {
-            JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        JOptionPane.showMessageDialog(this, "Bienvenido " + rol + ".");
-        new Menu(rol, usuario).setVisible(true);
-        dispose();
-    }
-
-    private void entrarComoInvitado() {
-        JOptionPane.showMessageDialog(this, "Bienvenido Invitado.");
-        new Menu("invitado", "Invitado").setVisible(true);
-        dispose();
+    	
     }
 }

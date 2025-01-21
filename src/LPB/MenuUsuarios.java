@@ -1,7 +1,5 @@
 package LPB;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -40,6 +38,8 @@ import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JPasswordField;
 import java.awt.Color;
+import java.awt.EventQueue;
+
 import javax.swing.JScrollPane;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -208,7 +208,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		        if (usuarioSeleccionado != null) {
 		            textUsuario.setText(usuarioSeleccionado.getUsuario());
 		            passwordField.setText(usuarioSeleccionado.getContrasena());
-		            comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol().name());
+		            comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
 		        }
 		    }
 		});
@@ -266,8 +266,9 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		
 		// Generar opciones del ComboBox a partir del enum
         comboBoxRol = new JComboBox<>();
-        for (Usuario.Rol rol : Usuario.Rol.values()) {
-            comboBoxRol.addItem(rol.name());
+        String[] roles = {"Administrador", "Árbitro", "Entrenador", "Usuario"};
+        for (String rol : roles) {
+            comboBoxRol.addItem(rol);
         }
 		panel_2.add(comboBoxRol);
 		comboBoxRol.setFont(new Font("Tahoma", Font.PLAIN, 18));
@@ -279,7 +280,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		flowLayout.setHgap(80);
 		panelCampos.add(panel_4);
 		
-		btnGuardar = new BotonRedondeado("Guardar");
+		btnGuardar = new BotonRedondeado("Guardar", null);
 		btnGuardar.addActionListener(this);
 		panel_4.add(btnGuardar);
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -289,7 +290,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		btnGuardar.setFocusPainted(false);
 		btnGuardar.addMouseListener(this);
 		
-		btnVolver = new BotonRedondeado("Volver");
+		btnVolver = new BotonRedondeado("Volver", null);
 		btnVolver.addActionListener(this);
 		btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolver.setBounds(327, 395, 200, 40);
@@ -298,7 +299,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		btnVolver.setFocusPainted(false);
 		btnVolver.addMouseListener(this);
 		
-		btnEliminar = new BotonRedondeado("Eliminar");
+		btnEliminar = new BotonRedondeado("Eliminar", null);
 		btnEliminar.addActionListener(this);
 		panel_4.add(btnEliminar);
 		panel_4.add(btnVolver);
@@ -346,7 +347,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		        Usuario usuarioExistente = listaUsuarios.get(usuarioSeleccionadoIndex);
     		        usuarioExistente.setUsuario(usuario);
     		        usuarioExistente.setContrasena(contrasena);
-    		        usuarioExistente.setRol(Usuario.Rol.valueOf(rol));
+    		        usuarioExistente.setRol(rol);
 
     		        // Actualizar la lista visual
     		        actualizarLista();
@@ -355,7 +356,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 
     		    } else {
     		        // Si no hay un usuario seleccionado, se crea uno nuevo
-    		        Usuario nuevoUsuario = new Usuario(usuario, contrasena, Usuario.Rol.valueOf(rol));
+    		        Usuario nuevoUsuario = new Usuario(usuario, contrasena, rol);
     		        listaUsuarios.add(nuevoUsuario);
     		        actualizarLista();
     		    }
@@ -389,13 +390,12 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		    comboBoxRol.setSelectedIndex(0);
     		    usuarioSeleccionadoIndex = -1;
     	    }
+    	    
     	    if (source == btnVolver) { 
-    	    	new Menu().setVisible(true);
-    	    	 this.dispose(); // Cierra esta ventana
-    	               
-                }
-                
+    	    	new Menu("Administrador", "Admin").setVisible(true);
+    	    	this.dispose(); // Cierra esta ventana                
     	    }
+    }
 
     
 
