@@ -1,6 +1,9 @@
 package LPBCLASES;
 
 import java.util.Objects;
+
+import javax.swing.ImageIcon;
+
 import java.io.Serializable;
 
 public class Jugador implements Comparable<Jugador>,Serializable {
@@ -13,6 +16,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   private String posicion; // Posición en el campo (base, escolta, etc.)
   private int numeroCamiseta; // Número de camiseta del jugador
   private int puntosTotales; // Puntos totales acumulados por el jugador
+  private ImageIcon foto; // Foto de cada jugador
 
   // Constructor por defecto
   public Jugador() {
@@ -21,6 +25,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
       this.posicion = "";
       this.numeroCamiseta = 0;
       this.puntosTotales = 0;
+      this.foto = null;
   }
 
 
@@ -31,16 +36,18 @@ public class Jugador implements Comparable<Jugador>,Serializable {
       this.posicion = otroJugador.posicion;
       this.numeroCamiseta = otroJugador.numeroCamiseta;
       this.puntosTotales = otroJugador.puntosTotales;
+      this.foto = otroJugador.foto;
   }
 
   
 //Constructor personalizado
- public Jugador(String nombre, String posicion, int numeroCamiseta, int puntosTotales) {
+ public Jugador(String nombre, String posicion, int numeroCamiseta, int puntosTotales, ImageIcon foto) {
      // Inicializa los atributos con valores proporcionados
      this.nombre = nombre;
      this.posicion = posicion;
      this.numeroCamiseta = numeroCamiseta;
      this.puntosTotales = puntosTotales;
+     this.foto = foto;
  }
  
   // Getters y Setters
@@ -84,16 +91,23 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   public void setPuntosTotales(int puntosTotales) {
       this.puntosTotales = puntosTotales;
   }
+ 
+  // Obtiene la foto del jugador
+  public ImageIcon getFoto() {
+	  return foto;
+  }
+  
+  // Establece la foto del jugador
+  public void setFoto(ImageIcon foto) {
+	  this.foto = foto;
+  }
 
   // Representación en formato de cadena (toString)
   @Override
   public String toString() {
       // Devuelve una representación de los atributos del jugador como texto
-      return "Jugador: " +
-              "nombre= " + nombre + '\'' +
-              ", posicion= " + posicion + '\'' +
-              ", numeroCamiseta= " + numeroCamiseta +
-              ", puntosTotales= " + puntosTotales ;
+      return "Jugador: " + nombre + ", Posicion: " + posicion + ", Dorsal: " + numeroCamiseta;
+         
               
   }
 
@@ -123,4 +137,12 @@ public class Jugador implements Comparable<Jugador>,Serializable {
       // Compara jugadores en función de sus puntos totales
       return Integer.compare(this.puntosTotales, otroJugador.puntosTotales);
   }
+
+
+
+
+public String toXML() {
+	// TODO Auto-generated method stub
+	return null;
+}
 }
