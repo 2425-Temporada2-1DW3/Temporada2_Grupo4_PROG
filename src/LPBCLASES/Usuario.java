@@ -6,20 +6,17 @@ import java.util.Objects;
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
+    public static final String ARCHIVO_USUARIOS = "usuarios.ser";
+
     private String usuario;
     private String contrasena;
-    private Rol rol; // Ahora usamos un atributo de tipo Rol en lugar de booleano
-
-    // Enum para los roles
-    public enum Rol {
-        ADMINISTRADOR, ENTRENADOR, ARBITRO, INVITADO
-    }
+    private String rol;
 
     // Constructor por defecto
     public Usuario() {
         this.usuario = "";
         this.contrasena = "";
-        this.rol = Rol.INVITADO; // Por defecto, los usuarios son invitados
+        this.rol = "Usuario"; // Por defecto, los usuarios son invitados
     }
 
     // Constructor copia
@@ -33,17 +30,17 @@ public class Usuario implements Serializable {
     public Usuario(String u, String c) {
         this.usuario = u;
         this.contrasena = c;
-        this.rol = Rol.INVITADO; // Por defecto, el rol es INVITADO
+        this.rol = "Usuario"; // Por defecto, el rol es Usuario
     }
 
     // Constructor personalizado con rol
-    public Usuario(String u, String c, Rol rol) {
+    public Usuario(String u, String c, String r) {
         this.usuario = u;
         this.contrasena = c;
-        this.rol = rol;
+        this.rol = r;
     }
 
-    // Getters and Setters
+    // Getters y Setters
     public String getUsuario() {
         return usuario;
     }
@@ -60,11 +57,11 @@ public class Usuario implements Serializable {
         this.contrasena = contrasena;
     }
 
-    public Rol getRol() {
+    public String getRol() {
         return rol;
     }
 
-    public void setRol(Rol rol) {
+    public void setRol(String rol) {
         this.rol = rol;
     }
 
@@ -84,14 +81,12 @@ public class Usuario implements Serializable {
         if (getClass() != obj.getClass())
             return false;
         Usuario other = (Usuario) obj;
-        return Objects.equals(contrasena, other.contrasena) 
-                && Objects.equals(usuario, other.usuario) 
-                && rol == other.rol;
+        return Objects.equals(contrasena, other.contrasena) && Objects.equals(usuario, other.usuario) && rol == other.rol;
     }
 
     // toString
     @Override
     public String toString() {
-        return "Usuario [usuario=" + usuario + ", contrasena=" + contrasena + ", rol=" + rol + "]";
+        return "Usuario: " + usuario + " | Rol: " + rol;
     }
 }

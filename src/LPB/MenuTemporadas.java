@@ -83,6 +83,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas1.setBackground(new Color(0xf46b20));
 		btnTemporadas1.setForeground(Color.WHITE);
 		btnTemporadas1.setBounds(50, 176, 200, 40);
+		btnTemporadas1.setFocusPainted(false);
 		btnTemporadas1.addMouseListener(this);
 		panelDerecho.add(btnTemporadas1);
 
@@ -91,6 +92,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas2.setBackground(new Color(0xf46b20));
 		btnTemporadas2.setForeground(Color.WHITE);
 		btnTemporadas2.setBounds(50, 236, 200, 40);
+		btnTemporadas2.setFocusPainted(false);
 		btnTemporadas2.addMouseListener(this);
 		panelDerecho.add(btnTemporadas2);
 
@@ -99,6 +101,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnTemporadas3.setBackground(new Color(0xf46b20));
 		btnTemporadas3.setForeground(Color.WHITE);
 		btnTemporadas3.setBounds(50, 296, 200, 40);
+		btnTemporadas3.setFocusPainted(false);
 		btnTemporadas3.addMouseListener(this);
 		panelDerecho.add(btnTemporadas3);
 
@@ -107,6 +110,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevaTemporada.setBackground(new Color(0x545454));
 		btnNuevaTemporada.setBounds(50, 356, 200, 40);
+		btnNuevaTemporada.setFocusPainted(false);
 		btnNuevaTemporada.addMouseListener(this);
 
 		if ("Administrador".equals(rol)) {
@@ -118,13 +122,14 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnVolverMenu.setBackground(new Color(64, 64, 64));
 		btnVolverMenu.setForeground(Color.WHITE);
 		btnVolverMenu.setBounds(250, 461, 140, 30);
+		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 
 		btnVolverMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Menu(usuario, usuario).setVisible(true);
+				new Menu(rol, usuario).setVisible(true);
 				dispose();
 			}
 		});

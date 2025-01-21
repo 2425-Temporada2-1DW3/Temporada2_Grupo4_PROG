@@ -473,6 +473,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		String nombre = "" + textNombre.getText() + " " + textApellido.getText();
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
+		String photoPath = "";
 	
 		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
 		
@@ -696,6 +697,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		String nombre = "" + nombreSelect + " " + apellidoSelect;
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
+		String photoPath = "";
 		
 		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
 		dlm.set(Indice, nuevoJugador);

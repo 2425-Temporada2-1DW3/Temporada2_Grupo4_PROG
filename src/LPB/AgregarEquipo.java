@@ -24,6 +24,8 @@ public class AgregarEquipo extends JFrame {
 	private JTextField anioFundField;
 	private JLabel logoLabel;
 	private JLabel entrenadorLabel;
+	private File logoFile;
+	private File entrenadorFile;
 	private JPanel jugadoresPanel;
 	private EquiposTemporada equiposTemporadaFrame;
 	private BotonRedondeado btnLogo;
@@ -43,6 +45,8 @@ public class AgregarEquipo extends JFrame {
 	private JLabel estadioLabel;
 	private JLabel fundacionLabel;
 	private JLabel jugadoresLabel;
+	private JLabel fundacionLabel_1;
+	private JLabel fundacionLabel_2;
 	private File selectedFile;
 	private String jugadorNombre;
 	private String jugadorPosicion;
@@ -50,7 +54,7 @@ public class AgregarEquipo extends JFrame {
 	private JLabel jugadorLabel;
 	private JLabel jugadorIcon;
 	private JPanel jugadorPanel;
-	private String nombre, entrenador, estadio;
+	private String nombre, entrenador, estadio, jugadorPhotoPath, equipoPath, entrenadorPath;
 	private int diaFund, mesFund, anioFund;
 
 	public AgregarEquipo(EquiposTemporada equiposTemporadaFrame) {
@@ -141,10 +145,20 @@ public class AgregarEquipo extends JFrame {
 		diaFundField.setBounds(20, 390, 82, 30);
 		panelIzquierdo.add(diaFundField);
 		
+		fundacionLabel_1 = new JLabel("/");
+		fundacionLabel_1.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		fundacionLabel_1.setBounds(115, 389, 10, 30);
+		panelIzquierdo.add(fundacionLabel_1);
+		
 		mesFundField = new TextoRedondeado(20);
 		mesFundField.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		mesFundField.setBounds(132, 390, 96, 30);
 		panelIzquierdo.add(mesFundField);
+		
+		fundacionLabel_2 = new JLabel("/");
+		fundacionLabel_2.setFont(new Font("SansSerif", Font.PLAIN, 16));
+		fundacionLabel_2.setBounds(238, 390, 10, 30);
+		panelIzquierdo.add(fundacionLabel_2);
 		
 		anioFundField = new TextoRedondeado(20);
 		anioFundField.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -166,16 +180,6 @@ public class AgregarEquipo extends JFrame {
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnGuardar.addActionListener(_ -> guardarEquipo());
 		panelIzquierdo.add(btnGuardar);
-		
-		JLabel fundacionLabel_1 = new JLabel("/");
-		fundacionLabel_1.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		fundacionLabel_1.setBounds(115, 389, 10, 30);
-		panelIzquierdo.add(fundacionLabel_1);
-		
-		JLabel fundacionLabel_2 = new JLabel("/");
-		fundacionLabel_2.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		fundacionLabel_2.setBounds(238, 390, 10, 30);
-		panelIzquierdo.add(fundacionLabel_2);
 
 		jugadoresLabel = new JLabel("Jugadores");
 		jugadoresLabel.setFont(new Font("SansSerif", Font.BOLD, 25));
@@ -191,7 +195,7 @@ public class AgregarEquipo extends JFrame {
 		scrollPane.setBounds(20, 60, 400, 400);
 		panelDerecho.add(scrollPane);
 
-		jugadores = new ArrayList<Jugador>();
+		jugadores = new ArrayList<>();
 	}
 
 	private void seleccionarImagen(JLabel label, boolean isLogo) {
@@ -203,11 +207,10 @@ public class AgregarEquipo extends JFrame {
 			selectedFile = fileChooser.getSelectedFile();
 			if (selectedFile.exists()) {
 				label.setText(selectedFile.getName());
-				if (isLogo) {
-					//logoFile = selectedFile;
-				} else {
-					//entrenadorFile = selectedFile;
-				}
+				if (isLogo)
+					logoFile = selectedFile;
+				else
+					entrenadorFile = selectedFile;
 			}
 		}
 	}
@@ -235,7 +238,7 @@ public class AgregarEquipo extends JFrame {
 							jugadoresPanel.revalidate();
 							jugadoresPanel.repaint();
 		
-							jugadores.add(new Jugador(jugadorNombre, jugadorPosicion, jugadorDorsal));
+							jugadores.add(new Jugador(jugadorNombre, jugadorPosicion, jugadorDorsal, jugadorPhotoPath));
 						}
 					}
 				}
@@ -256,7 +259,7 @@ public class AgregarEquipo extends JFrame {
 			return;
 		}
 
-		nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, new Fecha(diaFund, mesFund, anioFund));
+		nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, new Fecha(diaFund, mesFund, anioFund), equipoPath, entrenadorPath);
 		equiposTemporadaFrame.agregarNuevoEquipoDesdeFormulario(nuevoEquipo);
 		JOptionPane.showMessageDialog(this, "Equipo agregado correctamente");
 		dispose();

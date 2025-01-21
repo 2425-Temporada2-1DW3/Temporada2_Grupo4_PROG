@@ -60,11 +60,11 @@ public class EditarEquipo extends JFrame {
 		infoPanel.add(new JLabel("Fundación:"));
 		infoPanel.add(fundacionField);
 
-		DefaultListModel<Jugador> jugadoresModel = new DefaultListModel<>();
+		DefaultListModel<Jugador> jugadoresModel = new DefaultListModel<Jugador>();
 		for (Jugador jugador : equipo.getJugadores()) {
 			jugadoresModel.addElement(jugador);
 		}
-		JList<Jugador> jugadoresList = new JList<>(jugadoresModel);
+		JList<Jugador> jugadoresList = new JList<Jugador>(jugadoresModel);
 		jugadoresList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
 			JPanel playerPanel = new JPanel(new BorderLayout());
 			JLabel playerImage = new JLabel(new ImageIcon(value.getPhotoPath()));
