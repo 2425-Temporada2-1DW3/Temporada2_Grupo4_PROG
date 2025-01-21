@@ -1,111 +1,124 @@
 package LPBCLASES;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
-public class Equipo {
-//Atributos de la clase Equipo
-  private String nombre; // Nombre del equipo
-  private String ciudad; // Ciudad del equipo
-  private List<Jugador> jugadores; // Lista de jugadores del equipo
+public class Equipo implements Serializable {
 
-  // Constructor por defecto
-  public Equipo() {
-      // Inicializa los atributos con valores predeterminados
-      this.nombre = "";
-      this.ciudad = "";
-      this.jugadores = new ArrayList<>();
-  }
+    private static final long serialVersionUID = 1L;
+    private String nombre;
+    private String entrenador;
+    private List<PlayerWithImage> jugadores; // Almacena jugadores con nombres e imágenes
+    private String logoPath;
+    private String entrenadorPath;
+    private String estadio;
+    private String fundacion;
 
-  
+    public Equipo(String nombre, String entrenador, List<PlayerWithImage> jugadores, String logoPath, String entrenadorPath, String estadio, String fundacion) {
+        this.nombre = nombre;
+        this.entrenador = entrenador;
+        this.jugadores = jugadores;
+        this.logoPath = logoPath;
+        this.entrenadorPath = entrenadorPath;
+        this.estadio = estadio;
+        this.fundacion = fundacion;
+    }
 
-  // Constructor copia
-  public Equipo(Equipo otroEquipo) {
-      // Copia los valores de otro equipo
-      this.nombre = otroEquipo.nombre;
-      this.ciudad = otroEquipo.ciudad;
-      this.jugadores = new ArrayList<>(otroEquipo.jugadores); // Crea una copia de la lista de jugadores
-  }
-  
-//Constructor personalizado
- public Equipo(String nombre, String ciudad, List<Jugador> jugadores) {
-     // Inicializa los atributos con valores proporcionados
-     this.nombre = nombre;
-     this.ciudad = ciudad;
-     this.jugadores = new ArrayList<>(jugadores); // Crea una copia de la lista de jugadores
- }
+    public String getNombre() { 
+        return nombre; 
+    }
 
-  // Getters y Setters
+    public void setNombre(String nombre) { 
+        this.nombre = nombre; 
+    }
 
-  // Obtiene el nombre del equipo
-  public String getNombre() {
-      return nombre;
-  }
+    public String getEntrenador() { 
+        return entrenador; 
+    }
 
-  // Establece el nombre del equipo
-  public void setNombre(String nombre) {
-      this.nombre = nombre;
-  }
+    public void setEntrenador(String entrenador) { 
+        this.entrenador = entrenador; 
+    }
 
-  // Obtiene la ciudad del equipo
-  public String getCiudad() {
-      return ciudad;
-  }
+    public List<PlayerWithImage> getJugadores() { 
+        return jugadores; 
+    }
 
-  // Establece la ciudad del equipo
-  public void setCiudad(String ciudad) {
-      this.ciudad = ciudad;
-  }
+    public void setJugadores(List<PlayerWithImage> jugadores) { 
+        this.jugadores = jugadores; 
+    }
 
-  // Obtiene la lista de jugadores del equipo
-  public List<Jugador> getJugadores() {
-      return new ArrayList<>(jugadores); // Devuelve una copia para evitar modificaciones externas
-  }
+    public String getLogoPath() { 
+        return logoPath; 
+    }
 
-  // Establece la lista de jugadores del equipo
-  public void setJugadores(List<Jugador> jugadores) {
-      this.jugadores = new ArrayList<>(jugadores); // Crea una copia de la lista
-  }
+    public void setLogoPath(String logoPath) { 
+        this.logoPath = logoPath; 
+    }
 
-  // Añade un jugador al equipo
-  public void agregarJugador(Jugador jugador) {
-      this.jugadores.add(jugador);
-  }
+    public String getEntrenadorPath() { 
+        return entrenadorPath; 
+    }
 
-  // Elimina un jugador del equipo
-  public void eliminarJugador(Jugador jugador) {
-      this.jugadores.remove(jugador);
-  }
+    public void setEntrenadorPath(String entrenadorPath) { 
+        this.entrenadorPath = entrenadorPath; 
+    }
 
-  // Representación en formato de cadena (toString)
-  @Override
-  public String toString() {
-      // Devuelve una representación de los atributos del equipo como texto
-      return "Equipo: " +
-              "nombre= " + nombre + '\'' +
-              ", ciudad= " + ciudad + '\'' +
-              ", jugadores= " + jugadores;
-  }
+    public String getEstadio() { 
+        return estadio; 
+    }
 
-  // Método hashCode
-  @Override
-  public int hashCode() {
-      // Calcula un código hash basado en los atributos del equipo
-      return Objects.hash(nombre, ciudad, jugadores);
-  }
+    public void setEstadio(String estadio) { 
+        this.estadio = estadio; 
+    }
 
-  // Método equals
-  @Override
-  public boolean equals(Object obj) {
-      // Comprueba si dos equipos son iguales comparando sus atributos
-      if (this == obj) return true;
-      if (obj == null || getClass() != obj.getClass()) return false;
-      Equipo equipo = (Equipo) obj;
-      return Objects.equals(nombre, equipo.nombre) &&
-              Objects.equals(ciudad, equipo.ciudad) &&
-              Objects.equals(jugadores, equipo.jugadores);
-  }
+    public String getFundacion() { 
+        return fundacion; 
+    }
+
+    public void setFundacion(String fundacion) { 
+        this.fundacion = fundacion; 
+    }
+
+    @Override
+    public String toString() { 
+        return nombre; 
+    }
+
+    public static class PlayerWithImage implements Serializable {
+        private static final long serialVersionUID = 1L;
+        private String name;
+        private String imagePath;
+
+        public PlayerWithImage(String name, String imagePath) {
+            this.name = name;
+            this.imagePath = imagePath;
+        }
+
+        public String getName() { 
+            return name; 
+        }
+
+        public void setName(String name) { 
+            this.name = name; 
+        }
+
+        public String getImagePath() { 
+            return imagePath; 
+        }
+
+        public void setImagePath(String imagePath) { 
+            this.imagePath = imagePath; 
+        }
+
+        @Override
+        public String toString() { 
+            return name; 
+        }
+
+		public String getPosition() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+    }
 }
-
-
