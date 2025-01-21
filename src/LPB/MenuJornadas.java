@@ -1,17 +1,21 @@
 package LPB;
+
 import java.awt.Color;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.TextoRedondeado;
+
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -20,12 +24,11 @@ import javax.swing.JComboBox;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 import java.awt.BorderLayout;
-import javax.swing.JScrollPane;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+
 public class MenuJornadas extends JFrame implements MouseListener {
+
 	private static final long serialVersionUID = 1L;
+
 	// Componentes (variables) de la interfaz
 	private JPanel contentPane;
 	private JPanel panel;
@@ -39,6 +42,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private JPanel panel_1;
 	private JPanel panel_3;
 	private JPanel panel_5;
+	
+	private JTable table;
 	private JTextField textPtsLocal1;
 	private JTextField textPtsVisitante1;
 	private JTextField textPtsLocal2;
@@ -48,7 +53,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	
 	private JButton btnAtras;
 	private JButton btnAlante;
-	private JComboBox<String> comboBoxTemporadas;
+	private JComboBox comboBoxTemporadas;
 	private JButton btnGuardar;
 	
 	private JLabel lblTemporada;
@@ -66,6 +71,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private ImageIcon logo;
 	
 	private FlowLayout flowLayout;
+	private FlowLayout flowLayout_1;
 	private FlowLayout flowLayout_2;
 	private FlowLayout flowLayout_3;
 	private FlowLayout flowLayout_4;
@@ -76,8 +82,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private BackgroundFader fader;
 	private JPanel panel_11;
 	private JLabel labelLogo;
-	private JScrollPane scrollPane;
-	private JTable table;
 	/**
 	 * Launch the application.
 	 */
@@ -93,6 +97,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 			}
 		});
 	}
+
 	/**
 	 * Create the frame.
 	 */
@@ -100,7 +105,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú Jornadas");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1000, 780);
+		setBounds(100, 100, 992, 843);
 		contentPane = new JPanel();
 		contentPane.setBackground(new Color(255, 243, 205));
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -140,16 +145,16 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		flowLayout.setAlignOnBaseline(true);
 		panel.add(panel_4);
 		
-		btnAtras = new BotonRedondeado("<", null);
+		btnAtras = new BotonRedondeado("<");
 		btnAtras.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnAtras.setBounds(327, 445, 200, 40);
 		btnAtras.setBackground(new Color(0xf46b20));
 		btnAtras.setForeground(Color.WHITE);
-       btnAtras.setFocusPainted(false);
-       btnAtras.addMouseListener(this);
+        btnAtras.setFocusPainted(false);
+        btnAtras.addMouseListener(this);
 		panel_4.add(btnAtras);
 		
-		comboBoxTemporadas = new JComboBox<String>();
+		comboBoxTemporadas = new JComboBox();
 		
 		// añado elementos al combobox
 		comboBoxTemporadas.addItem(" Temporada 23/24");
@@ -158,13 +163,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 				
 		panel_4.add(comboBoxTemporadas);
 		
-		btnAlante = new BotonRedondeado(">", null);
+		btnAlante = new BotonRedondeado(">");
 		btnAlante.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnAlante.setBounds(327, 445, 200, 40);
 		btnAlante.setBackground(new Color(0xf46b20));
 		btnAlante.setForeground(Color.WHITE);
-       btnAlante.setFocusPainted(false);
-       btnAlante.addMouseListener(this);
+        btnAlante.setFocusPainted(false);
+        btnAlante.addMouseListener(this);
 		panel_4.add(btnAlante);
 		
 		// Panel para los puntos de los partidos
@@ -183,7 +188,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_6.add(panel_7);
 		textPtsLocal1 = new TextoRedondeado(20);
 		panel_7.add(textPtsLocal1);
-		textPtsLocal1.setColumns(3);
+		textPtsLocal1.setColumns(2);
 		
 		lblLocal1 = new JLabel("Equipo Local 1");
 		lblLocal1.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -198,7 +203,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_7.add(lblEquipoVisitante);
 		
 		textPtsVisitante1 = new TextoRedondeado(20);
-		textPtsVisitante1.setColumns(3);
+		textPtsVisitante1.setColumns(2);
 		panel_7.add(textPtsVisitante1);
 		
 		// Panel 2 (partido 2)
@@ -211,7 +216,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_6.add(panel_8);
 		
 		textPtsLocal2 = new TextoRedondeado(20);
-		textPtsLocal2.setColumns(3);
+		textPtsLocal2.setColumns(2);
 		panel_8.add(textPtsLocal2);
 		
 		lblEquipoLocal = new JLabel("Equipo Local 2");
@@ -227,7 +232,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_8.add(lblEquipoVisitante_1);
 		
 		textPtsVisitante2 = new TextoRedondeado(20);
-		textPtsVisitante2.setColumns(3);
+		textPtsVisitante2.setColumns(2);
 		panel_8.add(textPtsVisitante2);
 		
 		// Panel 3 (partido 3)
@@ -239,7 +244,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_9.setBackground(new Color(255, 243, 205));
 		panel_6.add(panel_9);
 		textPtsLocal3 = new TextoRedondeado(20);
-		textPtsLocal3.setColumns(3);
+		textPtsLocal3.setColumns(2);
 		panel_9.add(textPtsLocal3);
 		
 		lblEquipoLocal_1 = new JLabel("Equipo Local 3");
@@ -255,7 +260,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panel_9.add(lblEquipoVisitante_2);
 		
 		textPtsVisitante3 = new TextoRedondeado(20);
-		textPtsVisitante3.setColumns(3);
+		textPtsVisitante3.setColumns(2);
 		panel_9.add(textPtsVisitante3);
 		
 		// Botón guardar
@@ -266,13 +271,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		flowLayout_5.setHgap(1);
 		panel_10.setBackground(new Color(255, 243, 205));
 		panel.add(panel_10);
-		btnGuardar = new BotonRedondeado("Guardar", null);
+		btnGuardar = new BotonRedondeado("Guardar");
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnGuardar.setBounds(327, 445, 200, 40);
 		btnGuardar.setBackground(new Color(0xf46b20));
 		btnGuardar.setForeground(Color.WHITE);
-       btnGuardar.setFocusPainted(false);
-       btnGuardar.addMouseListener(this);
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.addMouseListener(this);
 		panel_10.add(btnGuardar);
 		
 		// Panel para la clasificación
@@ -294,59 +299,12 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		// Panel para la tabla de clasificación
 		panel_5 = new JPanel();
 		panel_5.setBackground(new Color(255, 243, 205));
+		flowLayout_1 = (FlowLayout) panel_5.getLayout();
+		flowLayout_1.setVgap(200);
 		panel_1.add(panel_5);
 		
-		scrollPane = new JScrollPane();
-		
 		table = new JTable();
-		table.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, null, null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null, null, null},
-				{null, null, null, null, null, null, null, null, null},
-			},
-			new String[] {
-				"Posici\u00F3n", "Equipo", "Ptos.", "PJ", "PG", "PP", "PF", "PC", "DP"
-			}
-		));
-		table.getColumnModel().getColumn(0).setResizable(false);
-		table.getColumnModel().getColumn(0).setPreferredWidth(47);
-		table.getColumnModel().getColumn(1).setResizable(false);
-		table.getColumnModel().getColumn(1).setPreferredWidth(80);
-		table.getColumnModel().getColumn(2).setResizable(false);
-		table.getColumnModel().getColumn(2).setPreferredWidth(32);
-		table.getColumnModel().getColumn(3).setResizable(false);
-		table.getColumnModel().getColumn(3).setPreferredWidth(32);
-		table.getColumnModel().getColumn(4).setResizable(false);
-		table.getColumnModel().getColumn(4).setPreferredWidth(32);
-		table.getColumnModel().getColumn(5).setResizable(false);
-		table.getColumnModel().getColumn(5).setPreferredWidth(32);
-		table.getColumnModel().getColumn(6).setResizable(false);
-		table.getColumnModel().getColumn(6).setPreferredWidth(32);
-		table.getColumnModel().getColumn(7).setResizable(false);
-		table.getColumnModel().getColumn(7).setPreferredWidth(32);
-		table.getColumnModel().getColumn(8).setResizable(false);
-		table.getColumnModel().getColumn(8).setPreferredWidth(32);
-		scrollPane.setViewportView(table);
-		GroupLayout gl_panel_5 = new GroupLayout(panel_5);
-		gl_panel_5.setHorizontalGroup(
-			gl_panel_5.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_5.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(scrollPane, GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
-					.addContainerGap())
-		);
-		gl_panel_5.setVerticalGroup(
-			gl_panel_5.createParallelGroup(Alignment.LEADING)
-				.addGroup(gl_panel_5.createSequentialGroup()
-					.addGap(122)
-					.addComponent(scrollPane, GroupLayout.PREFERRED_SIZE, 123, GroupLayout.PREFERRED_SIZE)
-					.addContainerGap(201, Short.MAX_VALUE))
-		);
-		panel_5.setLayout(gl_panel_5);
+		panel_5.add(table);
 		
 		panel_11 = new JPanel();
 		panel_11.setBackground(new Color(255, 243, 205));
@@ -359,22 +317,31 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		labelLogo.setBounds(317, 10, 220, 220);
 		panel_11.add(labelLogo);
 		
+
 		
 	}
+
 	@Override
 	public void mouseClicked(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
 	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
 	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
+
 	@Override
 	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
 		Object o = e.getSource();
 		
 		if (o == btnGuardar) {
@@ -386,16 +353,18 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		}
 		
 	}
+
 	@Override
 	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
 		Object o = e.getSource();
+
 		if (o == btnGuardar) {
 			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xf46b20));
 		} else if (o == btnAlante) {
 			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xf46b20));
 		} else if (o == btnAtras) {
 			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xf46b20));
-		}
+		} 
 	}
 }
-
