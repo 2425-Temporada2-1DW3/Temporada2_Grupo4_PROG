@@ -470,12 +470,13 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 		
 		// Cojemos los campos necesarios para crear un nuevo objeto Jugador
 		
-		String nombre = "" + textNombre.getText() + " " + textApellido.getText();
+		String nombre = textNombre.getText();
+		String apellidos = textApellido.getText();
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
 		String photoPath = "";
 	
-		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
+		Jugador nuevoJugador = new Jugador (nombre, apellidos, posicion, dorsal, photoPath);
 		
 		if (dlm.contains(nuevoJugador)) {
 			
@@ -692,14 +693,13 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 	private void editarSeleccion() {
 		int Indice = listJugadores.getSelectedIndex();
 
-		String nombreSelect = "" + textNombre.getText();
-		String apellidoSelect = "" + textApellido.getText();
-		String nombre = "" + nombreSelect + " " + apellidoSelect;
+		String nombre = "" + textNombre.getText();
+		String apellidos = "" + textApellido.getText();
 		String posicion = (String)comboBox.getSelectedItem();
 		int dorsal = Integer.parseInt(textDorsal.getText());
 		String photoPath = "";
 		
-		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
+		Jugador nuevoJugador = new Jugador (nombre, apellidos, posicion, dorsal, photoPath);
 		dlm.set(Indice, nuevoJugador);
 	}
 	
