@@ -56,7 +56,7 @@ public class EditarEquipo extends JFrame {
 		estadioField = new JTextField(equipo.getEstadio());
 		infoPanel.add(estadioField);
 		
-		infoPanel.add(new JLabel("Fundación:"));
+		infoPanel.add(new JLabel("Año de fundación:"));
 		fundacionField = new JTextField(equipo.getFundacion());		
 		infoPanel.add(fundacionField);
 

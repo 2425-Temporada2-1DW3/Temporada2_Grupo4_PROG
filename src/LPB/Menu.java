@@ -95,7 +95,7 @@ public class Menu extends JFrame implements MouseListener {
 		btnTemporadas.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new MenuTemporadas(usuario, usuario).setVisible(true);
+				new MenuTemporadas(rol, usuario).setVisible(true);
 				dispose();
 			}
 		});
@@ -124,6 +124,7 @@ public class Menu extends JFrame implements MouseListener {
 				dispose();
 			}
 		});
+		
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
