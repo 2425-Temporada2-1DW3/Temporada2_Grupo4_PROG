@@ -2,40 +2,15 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
-
-import LPBCLASES.BackgroundFader;
-import LPBCLASES.BotonRedondeado;
-import LPBCLASES.TextoRedondeado;
-
-
-import java.awt.Toolkit;
-
-import javax.swing.BoxLayout;
-import javax.swing.DefaultListModel;
-import javax.swing.ImageIcon;
-
-import java.awt.FlowLayout;
 import java.awt.Font;
-
-import LPBCLASES.Jugador;
-
-import javax.swing.JLabel;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JComboBox;
-//import javax.swing.JFileChooser;
-import javax.swing.JFileChooser;
-
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,737 +20,559 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.awt.event.ActionEvent;
+import javax.imageio.ImageIO;
+import javax.swing.DefaultListModel;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
-import java.awt.BorderLayout;
-import net.miginfocom.swing.MigLayout;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+
+import LPBCLASES.BackgroundFader;
+import LPBCLASES.BotonRedondeado;
+import LPBCLASES.TextoRedondeado;
+import LPBCLASES.Jugador;
+import javax.swing.SwingConstants;
+
+import org.imgscalr.Scalr;
 
 public class MenuJugador extends JFrame implements ActionListener, MouseListener, WindowListener, Serializable {
 
-	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
-	private JTextField textNombre;
-	private JTextField textDorsal;
-	private JPanel panel;
-	private JPanel panel_1;
-	private JPanel panel_2;
-	private JLabel lblNombre;
-	private JPanel panel_4;
-	private JLabel lblPosicion;
-	private JComboBox<String> comboBox;
-	private JPanel panel_5;
-	private JLabel lblDorsal;
-	private JPanel panel_6;
-	private FlowLayout flowLayout_1;
-	private JButton btnVolver;
-	private BackgroundFader fader;
-	private JPanel panel_3;
-	private JPanel panel_7;
-	private JButton btnSeleccionarImagen;
-	private JLabel lblFoto;
-	private JButton btnGuardar;
-	private JPanel panel_9;
-	private JPanel panel_8;
-	private JPanel panel_10;
-	private JLabel lblJugador;
-	private ImageIcon logo;
-	private JLabel labelLogo;
-	private JPanel panel_11;
-	private JList<Jugador> listJugadores;
-	private DefaultListModel<Jugador> dlm;
-	private JButton btnAgregar;
-	
-	private int contador = 0;
-	private boolean datosmodificados = false;
-	private boolean datosguardados = false;
-	
-	private JPanel panel_12;
-	private JLabel lblJugadoresTotales;
-	private JLabel lblContador;
-	private JButton btnEliminar;
-	private JLabel lblApellido;
-	private JTextField textApellido;
-	private BotonRedondeado btnSeleccionar;
-	private BotonRedondeado btnGuardarSeleccion;
-	private JPanel panel_13;
-	
-	
+    private static final long serialVersionUID = 1L;
+    private static final String ARCHIVO_JUGADORES = "jugadores.ser";
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MenuJugador frame = new MenuJugador();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+    // Atributos de la clase
+    private JPanel panelSuperior;
+    private JPanel panelInferior;
+    private ImageIcon logo;
+    private JLabel labelLogo;
+    private JLabel titulo;
+    private JTextField textNombre;
+    private JTextField textDorsal;
+    private JTextField textApellido;
+    private JComboBox<String> comboBoxPosicion;
+    private JButton btnGuardar, btnEliminar, btnVolver, btnSeleccionarImagen, btnAgregar, btnSeleccionar, btnGuardarSeleccion;
+    private DefaultListModel<Jugador> dlm;
+    private JList<Jugador> listJugadores;
+    private BackgroundFader fader;
+    private JScrollPane scrollPane;
+    private JLabel lblNombre;
+    private JLabel lblDorsal;
+    private JLabel lblPosicion;
+    private JLabel lblApellido;
+    private JLabel lblFoto;
+    private JLabel lblJugadoresTotales;
+    private JLabel lblContador;
+    
+    private int contador = 0;
+    private boolean datosmodificados = false;
+    private boolean datosguardados = false;
 
-	/**
-	 * Create the frame.
-	 */
-	public MenuJugador() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
-		setTitle("LPB Basketball - Menú Jugadores");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 1168, 763);
-		contentPane = new JPanel();
-		contentPane.setBackground(new Color(255, 243, 205));
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
-		
-		addWindowListener(this);
-		
-		fader = new BackgroundFader();
+    // Método main
+    public static void main(String[] args) {
+        EventQueue.invokeLater(new Runnable() {
+            public void run() {
+                try {
+                    MenuJugador frame = new MenuJugador();
+                    frame.setVisible(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
 
-		setContentPane(contentPane);
-		contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-		
-		panel_9 = new JPanel();
-		contentPane.add(panel_9);
-		panel_9.setLayout(new BoxLayout(panel_9, BoxLayout.X_AXIS));
-		
-		panel_8 = new JPanel();
-		FlowLayout flowLayout = (FlowLayout) panel_8.getLayout();
-		flowLayout.setHgap(10);
-		flowLayout.setVgap(80);
-		flowLayout.setAlignment(FlowLayout.LEFT);
-		panel_9.add(panel_8);
-		
-		lblJugador = new JLabel("Jugadores");
-		lblJugador.setFont(new Font("SansSerif", Font.BOLD, 40));
-		panel_8.add(lblJugador);
-		
-		panel_10 = new JPanel();
-		panel_9.add(panel_10);
-		
-		panel = new JPanel();
-		panel.setBackground(new Color(255, 243, 205));
-		contentPane.add(panel);
-		panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-		
-		panel_3 = new JPanel();
-		panel_3.setBackground(new Color(255, 243, 205));
-		panel.add(panel_3);
-		
-		panel_7 = new JPanel();
-		panel_7.setBackground(new Color(255, 243, 205));
-		panel.add(panel_7);
-		
-		panel_1 = new JPanel();
-		panel_1.setBackground(new Color(255, 243, 205));
-		contentPane.add(panel_1);
-		panel_1.setLayout(new BoxLayout(panel_1, BoxLayout.Y_AXIS));
-		
-		panel_2 = new JPanel();
-		panel_2.setBackground(new Color(255, 243, 205));
-		panel_1.add(panel_2);
-		
-		lblNombre = new JLabel("Nombre ");
-		lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 18));
-		panel_2.add(lblNombre);
-		
-		textNombre = new TextoRedondeado(20);
-		panel_2.add(textNombre);
-		textNombre.setColumns(10);
-		
-		lblApellido = new JLabel("Apellidos");
-		lblApellido.setFont(new Font("SansSerif", Font.PLAIN, 18));
-		panel_2.add(lblApellido);
-		
-		textApellido = new TextoRedondeado(20);
-		panel_2.add(textApellido);
-		textApellido.setColumns(10);
-		
-		panel_4 = new JPanel();
-		panel_4.setBackground(new Color(255, 243, 205));
-		panel_1.add(panel_4);
-		
-		lblPosicion = new JLabel("Posicion");
-		lblPosicion.setFont(new Font("SansSerif", Font.PLAIN, 18));
-		panel_4.add(lblPosicion);
-		
-		comboBox = new JComboBox<String>();
-		comboBox.addItem("Base");
-		comboBox.addItem("Escolta");
-		comboBox.addItem("Alero");
-		comboBox.addItem("Ala Pivot");
-		comboBox.addItem("Pivot");
-		panel_4.add(comboBox);
-		
-		panel_5 = new JPanel();
-		panel_5.setBackground(new Color(255, 243, 205));
-		panel_1.add(panel_5);
-		
-		lblDorsal = new JLabel("Dorsal");
-		lblDorsal.setFont(new Font("SansSerif", Font.PLAIN, 18));
-		panel_5.add(lblDorsal);
-		
-		textDorsal = new TextoRedondeado(20);
-		panel_5.add(textDorsal);
-		textDorsal.setColumns(2);
-		
-		panel_6 = new JPanel();
-		panel_6.setBackground(new Color(255, 243, 205));
-		flowLayout_1 = (FlowLayout) panel_6.getLayout();
-		flowLayout_1.setHgap(40);
-		flowLayout_1.setAlignment(FlowLayout.TRAILING);
-		panel_1.add(panel_6);
-		
-		btnEliminar = new BotonRedondeado("Eliminar", null);
-		btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnEliminar.setBounds(327, 445, 200, 40);
-		btnEliminar.setBackground(new Color(0xf46b20));
-		btnEliminar.setForeground(Color.WHITE);
+    // Constructor
+    public MenuJugador() {
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
+        setTitle("LPB Basketball - Menú de Jugadores");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1202, 550);
+        setLocationRelativeTo(null);
+        getContentPane().setLayout(null);
+
+        fader = new BackgroundFader();
+ 
+        panelSuperior = new JPanel();
+        panelSuperior.setBackground(new Color(255, 243, 205));
+        panelSuperior.setBounds(0, 0, 1188, 110);
+        panelSuperior.setLayout(null);
+
+        logo = new ImageIcon(getClass().getResource("/imagenes/logo150.png"));
+        labelLogo = new JLabel(logo);
+        labelLogo.setBounds(1038, -22, 150, 150);
+        panelSuperior.add(labelLogo);
+
+        titulo = new JLabel("Jugadores");
+        titulo.setBounds(10, 22, 306, 64);
+        titulo.setFont(new Font("SansSerif", Font.BOLD, 50));
+        titulo.setForeground(new Color(0x13427e));
+        panelSuperior.add(titulo);
+        getContentPane().add(panelSuperior);
+
+        panelInferior = new JPanel();
+        panelInferior.setBackground(new Color(204, 153, 102));
+        panelInferior.setBounds(0, 110, 1188, 403);
+        panelInferior.setLayout(null);
+
+        scrollPane = new JScrollPane();
+        scrollPane.setBounds(10, 20, 430, 360);   /////////
+        dlm = new DefaultListModel<>();
+        cargarDatos();
+        cargarJugadores();
+        
+        listJugadores = new JList<>();
+        listJugadores.setModel(dlm);
+        listJugadores.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        scrollPane.setViewportView(listJugadores);
+        panelInferior.add(scrollPane);
+        
+        lblNombre = new JLabel("Nombre:");
+        lblNombre.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblNombre.setForeground(new Color(0x545454));
+        lblNombre.setBounds(476, 193, 100, 30);
+        panelInferior.add(lblNombre);
+
+        textNombre = new TextoRedondeado(20);
+        textNombre.setColumns(10);
+        textNombre.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        textNombre.setBounds(586, 193, 200, 30);
+        panelInferior.add(textNombre);
+
+        lblApellido = new JLabel("Apellido:");
+        lblApellido.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblApellido.setForeground(new Color(0x545454));
+        lblApellido.setBounds(476, 243, 100, 30);
+        panelInferior.add(lblApellido);
+
+        textApellido = new TextoRedondeado(20);
+        textApellido.setColumns(10);
+        textApellido.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        textApellido.setBounds(586, 243, 200, 30);
+        panelInferior.add(textApellido);
+
+        lblDorsal = new JLabel("Dorsal:");
+        lblDorsal.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblDorsal.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblDorsal.setForeground(new Color(0x545454));
+        lblDorsal.setBounds(808, 193, 100, 30);
+        panelInferior.add(lblDorsal);
+
+        textDorsal = new TextoRedondeado(20);
+        textDorsal.setColumns(10);
+        textDorsal.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        textDorsal.setBounds(918, 193, 200, 30);
+        panelInferior.add(textDorsal);
+
+        lblPosicion = new JLabel("Posición:");
+        lblPosicion.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblPosicion.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblPosicion.setForeground(new Color(0x545454));
+        lblPosicion.setBounds(808, 243, 100, 30);
+        panelInferior.add(lblPosicion);
+
+        comboBoxPosicion = new JComboBox<>();
+        String[] posiciones = {"Base", "Escolta", "Alero", "Ala Pivot", "Pivot"};
+        for (String pos : posiciones) {
+            comboBoxPosicion.addItem(pos);
+        }
+        comboBoxPosicion.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        comboBoxPosicion.setBounds(918, 243, 200, 30);
+        panelInferior.add(comboBoxPosicion);
+
+        lblFoto = new JLabel("Foto del jugador");
+        lblFoto.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblFoto.setHorizontalAlignment(SwingConstants.CENTER);
+        lblFoto.setBounds(787, 20, 150, 150);
+        panelInferior.add(lblFoto);
+    
+        btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen", null);
+        btnSeleccionarImagen.setForeground(new Color(255, 255, 255));
+        btnSeleccionarImagen.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnSeleccionarImagen.setBounds(566, 74, 187, 40);
+        btnSeleccionarImagen.setBackground(new Color(0xf46b20));
+        btnSeleccionarImagen.addActionListener(this);
+        btnSeleccionarImagen.setFocusPainted(false);
+        btnSeleccionarImagen.addMouseListener(this);
+        panelInferior.add(btnSeleccionarImagen);
+
+        btnGuardar = new BotonRedondeado("Guardar", null);
+        btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnGuardar.setBackground(new Color(0x13427E));
+        btnGuardar.setForeground(Color.WHITE);
+        btnGuardar.setBounds(777, 307, 100, 40);
+        btnGuardar.setFocusPainted(false);
+        btnGuardar.addMouseListener(this);
+        btnGuardar.addActionListener(this);
+        panelInferior.add(btnGuardar);
+
+        btnAgregar = new BotonRedondeado("Agregar", null);
+        btnAgregar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnAgregar.setBackground(new Color(0x13427E));
+        btnAgregar.setForeground(Color.WHITE);
+        btnAgregar.setBounds(661, 307, 100, 40);
+        btnAgregar.setFocusPainted(false);
+        btnAgregar.addMouseListener(this);
+        btnAgregar.addActionListener(this);
+        panelInferior.add(btnAgregar);
+
+        btnEliminar = new BotonRedondeado("Eliminar", null);
+        btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnEliminar.setBackground(new Color(0xf46b20));
+        btnEliminar.setForeground(Color.WHITE);
+        btnEliminar.setBounds(897, 307, 100, 40);
         btnEliminar.setFocusPainted(false);
         btnEliminar.addMouseListener(this);
-		btnEliminar.addActionListener(this);
-		
-		btnSeleccionar = new BotonRedondeado("Eliminar", null);
-		btnSeleccionar.addActionListener(this);
-		
-		btnGuardarSeleccion = new BotonRedondeado("Eliminar", null);
-		btnGuardarSeleccion.addActionListener(this);
-		
-		btnGuardarSeleccion.setText("Guardar Seleccion");
-		btnGuardarSeleccion.setForeground(Color.WHITE);
-		btnGuardarSeleccion.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnGuardarSeleccion.setFocusPainted(false);
-		btnGuardarSeleccion.setBackground(new Color(244, 107, 32));
-		panel_6.add(btnGuardarSeleccion);
-		
-		btnSeleccionar.setText("Seleccionar");
-		btnSeleccionar.setForeground(Color.WHITE);
-		btnSeleccionar.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnSeleccionar.setFocusPainted(false);
-		btnSeleccionar.setBackground(new Color(244, 107, 32));
-		
-		panel_6.add(btnSeleccionar);
-		panel_6.add(btnEliminar);
-		
-		btnGuardar = new BotonRedondeado("Guardar", null);
-		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnGuardar.setBounds(327, 445, 200, 40);
-		btnGuardar.setBackground(new Color(0xf46b20));
-		btnGuardar.setForeground(Color.WHITE);
-		btnGuardar.setFocusPainted(false);
-		btnGuardar.addMouseListener(this);
-		btnGuardar.addActionListener(this);
-		
-		btnAgregar = new BotonRedondeado("Agregar", null);
-		btnAgregar.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnAgregar.setBounds(327, 445, 200, 40);
-		btnAgregar.setBackground(new Color(0xf46b20));
-		btnAgregar.setForeground(Color.WHITE);
-		btnAgregar.setFocusPainted(false);
-		btnAgregar.addMouseListener(this);
-		btnAgregar.addActionListener(this);
-		panel_6.add(btnAgregar);
-		panel_6.add(btnGuardar);
-		
-		btnVolver = new BotonRedondeado("Volver", null);
-		btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnVolver.setBounds(327, 445, 200, 40);
-		btnVolver.setBackground(new Color(0xf46b20));
-		btnVolver.setForeground(Color.WHITE);
-		btnVolver.setFocusPainted(false);
-		btnVolver.addMouseListener(this);
-		btnVolver.addActionListener(this);
-		panel_6.add(btnVolver);
-		
-		
-		btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen", null);
-		btnSeleccionarImagen.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnSeleccionarImagen.setBounds(327, 445, 100, 20);
-		btnSeleccionarImagen.setBackground(new Color(0xf46b20));
-		btnSeleccionarImagen.setForeground(Color.WHITE);
-		btnSeleccionarImagen.setFocusPainted(false);
-		btnSeleccionarImagen.addMouseListener(this);
-		btnSeleccionarImagen.addActionListener(this);
-		panel_7.add(btnSeleccionarImagen);
-		
-		lblFoto = new JLabel();
-        lblFoto.setBounds(317, 10, 120, 120);
-        lblFoto.setHorizontalAlignment(JLabel.CENTER);
-		panel_3.add(lblFoto);
-		
-		
-		logo = new ImageIcon(getClass().getResource("/imagenes/logo220.png"));
-		panel_10.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 5));
-		labelLogo = new JLabel(logo);
-		labelLogo.setFont(new Font("Arial", Font.BOLD, 16));
-		labelLogo.setBounds(317, 10, 120, 120);
-		panel_10.add(labelLogo);
-		
-		panel_11 = new JPanel();
-		contentPane.add(panel_11);
-		panel_11.setLayout(new BorderLayout(0, 0));
-		
-		// Creo el modelo de datos de la lista
-		
-		dlm = new DefaultListModel<Jugador>();
-		
-		// Creo la lista		
-		
-		listJugadores = new JList<Jugador>();
-		
-		// Asocio el modelo de datos a la lista
-		
-		listJugadores.setModel(dlm);		
-		
-		JScrollPane scrollPane = new JScrollPane(listJugadores);
-		
-		panel_11.add(scrollPane, BorderLayout.WEST);
-		
-		panel_12 = new JPanel();
-		panel_11.add(panel_12, BorderLayout.SOUTH);
-		
-		lblJugadoresTotales = new JLabel("Jugadores en la Liga:");
-		panel_12.add(lblJugadoresTotales);
-		
+        btnEliminar.addActionListener(this);
+        panelInferior.add(btnEliminar);
 
-		cargarDatos();
-		contador = dlm.getSize();
-		
-		lblContador = new JLabel(""+ contador);
-		panel_12.add(lblContador);
-		
-		panel_13 = new JPanel();
-		panel_11.add(panel_13, BorderLayout.EAST);
-		panel_13.setLayout(new MigLayout("", "[]", "[]"));
-		
-	}
+        btnVolver = new BotonRedondeado("Volver", null);
+        btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnVolver.setBackground(new Color(0x404040));
+        btnVolver.setForeground(Color.WHITE);
+        btnVolver.setBounds(1017, 307, 100, 40);
+        btnVolver.setFocusPainted(false);
+        btnVolver.addMouseListener(this);
+        btnVolver.addActionListener(this);
+        panelInferior.add(btnVolver);
 
-	@Override
-	public void actionPerformed(ActionEvent e) {		
-		Object o = e.getSource();
-		
-		if (o == btnGuardar) {
-		
-			JOptionPane.showMessageDialog(this,(String)"Datos guardados correctamente","Aviso",JOptionPane.INFORMATION_MESSAGE);
-			guardarDatos();
-			datosguardados = true; // Para que no salga el mensaje de "¿Deseas guardar?"
-			datosmodificados = false; 
-		
-		} else if (o == btnVolver) {
-			
-			
-			
-		} else if (o == btnSeleccionarImagen){
-		
-			seleccionarImagen();
+        btnSeleccionar = new BotonRedondeado("Seleccionar", null);
+        btnSeleccionar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnSeleccionar.setBackground(new Color(0x404040));
+        btnSeleccionar.setForeground(Color.WHITE);
+        btnSeleccionar.setBounds(512, 307, 139, 40);
+        btnSeleccionar.setFocusPainted(false);
+        btnSeleccionar.addMouseListener(this);
+        btnSeleccionar.addActionListener(this);
+        panelInferior.add(btnSeleccionar);
 
-		} else if (o == btnAgregar) {
-			
-			if (textNombre.getText().isEmpty() & textDorsal.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Nombre y Dorsal no introducidos");
-			} else if (textNombre.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Nombre no introducido");
-			} else if (textDorsal.getText().isEmpty()) {
-				JOptionPane.showMessageDialog(null, "Dorsal no introducido");
-			} else if (Integer.parseInt(textDorsal.getText()) >= 100 || Integer.parseInt(textDorsal.getText()) <= 0) {
-				JOptionPane.showMessageDialog(null, "El numero de Dorsal tiene que estar entre los numeros 1 y 99");
-			} else {
-				agregarJugador();
-			} 
-		
-		} else if (o == btnEliminar) {
-			
-			eliminarJugador();
-		} else if (o == btnSeleccionar) {
-			seleccionarJugador();
-		} else if (o == btnGuardarSeleccion) {
-			editarSeleccion();
-		} 
-		
-        // Hacer visible la ventana
-		
-        setVisible(true);
-	}
+        btnGuardarSeleccion = new BotonRedondeado("Guardar Selección", null);
+        btnGuardarSeleccion.setForeground(Color.WHITE);
+        btnGuardarSeleccion.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnGuardarSeleccion.setFocusPainted(false);
+        btnGuardarSeleccion.setBackground(new Color(244, 107, 32));
+        btnGuardarSeleccion.addActionListener(this);
+        panelInferior.add(btnGuardarSeleccion);
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		
-	}
+        lblJugadoresTotales = new JLabel("Jugadores en la Liga:");
+        panelInferior.add(lblJugadoresTotales);
 
-	@Override
-	public void mousePressed(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		Object o = e.getSource();
-		
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xff7f50));
-		} else if (o == btnVolver) {
-			fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0xff7f50));
-		} else if (o == btnGuardarSeleccion) {
-			fader.fadeBackground(btnGuardarSeleccion, btnGuardarSeleccion.getBackground(), new Color(0xff7f50));
-		} else if (o == btnAgregar) {
-			fader.fadeBackground(btnAgregar, btnAgregar.getBackground(), new Color(0xff7f50));
-		} else if (o == btnSeleccionarImagen) {
-			fader.fadeBackground(btnSeleccionarImagen, btnSeleccionarImagen.getBackground(), new Color(0xff7f50));
-		} else if (o == btnEliminar) {
-			fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xff7f50));
-		} else if (o == btnSeleccionar) {
-			fader.fadeBackground(btnSeleccionar, btnSeleccionar.getBackground(), new Color(0xff7f50));
-		}
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		Object o = e.getSource();
-
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xf46b20));
-		} else if (o == btnVolver) {
-			fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0xf46b20));
-		} else if (o == btnSeleccionarImagen) {
-			fader.fadeBackground(btnSeleccionarImagen, btnSeleccionarImagen.getBackground(), new Color(0xf46b20));
-		} else if (o == btnGuardarSeleccion) {
-			fader.fadeBackground(btnGuardarSeleccion, btnGuardarSeleccion.getBackground(), new Color(0xf46b20));
-		} else if (o == btnAgregar) {
-			fader.fadeBackground(btnAgregar, btnAgregar.getBackground(), new Color(0xf46b20));
-		} else if (o == btnSeleccionar) {
-			fader.fadeBackground(btnSeleccionar, btnSeleccionar.getBackground(), new Color(0xf46b20));
-		} else if (o == btnEliminar) {
-			fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xf46b20));
-		} 
-	}
-	
-	
-	
-	
-	// --------------------------------- METODOS --------------------------------------- //
-	
-	
-	
-	
-	public void agregarJugador() {
-		
-		// Cojemos los campos necesarios para crear un nuevo objeto Jugador
-		
-		String nombre = "" + textNombre.getText() + " " + textApellido.getText();
-		String posicion = (String)comboBox.getSelectedItem();
-		int dorsal = Integer.parseInt(textDorsal.getText());
-		String photoPath = "";
-	
-		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
-		
-		if (dlm.contains(nuevoJugador)) {
-			
-			// Si ya esta en la lista
-			
-			JOptionPane.showMessageDialog(this,(String)"Error. El jugador " + nuevoJugador + " ya esta en la lista","Error",JOptionPane.ERROR_MESSAGE,null);
-		}
-		else {
-			
-			// Si NO esta en la lista
-			// Busco la posicion donde insertar el valor
-			
-			int posiciondlm = 0;
-			int numeroElementos = dlm.getSize();
-			Jugador valorLista;
-			while(posiciondlm < numeroElementos) {
-				
-				// Compruebo si es la posicion a insertar
-				
-				valorLista = dlm.get(posiciondlm);
-				if(nuevoJugador.compareTo(valorLista) < 0) {
-					
-					// Si he encontrado la posicion
-					// Salgo del bucle
-					
-					break;
-				}
-				posiciondlm = posiciondlm + 1;
-			}
-			
-			// Lo Inserto en su posicion
-			
-			dlm.add(posiciondlm, nuevoJugador);
-			contador++; // Actualizamos el contador
-			lblContador.setText("" + contador); // Actualizamos el JLabel
-			datosmodificados = true; 
-		}
-	}
-	
-	
-	public void seleccionarImagen() {
-	    JFileChooser fileChooser = new JFileChooser();
-	    fileChooser.setDialogTitle("Seleccionar Imagen del Jugador");
-	    fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png"));
-
-	    int resultado = fileChooser.showOpenDialog(null);
-
-	    if (resultado == JFileChooser.APPROVE_OPTION) {
-	        // Obtener el archivo seleccionado
-	        File archivoSeleccionado = fileChooser.getSelectedFile();
-	        String rutaArchivo = archivoSeleccionado.getAbsolutePath();
-
-	        // Crear un ImageIcon con la imagen seleccionada
-	        ImageIcon fotoSeleccionada = new ImageIcon(rutaArchivo);
-
-	        Jugador jugador = new Jugador();
-
-	        // Obtener detalles para construir la ruta de destino
-	        String temporada = "2024-25"; // Cambiar dinámicamente si es necesario
-	        String nombreEquipo = "Nombre_Equipo"; // Obtener el nombre del equipo del jugador
-	        String nombreJugador = "Nombre_Jugador"; // Obtener el nombre del jugador
-
-	        // Crear la ruta de destino
-	        String rutaDestino = "resources/imagenes/" + temporada + "/" + nombreEquipo;
-	        File directorioDestino = new File(rutaDestino);
-
-	        // Crear directorios si no existen
-	        if (!directorioDestino.exists()) {
-	            directorioDestino.mkdirs();
-	        }
-
-	        // Ruta final para la imagen del jugador
-	        File archivoDestino = new File(directorioDestino, nombreJugador + ".png");
-
-	        try {
-	            // Copiar la imagen seleccionada al directorio destino
-	            Files.copy(archivoSeleccionado.toPath(), archivoDestino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-
-	            // Actualizar la foto en el jugador
-	            jugador.setPhotoPath(archivoDestino.getAbsolutePath());
-
-	            // Mostrar la foto en el JLabel
-	            lblFoto.setIcon(fotoSeleccionada);
-
-	            JOptionPane.showMessageDialog(null, "Imagen guardada correctamente en " + archivoDestino.getAbsolutePath());
-	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(null, "Error al guardar la imagen: " + e.getMessage());
-	        }
-	    }
-	}
-
-	
-	private void guardarDatos(){
-		
-		// Guardo los datos en jugadores.ser
-		
-		FileOutputStream fos;
-		ObjectOutputStream oos;
-		try {
-			
-			// Abro el fichero en modo escritura
-			
-			fos = new FileOutputStream("jugadores.ser");
-			oos = new ObjectOutputStream (fos);
-			
-			// Recorro la lista con los datos
-			
-			Jugador nuevoJugador;
-			for(int posicion = 0; posicion < dlm.getSize(); posicion ++) {
-				
-				// Escribo el elemento
-				
-				nuevoJugador = dlm.get(posicion);
-				oos.writeObject(nuevoJugador);
-				contador = dlm.getSize();
-			}
-			
-			// Libero los recursos
-			
-			oos.close();
-			fos.close();
-			
-		} catch (FileNotFoundException e) {
-			
-			// Si no encuentro el fichero
-			
-			JOptionPane.showMessageDialog(this,(String)"Fichero no encontrado","error",JOptionPane.INFORMATION_MESSAGE);
-		} catch (IOException e) {
-			
-			// Si se produce una excepcion de entrada/salida
-			
-		       JOptionPane.showMessageDialog(this, "Error de Entrada/Salida al guardar el archivo: " + "jugadores.ser" + "\n" + e.getMessage(), "Error de IO", JOptionPane.ERROR_MESSAGE);
-		        e.printStackTrace();
-		}		
-	}
-	
-	private void cargarDatos() {
-
-		try (FileInputStream fis = new FileInputStream("jugadores.ser");
-			     ObjectInputStream ois = new ObjectInputStream(fis)) {
-			    while (true) {
-			        try {
-			            Jugador jugador = (Jugador) ois.readObject();
-			            dlm.addElement(jugador);
-			        } catch (EOFException eof) {
-			        	
-			            // Fin del archivo alcanzado, salimos del bucle
-			        	
-			            break;
-			        }
-			    }
-			} catch (FileNotFoundException e) {
-			    JOptionPane.showMessageDialog(this, "Archivo no encontrado: jugadores.ser", "Error", JOptionPane.ERROR_MESSAGE);
-			} catch (IOException | ClassNotFoundException e) {
-			    JOptionPane.showMessageDialog(this, "Error al cargar datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-			}
+        contador = dlm.getSize();
+        lblContador = new JLabel("" + contador);
+        panelInferior.add(lblContador);
+        getContentPane().add(panelInferior);
 }
-	
-	
-	private void eliminarJugador() {
-		
-			// Seleccionamos el indice que queremos eliminar
-		
-		int[] Indice = listJugadores.getSelectedIndices();
-		if (Indice.length > 0) {
-			for (int i = Indice.length - 1; i >= 0; i--) {
-				dlm.removeElementAt(Indice[i]);
-				
-					// Actualizacmos el contador
-				
-				contador = dlm.getSize();
-				
-					// Actualizamos el JLabel;
-				
-				lblContador.setText(String.valueOf(contador)); 
-				datosmodificados = true;
-			}
-		}
-	}
-	
-	
-	private void seleccionarJugador() {
-		
-			// Seleccionamos el indice
-		
-		int Indice = listJugadores.getSelectedIndex();
-		
-			// Cojemos los datos necesarios para crear un nuevo 
 
-		Jugador jugadorSeleccionado = dlm.get(Indice);
-		String nombreSelectCompleto = "" + jugadorSeleccionado.getNombre();
-		
-			// Dividimos el nombre completo en Nombre y Apellidos
-		
-		 String[] partes = nombreSelectCompleto.split(" ");
-		 
-		 String nombreSelect = partes[0];   // El primer valor es el nombre
-	     String apellidosSelect = partes[1]; // El segundo valor es el apellido
-		 
-		String posicionSelect = jugadorSeleccionado.getPosicion();
-		int dorsalSelect = jugadorSeleccionado.getDorsal();
-		
-			// Introducimos los datos en los campos necesarios
-		
-		textNombre.setText(nombreSelect);
-		textApellido.setText(apellidosSelect);
-		comboBox.setSelectedItem(posicionSelect);
-		String dorsalSelectString = String.valueOf(dorsalSelect);
-		textDorsal.setText(dorsalSelectString);
-		
-	}
-	
-	
-	private void editarSeleccion() {
-		int Indice = listJugadores.getSelectedIndex();
+    // Métodos de funcionalidad
+    public void agregarJugador() {
+        String nombre = "" + textNombre.getText() + " " + textApellido.getText();
+        String posicion = (String) comboBoxPosicion.getSelectedItem();
+        int dorsal = Integer.parseInt(textDorsal.getText());
+        String photoPath = "";
 
-		String nombreSelect = "" + textNombre.getText();
-		String apellidoSelect = "" + textApellido.getText();
-		String nombre = "" + nombreSelect + " " + apellidoSelect;
-		String posicion = (String)comboBox.getSelectedItem();
-		int dorsal = Integer.parseInt(textDorsal.getText());
-		String photoPath = "";
-		
-		Jugador nuevoJugador = new Jugador (nombre, posicion, dorsal, photoPath);
-		dlm.set(Indice, nuevoJugador);
-	}
-	
-	
-	
+        Jugador nuevoJugador = new Jugador(nombre, posicion, dorsal, photoPath);
 
-	@Override
-	public void windowOpened(WindowEvent e) {
-		   setExtendedState(JFrame.MAXIMIZED_BOTH);
-	}
+        if (dlm.contains(nuevoJugador)) {
+            JOptionPane.showMessageDialog(this, "Error. El jugador " + nuevoJugador + " ya está en la lista", "Error", JOptionPane.ERROR_MESSAGE, null);
+        } else {
+            int posiciondlm = 0;
+            int numeroElementos = dlm.getSize();
+            Jugador valorLista;
+            while (posiciondlm < numeroElementos) {
+                valorLista = dlm.get(posiciondlm);
+                if (nuevoJugador.compareTo(valorLista) < 0) {
+                    break;
+                }
+                posiciondlm++;
+            }
+            dlm.add(posiciondlm, nuevoJugador);
+            contador++;
+            lblContador.setText("" + contador);
+            datosmodificados = true;
+        }
+    }
 
-	@Override
-	public void windowClosing(WindowEvent e) {
-		
-		// Compreubo si los datos no han sido modificados
-		
-		if(datosmodificados) {
-			
-			// Si los datos han sido modificados
-			
-			int opcion = JOptionPane.showConfirmDialog(this,(String)"Los datos han sido modificados, ¿Desea guardarlos?","Info",JOptionPane.YES_NO_CANCEL_OPTION,JOptionPane.QUESTION_MESSAGE,null);
-			switch (opcion) {
-			case JOptionPane.YES_OPTION: // opcion "Si"
-				
-					// Guardo los datos
-					// Implemento el metodo guardarDatos()
-				
-				guardarDatos();
-				break;
-				
-				// case JOptionPane.NO_OPTION: // opcion "No"
-				// break;
-				
-			case JOptionPane.CANCEL_OPTION: 
-			case JOptionPane.CLOSED_OPTION:
-				
-				// Si pulsa Cancelar
-				// Si cierra la ventana
-				
-				return;
-			}
-		} else if (datosguardados) {
-			
-			// Salgo de la aplicacion
-			
-			System.exit(0);
-		}
-		
-		// Salgo de la aplicacion
-		
-		System.exit(0);
-	}
-	
+    public void seleccionarImagen() {
+        JFileChooser selectorArchivo = new JFileChooser();
+        selectorArchivo.setDialogTitle("Seleccionar Imagen del Jugador");
+        selectorArchivo.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png"));
+
+        int resultado = selectorArchivo.showOpenDialog(null);
+
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            File archivoSeleccionado = selectorArchivo.getSelectedFile();
+            try {
+                BufferedImage imagenOriginal = ImageIO.read(archivoSeleccionado);
+
+                BufferedImage imagenEscalada = Scalr.resize(imagenOriginal, Scalr.Method.QUALITY, 150, 150);
+
+                String nombreJugador = "jugador_" + System.currentTimeMillis();
+                File archivoDestino = new File("resources/imagenes/" + nombreJugador + ".png");
+                archivoDestino.getParentFile().mkdirs();
+                ImageIO.write(imagenEscalada, "png", archivoDestino);
+
+                lblFoto.setIcon(new ImageIcon(imagenEscalada));
+                lblFoto.setText("");
+
+                JOptionPane.showMessageDialog(null, "Imagen guardada correctamente en " + archivoDestino.getAbsolutePath());
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error al procesar la imagen: " + e.getMessage());
+            }
+        }
+    }
+
+
+    private void cargarJugadores() {
+        File archivo = new File(ARCHIVO_JUGADORES);
+        if (!archivo.exists()) {
+            System.out.println("El archivo " + ARCHIVO_JUGADORES + " no existe. Creando una nueva lista vacía.");
+            return;
+        }
+
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARCHIVO_JUGADORES))) {
+            while (true) {
+                try {
+                    Jugador jugador = (Jugador) ois.readObject();
+                    dlm.addElement(jugador);
+                } catch (EOFException eof) {
+                    // Fin del archivo alcanzado, salir del bucle
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println("Archivo no encontrado: " + e.getMessage());
+        } catch (IOException e) {
+            System.err.println("Error al leer el archivo: " + e.getMessage());
+        } catch (ClassNotFoundException e) {
+            System.err.println("Error al cargar los datos del jugador: " + e.getMessage());
+        }
+    }
+
+
+    private void cargarDatos() {
+        try (FileInputStream fis = new FileInputStream("jugadores.ser");
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            while (true) {
+                try {
+                    Jugador jugador = (Jugador) ois.readObject();
+                    dlm.addElement(jugador);
+                } catch (EOFException eof) {
+                    break;
+                }
+            }
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "Archivo no encontrado: jugadores.ser", "Error", JOptionPane.ERROR_MESSAGE);
+        } catch (IOException | ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "Error al cargar datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        Object o = e.getSource();
+
+        if (o == btnAgregar) {
+            if (textNombre.getText().isEmpty() && textDorsal.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nombre y Dorsal no introducidos");
+            } else if (textNombre.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Nombre no introducido");
+            } else if (textDorsal.getText().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Dorsal no introducido");
+            } else {
+                try {
+                    int dorsal = Integer.parseInt(textDorsal.getText());
+                    if (dorsal < 1 || dorsal > 99) {
+                        JOptionPane.showMessageDialog(null, "El número de Dorsal tiene que estar entre 1 y 99");
+                    } else {
+                        agregarJugador(); // Llama al método que agrega al jugador si todos los datos son válidos
+                    }
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(null, "El campo Dorsal debe contener solo números.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } else if (o == btnEliminar) {
+            eliminarJugador();
+        } else if (o == btnSeleccionar) {
+            seleccionarJugador();
+        } else if (o == btnGuardar) {
+            guardarDatos();
+            JOptionPane.showMessageDialog(this, "Datos guardados correctamente", "Aviso", JOptionPane.INFORMATION_MESSAGE);
+        } else if (o == btnSeleccionarImagen) {
+            seleccionarImagen();
+        }else if (o == btnGuardarSeleccion) {
+        editarSeleccion();
+    } else if (o == btnVolver) {
+        if (datosmodificados) {
+            int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados, ¿Desea guardarlos?", "Info", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+            switch (opcion) {
+                case JOptionPane.YES_OPTION:
+                    guardarDatos();
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                case JOptionPane.CLOSED_OPTION:
+                    return;
+            }
+        }
+        datosguardados = true;
+        System.exit(0);
+    }}
+
+
+    private void editarSeleccion() {
+        int Indice = listJugadores.getSelectedIndex();
+        String nombreSelect = "" + textNombre.getText();
+        String apellidoSelect = "" + textApellido.getText();
+        String nombre = "" + nombreSelect + " " + apellidoSelect;
+        String posicion = (String) comboBoxPosicion.getSelectedItem();
+        int dorsal = Integer.parseInt(textDorsal.getText());
+        String photoPath = "";
+
+        Jugador nuevoJugador = new Jugador(nombre, posicion, dorsal, photoPath);
+        dlm.set(Indice, nuevoJugador);
+    }
+
+    private void guardarDatos() {
+        FileOutputStream fos;
+        ObjectOutputStream oos;
+        try {
+            fos = new FileOutputStream("jugadores.ser");
+            oos = new ObjectOutputStream(fos);
+
+            Jugador nuevoJugador;
+            for (int posicion = 0; posicion < dlm.getSize(); posicion++) {
+                nuevoJugador = dlm.get(posicion);
+                oos.writeObject(nuevoJugador);
+                contador = dlm.getSize();
+            }
+
+            oos.close();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            JOptionPane.showMessageDialog(this, "Fichero no encontrado", "Error", JOptionPane.INFORMATION_MESSAGE);
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(this, "Error de Entrada/Salida al guardar el archivo: jugadores.ser\n" + e.getMessage(), "Error de IO", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
+        }
+    }
+
+    private void seleccionarJugador() {
+        int Indice = listJugadores.getSelectedIndex();
+        Jugador jugadorSeleccionado = dlm.get(Indice);
+        String nombreSelectCompleto = "" + jugadorSeleccionado.getNombre();
+        String[] partes = nombreSelectCompleto.split(" ");
+        String nombreSelect = partes[0];
+        String apellidosSelect = partes[1];
+        String posicionSelect = jugadorSeleccionado.getPosicion();
+        int dorsalSelect = jugadorSeleccionado.getDorsal();
+
+        textNombre.setText(nombreSelect);
+        textApellido.setText(apellidosSelect);
+        comboBoxPosicion.setSelectedItem(posicionSelect);
+        String dorsalSelectString = String.valueOf(dorsalSelect);
+        textDorsal.setText(dorsalSelectString);
+    }
+
+    private void eliminarJugador() {
+        int[] Indice = listJugadores.getSelectedIndices();
+        if (Indice.length > 0) {
+            for (int i = Indice.length - 1; i >= 0; i--) {
+                dlm.removeElementAt(Indice[i]);
+                contador = dlm.getSize();
+                lblContador.setText(String.valueOf(contador));
+                datosmodificados = true;
+            }
+        }
+    }
+
+    public void windowOpened(WindowEvent e) {
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+    }
+
+    public void windowClosing(WindowEvent e) {
+        if (datosmodificados) {
+            int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados, ¿Desea guardarlos?", "Info", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+            switch (opcion) {
+                case JOptionPane.YES_OPTION:
+                    guardarDatos();
+                    break;
+                case JOptionPane.CANCEL_OPTION:
+                case JOptionPane.CLOSED_OPTION:
+                    return;
+            }
+        } else if (datosguardados) {
+            System.exit(0);
+        }
+        System.exit(0);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {}
+
+    @Override
+    public void mousePressed(MouseEvent e) {}
+
+    @Override
+    public void mouseReleased(MouseEvent e) {}
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        Object source = e.getSource();
+        if (source == btnGuardar) {
+            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x1a5bae));
+        } else if (source == btnEliminar) {
+            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xfe9f2e));
+        } else if (source == btnVolver) {
+            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x646464));
+        }
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        Object source = e.getSource();
+        if (source == btnGuardar) {
+            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x13427E));
+        } else if (source == btnEliminar) {
+            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xf46b20));
+        } else if (source == btnVolver) {
+            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x404040));
+        }
+    }
 
 	@Override
 	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 }
