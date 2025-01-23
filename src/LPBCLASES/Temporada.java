@@ -102,7 +102,7 @@ public class Temporada implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Temporada temporada = (Temporada) obj;
-        return periodo == temporada.periodo && Objects.equals(jornadas, temporada.jornadas);
+        return periodo == temporada.periodo;
     }
 }
 

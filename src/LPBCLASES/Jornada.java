@@ -25,10 +25,10 @@ public class Jornada {
     }
 
     // Constructor copia
-    public Jornada(Jornada otraJornada) {
+    public Jornada(Jornada j) {
         // Copia los valores de otra jornada
-        this.numero = otraJornada.numero;
-        this.partidos = new ArrayList<>(otraJornada.partidos); // Crea una copia de la lista de partidos
+        this.numero = j.numero;
+        this.partidos = new ArrayList<>(j.partidos); // Crea una copia de la lista de partidos
     }
 
     // Getters y Setters
