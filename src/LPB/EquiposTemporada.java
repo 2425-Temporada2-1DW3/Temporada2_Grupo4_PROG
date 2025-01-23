@@ -3,6 +3,7 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
 
@@ -68,7 +70,32 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JPanel panelEquipos;
 	private Boolean datosModificados;
 	private Map<String, List<Equipo>> equiposPorTemporada;
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+	    try {
+	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	    
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					EquiposTemporada frame = new EquiposTemporada("Administrador", "Administrador");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
+	/**
+	 * Create the frame.
+	 */
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
@@ -429,9 +456,5 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-	}
-
-	public static void main(String[] args) {
-		new EquiposTemporada("Administrador", "Administrador").setVisible(true);
 	}
 }
