@@ -12,8 +12,7 @@ public class Equipo implements Serializable {
     private String entrenador;
     private List<Jugador> jugadores;
     private String estadio;
-    private Fecha fundacion;
-    private String entrenadorPath;
+    private int fundacion;
     private String equipoPath;
     
     // Constructor por defecto
@@ -23,8 +22,7 @@ public class Equipo implements Serializable {
         this.entrenador = "";
         this.jugadores = new ArrayList<>();
         this.estadio = "";
-        this.fundacion = new Fecha();
-        this.entrenadorPath = "";
+        this.fundacion = 1900;
         this.equipoPath = "";
     }
     
@@ -35,17 +33,15 @@ public class Equipo implements Serializable {
         this.jugadores = e.jugadores;
         this.estadio = e.estadio;
         this.fundacion = e.fundacion;
-        this.entrenadorPath = e.entrenadorPath;
         this.equipoPath = e.equipoPath;
   	}
 
-    public Equipo(String nombre, String entrenador, List<Jugador> jugadores, String estadio, Fecha fundacion, String entrenadorPath, String equipoPath) {
+    public Equipo(String nombre, String entrenador, List<Jugador> jugadores, String estadio, int fundacion, String equipoPath) {
         this.nombre = nombre;
         this.entrenador = entrenador;
         this.jugadores = jugadores;
         this.estadio = estadio;
         this.fundacion = fundacion;
-        this.entrenadorPath = entrenadorPath;
         this.equipoPath = equipoPath;
     }
 
@@ -81,20 +77,12 @@ public class Equipo implements Serializable {
         this.estadio = estadio; 
     }
 
-    public Fecha getFundacion() { 
+    public int getFundacion() { 
         return fundacion; 
     }
 
-    public void setFundacion(Fecha fundacion) { 
+    public void setFundacion(int fundacion) { 
         this.fundacion = fundacion; 
-    }
-    
-    public String getEntrenadorPath() { 
-        return entrenadorPath; 
-    }
-
-    public void setEntrenadorPath(String entrenadorPath) { 
-        this.entrenadorPath = entrenadorPath; 
     }
     
     public String getEquipoPath() { 
@@ -117,7 +105,7 @@ public class Equipo implements Serializable {
     // hashCode
     @Override
 	public int hashCode() {
-		return Objects.hash(nombre, entrenador, jugadores, estadio, fundacion, entrenadorPath, equipoPath);
+		return Objects.hash(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
 	}
     
     // equals

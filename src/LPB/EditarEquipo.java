@@ -3,6 +3,7 @@ package LPB;
 
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -30,11 +31,12 @@ public class EditarEquipo extends JFrame {
 	public EditarEquipo(Equipo equipo) {
 		this.equipo = equipo;
 
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("Editar Equipo: " + equipo.getNombre());
 		setSize(600, 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setLayout(new BorderLayout());
+		getContentPane().setLayout(new BorderLayout());
 
 		JPanel infoPanel = new JPanel(new GridLayout(4, 2, 10, 10));
 
@@ -42,28 +44,28 @@ public class EditarEquipo extends JFrame {
 		infoPanel.add(new JLabel("Logo:"));
 		infoPanel.add(logoLabel);
 
-		nombreField = new JTextField(equipo.getNombre());
 		infoPanel.add(new JLabel("Nombre:"));
+		nombreField = new JTextField(equipo.getNombre());
 		infoPanel.add(nombreField);
 
-		entrenadorField = new JTextField(equipo.getEntrenador());
-		JLabel entrenadorLabel = new JLabel(new ImageIcon(equipo.getEntrenadorPath()));
 		infoPanel.add(new JLabel("Entrenador:"));
+		entrenadorField = new JTextField(equipo.getEntrenador());
 		infoPanel.add(entrenadorField);
-		infoPanel.add(new JLabel("Foto Entrenador:"));
-		infoPanel.add(entrenadorLabel);
 
-		estadioField = new JTextField(equipo.getEstadio());
-		fundacionField = new JTextField(equipo.getFundacion());
 		infoPanel.add(new JLabel("Estadio:"));
+		estadioField = new JTextField(equipo.getEstadio());
 		infoPanel.add(estadioField);
+		
 		infoPanel.add(new JLabel("Fundación:"));
+		fundacionField = new JTextField(equipo.getFundacion());		
 		infoPanel.add(fundacionField);
 
 		DefaultListModel<Jugador> jugadoresModel = new DefaultListModel<Jugador>();
+		
 		for (Jugador jugador : equipo.getJugadores()) {
 			jugadoresModel.addElement(jugador);
 		}
+		
 		JList<Jugador> jugadoresList = new JList<Jugador>(jugadoresModel);
 		jugadoresList.setCellRenderer((list, value, index, isSelected, cellHasFocus) -> {
 			JPanel playerPanel = new JPanel(new BorderLayout());
@@ -76,8 +78,8 @@ public class EditarEquipo extends JFrame {
 
 		JScrollPane scrollPane = new JScrollPane(jugadoresList);
 
-		add(infoPanel, BorderLayout.CENTER);
-		add(scrollPane, BorderLayout.EAST);
+		getContentPane().add(infoPanel, BorderLayout.CENTER);
+		getContentPane().add(scrollPane, BorderLayout.EAST);
 
 		JPanel buttonPanel = new JPanel();
 		JButton guardarButton = new JButton("Guardar");
@@ -87,9 +89,8 @@ public class EditarEquipo extends JFrame {
 			equipo.setNombre(nombreField.getText());
 			equipo.setEntrenador(entrenadorField.getText());
 			equipo.setEstadio(estadioField.getText());
-			equipo.setFundacion(fundacionField.getText());
-			JOptionPane.showMessageDialog(this, "Cambios guardados correctamente.", "Información",
-					JOptionPane.INFORMATION_MESSAGE);
+			equipo.setFundacion(Integer.valueOf(fundacionField.getText()));
+			JOptionPane.showMessageDialog(this, "Cambios guardados correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 			dispose();
 		});
 
@@ -98,6 +99,6 @@ public class EditarEquipo extends JFrame {
 		buttonPanel.add(guardarButton);
 		buttonPanel.add(cancelarButton);
 
-		add(buttonPanel, BorderLayout.SOUTH);
+		getContentPane().add(buttonPanel, BorderLayout.SOUTH);
 	}
 }
