@@ -8,6 +8,7 @@ import javax.swing.border.EmptyBorder;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 
 import java.awt.FlowLayout;
@@ -15,6 +16,9 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -54,6 +58,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private JButton btnAtras;
 	private JButton btnAlante;
 	private JComboBox<String> comboBoxTemporadas;
+	private List<Temporada> temporadas;
 	private JButton btnGuardar;
 	
 	private JLabel lblTemporada;
@@ -69,6 +74,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private JLabel lblEquipoVisitante_2;
 	private JLabel lblClasificacion;
 	private ImageIcon logo;
+	private String temporadaSeleccionada;
 	
 	private FlowLayout flowLayout;
 	private FlowLayout flowLayout_1;
@@ -89,7 +95,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					MenuJornadas frame = new MenuJornadas();
+					MenuJornadas frame = new MenuJornadas("Administrador", "Administrador", "2024-2025");
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -100,8 +106,10 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	/**
 	 * Create the frame.
+	 * @param temporada 
 	 */
-	public MenuJornadas() {
+	public MenuJornadas(String rol, String usuario, String temporada) {
+		temporadaSeleccionada = temporada;
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú Jornadas");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -114,6 +122,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		fader = new BackgroundFader();
 		
+		cargarTemporadas();
 		
 		// Panel principal para los elementos superiores
 		panel = new JPanel();
@@ -132,7 +141,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		lblTemporada.setFont(new Font("SansSerif", Font.BOLD, 25));
 		panel_2.add(lblTemporada);
 		
-		lblAniosTemporada = new JLabel("22/23");
+		lblAniosTemporada = new JLabel(temporadaSeleccionada);
 		lblAniosTemporada.setFont(new Font("SansSerif", Font.BOLD, 25));
 		panel_2.add(lblAniosTemporada);
 		
@@ -157,8 +166,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		comboBoxTemporadas = new JComboBox<String>();
 		
 		// añado elementos al combobox
-		comboBoxTemporadas.addItem(" Temporada 23/24");
-		comboBoxTemporadas.addItem(" Temporada 24/25");
+		for (Temporada temporadaSeleccionada : temporadas) {
+			comboBoxTemporadas.addItem("Temporada " + temporadaSeleccionada.getPeriodo());
+		}
 		comboBoxTemporadas.setFont(new Font("Tahoma", Font.PLAIN, 18));
 				
 		panel_4.add(comboBoxTemporadas);
@@ -315,11 +325,17 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		labelLogo = new JLabel(logo);
 		labelLogo.setFont(new Font("Arial", Font.BOLD, 16));
 		labelLogo.setBounds(317, 10, 220, 220);
-		panel_11.add(labelLogo);
-		
-
-		
+		panel_11.add(labelLogo);		
 	}
+	
+	@SuppressWarnings("unchecked")
+	private void cargarTemporadas() {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("temporadas.ser"))) {
+        	temporadas = (List<Temporada>) ois.readObject();
+        } catch (Exception e) {
+            temporadas = List.of();
+        }
+    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
