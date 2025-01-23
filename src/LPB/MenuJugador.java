@@ -311,6 +311,11 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
             File archivoSeleccionado = selectorArchivo.getSelectedFile();
             try {
                 BufferedImage imagenOriginal = ImageIO.read(archivoSeleccionado);
+                
+                if (imagenOriginal == null) {
+                    JOptionPane.showMessageDialog(this, "El archivo seleccionado no es una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
 
                 BufferedImage imagenEscalada = Scalr.resize(imagenOriginal, Scalr.Method.QUALITY, 150, 150);
 
@@ -465,6 +470,12 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
     private void seleccionarJugador() {
         int Indice = listJugadores.getSelectedIndex();
+        
+        if (Indice == -1) {
+            JOptionPane.showMessageDialog(this, "Por favor, seleccione un jugador de la lista.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
         Jugador jugadorSeleccionado = dlm.get(Indice);
         String nombreSelectCompleto = "" + jugadorSeleccionado.getNombre();
         String[] partes = nombreSelectCompleto.split(" ");
