@@ -323,7 +323,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
             File archivoSeleccionado = selectorArchivo.getSelectedFile();
             try {
                 BufferedImage imagenOriginal = ImageIO.read(archivoSeleccionado);
-                
+
                 if (imagenOriginal == null) {
                     JOptionPane.showMessageDialog(this, "El archivo seleccionado no es una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
                     return;
@@ -331,8 +331,19 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
                 BufferedImage imagenEscalada = Scalr.resize(imagenOriginal, Scalr.Method.QUALITY, 150, 150);
 
-                String nombreJugador = "jugador_" + System.currentTimeMillis();
-                File archivoDestino = new File("resources/imagenes/" + nombreJugador + ".png");
+                // Obtener el nombre y apellido del jugador
+                String nombre = textNombre.getText().trim();
+                String apellido = textApellido.getText().trim();
+
+                // Asegurarse de que los campos no estén vacíos
+                if (nombre.isEmpty() || apellido.isEmpty()) {
+                    JOptionPane.showMessageDialog(this, "Por favor ingrese el nombre y el apellido antes de seleccionar la imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Crear el nombre del archivo con el formato "jugador_Nombre_Apellido"
+                String nombreArchivo = nombre + "_" + apellido + ".png";
+                File archivoDestino = new File("resources/imagenes/" + nombreArchivo);
                 archivoDestino.getParentFile().mkdirs();
                 ImageIO.write(imagenEscalada, "png", archivoDestino);
 
@@ -345,6 +356,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
             }
         }
     }
+
 
 
     private void cargarJugadores() {
