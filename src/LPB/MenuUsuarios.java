@@ -205,6 +205,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         btnVolver.setBounds(625, 240, 100, 40);
         btnVolver.setFocusPainted(false);
 		btnVolver.addMouseListener(this);
+		btnVolver.addActionListener(this);
 		panelInferior.add(btnVolver);
 		
 		actualizarLista();
@@ -322,27 +323,23 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     	    }
     	    
     	    if (source == btnVolver) {
-    	    	System.out.println("Botón Volver presionado"); // Debugging
     	        new Menu("Administrador", "Admin").setVisible(true);
-    	        this.dispose(); // Close the current window
+    	        this.dispose();
     	    }
     }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 

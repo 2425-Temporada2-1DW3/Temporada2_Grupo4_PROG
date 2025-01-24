@@ -12,6 +12,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
 	
 	// Atributos de la clase Jugador
 	private String nombre; // Nombre del jugador
+	private String apellidos; // Apellidos del jugador
 	private String posicion; // Posición en el campo (base, escolta, etc.)
 	private int dorsal; // Número de camiseta del jugador
 	private String photoPath;
@@ -20,6 +21,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   	public Jugador() {
       	// Inicializa los atributos con valores predeterminados
       	this.nombre = "";
+      	this.apellidos = "";
       	this.posicion = "";
       	this.dorsal = 0;
       	this.photoPath = "";
@@ -30,6 +32,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   	public Jugador(Jugador j) {
       	// Copia los valores de otro jugador
       	this.nombre = j.nombre;
+      	this.apellidos = j.apellidos;
       	this.posicion = j.posicion;
       	this.dorsal = j.dorsal;
       	this.photoPath = j.photoPath;
@@ -37,9 +40,10 @@ public class Jugador implements Comparable<Jugador>,Serializable {
 
   
 	//C onstructor personalizado
-  	public Jugador(String nombre, String posicion, int dorsal, String photoPath) {
+  	public Jugador(String nombre, String apellidos, String posicion, int dorsal, String photoPath) {
      	// Inicializa los atributos con valores proporcionados
      	this.nombre = nombre;
+     	this.apellidos = apellidos;
      	this.posicion = posicion;
      	this.dorsal = dorsal;
      	this.photoPath = photoPath;
@@ -55,6 +59,16 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   	// Establece el nombre del jugador
   	public void setNombre(String nombre) {
       	this.nombre = nombre;
+  	}
+  	
+  	// Obtiene el nombre del jugador
+  	public String getApellidos() {
+      	return apellidos;
+  	}
+
+  	// Establece el nombre del jugador
+  	public void setApellidos(String apellidos) {
+      	this.apellidos = apellidos;
   	}
 
   	// Obtiene la posición del jugador
@@ -91,14 +105,14 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   	@Override
   	public String toString() {
       	// Devuelve una representación de los atributos del jugador como texto
-      	return "Jugador: " + nombre + ", Posicion: " + posicion + ", Dorsal: " + dorsal;         
+      	return "Jugador: " + nombre + " " + apellidos + ", Posicion: " + posicion + ", Dorsal: " + dorsal;         
   	}
 
   	// Método hashCode
   	@Override
   	public int hashCode() {
       	// Calcula un código hash basado en los atributos del jugador
-      	return Objects.hash(nombre, posicion, dorsal);
+      	return Objects.hash(nombre, apellidos, posicion, dorsal, photoPath);
   	}
 
   	// Método equals
@@ -109,8 +123,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   		if (obj == null || getClass() != obj.getClass()) return false;
   		Jugador jugador = (Jugador) obj;
   		return dorsal == jugador.dorsal &&
-  			Objects.equals(nombre, jugador.nombre) &&
-  			Objects.equals(posicion, jugador.posicion);
+  			Objects.equals(nombre, jugador.nombre) && Objects.equals(apellidos, jugador.apellidos) &&	Objects.equals(posicion, jugador.posicion);
   	}
 
 	// Método compareTo

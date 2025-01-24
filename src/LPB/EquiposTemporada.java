@@ -3,6 +3,7 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -13,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -35,6 +35,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
 
@@ -58,18 +59,44 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JButton btnEquipo;
 	private BufferedImage originalImage;
 	private JPanel equipoPanel;
-	private File logoFile;
 	private GridBagConstraints gbcBtnEliminar;
 	private JButton btnEliminar;
 	private String temporadaSeleccionada;
-	private EditarEquipo editarEquipoFrame;
+	private String logoBasePath;
+	private VerEquipo VerEquipoFrame;
 	private GridBagConstraints gbcBtnEquipo;
 	private BufferedImage scaledImage;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
 	private Boolean datosModificados;
 	private Map<String, List<Equipo>> equiposPorTemporada;
+	private String usuario;
+	
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+	    try {
+	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	    
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					EquiposTemporada frame = new EquiposTemporada("Administrador", "Administrador");
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
+	/**
+	 * Create the frame.
+	 */
 	public EquiposTemporada(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
@@ -78,6 +105,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		setSize(850, 550);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+		
+		
+		this.usuario = usuario;
 
 		panelSuperior = new JPanel();
 		panelSuperior.setBackground(new Color(255, 243, 205));
@@ -111,8 +141,8 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		String[] temporadas = { "Temporada 2023-24", "Temporada 2024-25", "Temporada 2025-26" };
 
 		SelectTemporadas = new JComboBox<>(temporadas);
-		SelectTemporadas.setBackground(new Color(0x13427e));
-		SelectTemporadas.setForeground(Color.WHITE);
+		SelectTemporadas.setBackground(new Color(0, 64, 128));
+		SelectTemporadas.setForeground(new Color(40, 40, 40));
 		SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		SelectTemporadas.setBounds(545, 27, 200, 40);
 
@@ -134,15 +164,33 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnVolverMenu.setBackground(new Color(64, 64, 64));
 		btnVolverMenu.setForeground(Color.WHITE);
-		btnVolverMenu.setBounds(673, 351, 140, 30);
+		btnVolverMenu.setBounds(663, 351, 150, 30);
 		btnVolverMenu.setFocusPainted(false);
 		panelInferior.add(btnVolverMenu);
 
 		btnVolverMenu.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new Menu(rol, usuario).setVisible(true);
-				dispose();
+			    if (datosModificados) {
+			        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de volver?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			        switch (opcion) {
+				        case JOptionPane.YES_OPTION:
+				            guardarDatos(); 
+				            new Menu(rol, usuario).setVisible(true);
+				            dispose();
+				            break;
+				        case JOptionPane.NO_OPTION:
+				        	new Menu(rol, usuario).setVisible(true);
+				        	dispose();
+				            break;
+				        case JOptionPane.CANCEL_OPTION:
+				        case JOptionPane.CLOSED_OPTION:
+				            return;
+			        }
+			    } else {
+					new Menu(rol, usuario).setVisible(true);
+					dispose();
+			    }
 			}
 		});
 
@@ -169,19 +217,29 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnNuevo.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				agregarEquipoFrame = new AgregarEquipo(EquiposTemporada.this);
+				agregarEquipoFrame = new AgregarEquipo(EquiposTemporada.this, (String) SelectTemporadas.getSelectedItem());
 				agregarEquipoFrame.setVisible(true);
 			}
 		});
 
 		datosModificados = false;
+		actualizarTitulo();
 		equiposPorTemporada = new HashMap<>();
 		for (String temporada : temporadas) {
 			equiposPorTemporada.put(temporada, new ArrayList<>());
 		}
 		cargarDatos();
 		datosModificados = false;
+		actualizarTitulo();
 		actualizarPanelEquipos((String) SelectTemporadas.getSelectedItem(), rol);
+	}
+	
+	private void actualizarTitulo() {
+	    if (datosModificados) {
+	        setTitle("*LPB Basketball - Equipos");
+	    } else {
+	        setTitle("LPB Basketball - Equipos");
+	    }
 	}
 
 	private void actualizarPanelEquipos(String temporada, String rol) {
@@ -210,22 +268,35 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-	            logoFile = new File(equipo.getEquipoPath());
-	            if (logoFile.exists() && !logoFile.isDirectory()) {
-	                originalImage = ImageIO.read(logoFile);
+	            String logoBasePath = String.format("/imagenes/temporadas/%s/%s/", (String) SelectTemporadas.getSelectedItem(), equipo.getNombre());
+	            String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"}; // Extensiones posibles
+	            java.net.URL logoURL = null;
+
+	            for (String ext : possibleExtensions) {
+	                logoURL = getClass().getResource(logoBasePath + equipo.getNombre() + "." + ext);
+	                if (logoURL != null) {
+	                    break;
+	                }
+	            }
+
+	            if (logoURL != null) {
+	                originalImage = ImageIO.read(logoURL);
 	                if (originalImage != null) {
+	                    // Escalar la imagen
 	                    scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
 	                    btnEquipo.setIcon(new ImageIcon(scaledImage));
 	                } else {
+	                    // Error al procesar la imagen
 	                    JOptionPane.showMessageDialog(null, "Error: No se pudo procesar la imagen del equipo: " + equipo.getNombre(), "Error de Imagen", JOptionPane.ERROR_MESSAGE);
 	                    btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	                }
 	            } else {
+	                // Archivo no encontrado
 	                JOptionPane.showMessageDialog(null, "Advertencia: Archivo de imagen no encontrado para el equipo: " + equipo.getNombre(), "Archivo No Encontrado", JOptionPane.WARNING_MESSAGE);
 	                btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	            }
 	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + equipo.getEquipoPath(), "Error de Lectura", JOptionPane.ERROR_MESSAGE);
+	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + logoBasePath, "Error de Lectura", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
 	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
 	        } catch (NullPointerException e) {
@@ -238,6 +309,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        btnEquipo.setBackground(new Color(0xf46b20));
 	        btnEquipo.setHorizontalAlignment(SwingConstants.LEFT);
 	        btnEquipo.setForeground(Color.WHITE);
+	        btnEquipo.setFocusPainted(false);
+	        btnEquipo.setIconTextGap(10);
+	        
 	        gbcBtnEquipo = new GridBagConstraints();
 	        gbcBtnEquipo.gridx = 0;
 	        gbcBtnEquipo.gridy = 0;
@@ -245,19 +319,21 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        btnEquipo.setPreferredSize(new Dimension(290, 60));
 	        equipoPanel.add(btnEquipo, gbcBtnEquipo);
 
-	        btnEquipo.addActionListener(new ActionListener() {
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	                editarEquipoFrame = new EditarEquipo(equipo);
-	                editarEquipoFrame.setVisible(true);
-	            }
-	        });
+			btnEquipo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					VerEquipoFrame = new VerEquipo(equipo, rol, usuario);
+					VerEquipoFrame.setVisible(true);
+				}
+			});
 
 	        if ("Administrador".equals(rol)) {
 	            btnEliminar = new BotonRedondeado("-", null);
 	            btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
 	            btnEliminar.setBackground(new Color(0x545454));
 	            btnEliminar.setForeground(Color.WHITE);
+	            btnEliminar.setFocusPainted(false);
+	            
 	            gbcBtnEliminar = new GridBagConstraints();
 	            gbcBtnEliminar.gridx = 1;
 	            gbcBtnEliminar.gridy = 0;
@@ -271,6 +347,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	                    if (equipos.remove(equipo)) {
 	                        actualizarPanelEquipos(temporada, rol);
 	                        datosModificados = true;
+	                        actualizarTitulo();
 	                    } else {
 	                        JOptionPane.showMessageDialog(null, "No se pudo eliminar el equipo. " + equipo.getNombre(), "Error" , JOptionPane.ERROR_MESSAGE);
 	                    }
@@ -300,6 +377,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        equipos.add(nuevoEquipo);
 	        actualizarPanelEquipos(temporadaSeleccionada, "Administrador");
 	        datosModificados = true;
+	        actualizarTitulo();
 	    } else {
 	        JOptionPane.showMessageDialog(null, "Error: No se encontraron equipos para la temporada seleccionada (" + temporadaSeleccionada + ").", "Error", JOptionPane.ERROR_MESSAGE
 	        );
@@ -382,9 +460,5 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-	}
-
-	public static void main(String[] args) {
-		new EquiposTemporada("Administrador", "Administrador").setVisible(true);
 	}
 }

@@ -39,6 +39,7 @@ import LPBCLASES.BotonRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Jugador;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
 
@@ -74,21 +75,31 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
     private boolean datosmodificados = false;
     private boolean datosguardados = false;
 
-    // Método main
-    public static void main(String[] args) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    MenuJugador frame = new MenuJugador();
-                    frame.setVisible(true);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+	    try {
+	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+	    
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					MenuJugador frame = new MenuJugador();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
 
-    // Constructor
+	/**
+	 * Create the frame.
+	 */
     public MenuJugador() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
         setTitle("LPB Basketball - Menú de Jugadores");
@@ -122,7 +133,7 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
         panelInferior.setLayout(null);
 
         scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 20, 430, 360);   /////////
+        scrollPane.setBounds(10, 20, 430, 360);
         dlm = new DefaultListModel<>();
         cargarDatos();
         cargarJugadores();
@@ -273,12 +284,13 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
     // Métodos de funcionalidad
     public void agregarJugador() {
-        String nombre = "" + textNombre.getText() + " " + textApellido.getText();
+        String nombre = "" + textNombre.getText();
+        String apellidos = "" + textApellido.getText();
         String posicion = (String) comboBoxPosicion.getSelectedItem();
         int dorsal = Integer.parseInt(textDorsal.getText());
         String photoPath = "";
 
-        Jugador nuevoJugador = new Jugador(nombre, posicion, dorsal, photoPath);
+        Jugador nuevoJugador = new Jugador(nombre, apellidos, posicion, dorsal, photoPath);
 
         if (dlm.contains(nuevoJugador)) {
             JOptionPane.showMessageDialog(this, "Error. El jugador " + nuevoJugador + " ya está en la lista", "Error", JOptionPane.ERROR_MESSAGE, null);
@@ -445,14 +457,13 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
     private void editarSeleccion() {
         int Indice = listJugadores.getSelectedIndex();
-        String nombreSelect = "" + textNombre.getText();
-        String apellidoSelect = "" + textApellido.getText();
-        String nombre = "" + nombreSelect + " " + apellidoSelect;
+        String nombre = "" + textNombre.getText();
+        String apellidos = "" + textApellido.getText();
         String posicion = (String) comboBoxPosicion.getSelectedItem();
         int dorsal = Integer.parseInt(textDorsal.getText());
         String photoPath = "";
 
-        Jugador nuevoJugador = new Jugador(nombre, posicion, dorsal, photoPath);
+        Jugador nuevoJugador = new Jugador(nombre, apellidos, posicion, dorsal, photoPath);
         dlm.set(Indice, nuevoJugador);
     }
 
@@ -571,31 +582,26 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 }
