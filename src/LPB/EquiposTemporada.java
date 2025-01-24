@@ -63,13 +63,14 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JButton btnEliminar;
 	private String temporadaSeleccionada;
 	private String logoBasePath;
-	private EditarEquipo editarEquipoFrame;
+	private VerEquipo VerEquipoFrame;
 	private GridBagConstraints gbcBtnEquipo;
 	private BufferedImage scaledImage;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
 	private Boolean datosModificados;
 	private Map<String, List<Equipo>> equiposPorTemporada;
+	private String usuario;
 	
 	/**
 	 * Launch the application.
@@ -104,6 +105,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		setSize(850, 550);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+		
+		
+		this.usuario = usuario;
 
 		panelSuperior = new JPanel();
 		panelSuperior.setBackground(new Color(255, 243, 205));
@@ -315,13 +319,13 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        btnEquipo.setPreferredSize(new Dimension(290, 60));
 	        equipoPanel.add(btnEquipo, gbcBtnEquipo);
 
-	        btnEquipo.addActionListener(new ActionListener() {
-	            @Override
-	            public void actionPerformed(ActionEvent e) {
-	                editarEquipoFrame = new EditarEquipo(equipo);
-	                editarEquipoFrame.setVisible(true);
-	            }
-	        });
+			btnEquipo.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					VerEquipoFrame = new VerEquipo(equipo, rol, usuario);
+					VerEquipoFrame.setVisible(true);
+				}
+			});
 
 	        if ("Administrador".equals(rol)) {
 	            btnEliminar = new BotonRedondeado("-", null);
