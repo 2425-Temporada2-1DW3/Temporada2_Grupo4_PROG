@@ -9,6 +9,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
 import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
@@ -24,14 +26,11 @@ public class AgregarEquipo extends JFrame {
 	private JTextField anioFundacion;
 	private JLabel logoLabel;
 	private File logoFile;
-	private JPanel jugadoresPanel;
 	private EquiposTemporada equiposTemporadaFrame;
 	private BotonRedondeado btnLogo;
 	private JScrollPane scrollPane;
 	private BotonRedondeado btnAgregarJugador;
 	private BotonRedondeado btnGuardar;
-	private JFileChooser fileChooser;
-	private FileNameExtensionFilter imageFilter;
 	private ArrayList<Jugador> jugadores;
 	private Equipo nuevoEquipo;
 	private JPanel panelIzquierdo;
@@ -43,15 +42,10 @@ public class AgregarEquipo extends JFrame {
 	private JLabel jugadoresLabel;
 	private File selectedFile;
 	private String selectedFileExtension;
-	private String jugadorNombre;
-	private String jugadorApellidos;
-	private String jugadorPosicion;
-	private int jugadorDorsal;
-	private JLabel jugadorLabel;
-	private JLabel jugadorIcon;
-	private JPanel jugadorPanel;
-	private String temporada, nombre, entrenador, estadio, jugadorPhotoPath, equipoPath;
+	private String temporada, nombre, entrenador, estadio, equipoPath;
 	private int fundacion;
+	private JTable tablaJugadores;
+	private DefaultTableModel tableModel;
 
 	public AgregarEquipo(EquiposTemporada equiposTemporadaFrame, String temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -150,18 +144,50 @@ public class AgregarEquipo extends JFrame {
 		jugadoresLabel.setBounds(20, 20, 200, 30);
 		panelDerecho.add(jugadoresLabel);
 
-		jugadoresPanel = new JPanel();
-		jugadoresPanel.setLayout(new GridLayout(0, 1, 5, 5));
-		jugadoresPanel.setBackground(Color.LIGHT_GRAY);
+		 String[] nombreColumnas = {"Foto", "Nombre", "Apellido", "Posición", "Dorsal"};
+		    tableModel = new DefaultTableModel(nombreColumnas, 0) {
+		        
+				private static final long serialVersionUID = 4426702124875665016L;
 
-		scrollPane = new JScrollPane(jugadoresPanel);
-		scrollPane.setBounds(20, 60, 400, 400);
-		panelDerecho.add(scrollPane);
+				@Override
+		        public Class<?> getColumnClass(int column) {
+		            if (column == 0) {
+		                return ImageIcon.class;
+		            }
+		            return String.class;
+		        }
+
+		        @Override
+		        public boolean isCellEditable(int row, int column) {
+		            return false;
+		        }
+		    };
+		    tablaJugadores = new JTable(tableModel);
+		    tablaJugadores.getTableHeader().setReorderingAllowed(false);
+		    tablaJugadores.setFont(new Font("SansSerif", Font.PLAIN, 12));
+		    tablaJugadores.setShowGrid(false);
+		    tablaJugadores.setBackground(new Color(0xd9d9d9));
+		    tablaJugadores.setRowHeight(50);
+		    tablaJugadores.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
+		    
+		    
+		    
+		    DefaultTableCellRenderer centrarTexto = new DefaultTableCellRenderer();
+		    centrarTexto.setHorizontalAlignment(SwingConstants.CENTER);
+
+		    for (int i = 1; i < tablaJugadores.getColumnCount(); i++) {
+		        tablaJugadores.getColumnModel().getColumn(i).setCellRenderer(centrarTexto);
+		    }
+
+			scrollPane = new JScrollPane(tablaJugadores);
+			scrollPane.setBackground(new Color(0xd9d9d9));
+			scrollPane.getViewport().setBackground(new Color(0xd9d9d9));
+			scrollPane.setBounds(20, 60, 400, 400);
+			panelDerecho.add(scrollPane);
 
 		jugadores = new ArrayList<>();
 	}
 
-	// Método para seleccionar la imagen
 	private void seleccionarImagen(JLabel label, boolean isLogo) {
 	    JFileChooser fileChooser = new JFileChooser();
 	    FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif");
@@ -186,37 +212,25 @@ public class AgregarEquipo extends JFrame {
 	}
 
 	private void agregarJugador() {
-		jugadorNombre = JOptionPane.showInputDialog("Nombre del jugador:");
-		if (jugadorNombre != null && !jugadorNombre.trim().isEmpty()) {
-			jugadorApellidos = JOptionPane.showInputDialog("Apellidos del jugador:");
-			if (jugadorApellidos != null && !jugadorApellidos.trim().isEmpty()) {
-				jugadorPosicion = JOptionPane.showInputDialog("Posición del jugador (Alero, Base, Escolta, Ala-pívot, Pívot):");
-				if (jugadorPosicion != null && !jugadorPosicion.trim().isEmpty()) {
-					jugadorDorsal = Integer.valueOf(JOptionPane.showInputDialog("Dorsal del jugador:"));
-					if (jugadorDorsal >= 0) {
-						fileChooser = new JFileChooser();
-						fileChooser.setFileFilter(imageFilter);
-						int result = fileChooser.showOpenDialog(this);
-						if (result == JFileChooser.APPROVE_OPTION) {
-							selectedFile = fileChooser.getSelectedFile();
-							if (selectedFile.exists()) {
-								jugadorLabel = new JLabel(jugadorNombre);
-								jugadorIcon = new JLabel(new ImageIcon(new ImageIcon(selectedFile.getAbsolutePath()).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH)));
-			
-								jugadorPanel = new JPanel(new BorderLayout());
-								jugadorPanel.add(jugadorIcon, BorderLayout.WEST);
-								jugadorPanel.add(jugadorLabel, BorderLayout.CENTER);
-								jugadoresPanel.add(jugadorPanel);
-								jugadoresPanel.revalidate();
-								jugadoresPanel.repaint();
-			
-								jugadores.add(new Jugador(jugadorNombre, jugadorApellidos, jugadorPosicion, jugadorDorsal, jugadorPhotoPath));
-							}
-						}
-					}
-				}
-			}
-		}
+	    AgregarJugador dialog = new AgregarJugador(this);
+	    dialog.setVisible(true);
+
+	    if (dialog.isGuardado()) {
+	        String nombre = dialog.getNombre();
+	        String apellidos = dialog.getApellidos();
+	        String posicion = dialog.getPosicion();
+	        int dorsal = dialog.getDorsal();
+	        File foto = dialog.getJugadorFoto();
+
+	        ImageIcon icon = null;
+	        if (foto != null) {
+	            icon = new ImageIcon(new ImageIcon(foto.getAbsolutePath())
+	                .getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
+	        }
+
+	        tableModel.addRow(new Object[]{icon, nombre, apellidos, posicion, dorsal});
+	        jugadores.add(new Jugador(nombre, apellidos, posicion, dorsal, foto != null ? foto.getAbsolutePath() : null));
+	    }
 	}
 
 	private void guardarEquipo() {
