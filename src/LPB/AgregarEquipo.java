@@ -3,7 +3,11 @@ package LPB;
 
 import java.awt.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
@@ -12,6 +16,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
+import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.BotonRedondeado;
 
@@ -52,6 +57,7 @@ public class AgregarEquipo extends JFrame {
 	private JPanel jugadorPanel;
 	private String temporada, nombre, entrenador, estadio, jugadorPhotoPath, equipoPath;
 	private int fundacion;
+	private Temporada temporadaActual;
 
 	public AgregarEquipo(EquiposTemporada equiposTemporadaFrame, String temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -230,21 +236,16 @@ public class AgregarEquipo extends JFrame {
 	        return;
 	    }
 
-	    // Mover el archivo seleccionado al directorio de destino
 	    if (logoFile != null) {
 	        try {
-	            // Construir la ruta de destino dentro de los recursos
 	            String logoDestinationPath = String.format("src/imagenes/temporadas/%s/%s/%s.%s",
 	                this.temporada, nombre, nombre, selectedFileExtension);
 	            File logoDestinationFile = new File(logoDestinationPath);
 
-	            // Crear directorios si no existen
 	            logoDestinationFile.getParentFile().mkdirs();
 
-	            // Copiar el archivo del logo
 	            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
-	            // Mostrar mensaje de éxito (opcional)
 	            System.out.println("El logo se ha guardado correctamente en: " + logoDestinationFile.getAbsolutePath());
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
@@ -253,10 +254,7 @@ public class AgregarEquipo extends JFrame {
 	        }
 	    }
 
-	    // Crear y guardar el equipo
 	    nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
-	    equiposTemporadaFrame.agregarNuevoEquipoDesdeFormulario(nuevoEquipo);
-	    JOptionPane.showMessageDialog(this, "Equipo agregado correctamente");
-	    dispose();
+
 	}
 }

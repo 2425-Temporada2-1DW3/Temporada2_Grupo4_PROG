@@ -75,44 +75,6 @@ public class AgregarTemporada extends JFrame {
         panel.add(btnCancelar);
     }
 
-    @SuppressWarnings("unchecked")
-    private List<Temporada> leerTemporadas() {
-        List<Temporada> temporadas = new ArrayList<>();
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(FILE_NAME))) {
-            temporadas = (List<Temporada>) ois.readObject();
-        } catch (Exception e) {
-            System.out.println("No se pudo leer el archivo temporadas.ser. Se creará uno nuevo.");
-        }
-        return temporadas;
-    }
-
-    private void guardarTemporadas(List<Temporada> temporadas) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(FILE_NAME))) {
-            oos.writeObject(temporadas);
-            System.out.println("Temporadas guardadas correctamente.");
-        } catch (Exception e) {
-            System.err.println("Error al guardar las temporadas: " + e.getMessage());
-        }
-    }
-
-    private void guardarTemporada() {
-        String periodo = periodoField.getText().trim();
-        String estado = (String) estadoComboBox.getSelectedItem();
-
-        if (periodo.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "El campo de período no puede estar vacío.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-
-        List<Temporada> temporadas = leerTemporadas();
-        Temporada nuevaTemporada = new Temporada(periodo, estado, new ArrayList<>());
-        temporadas.add(nuevaTemporada);
-        guardarTemporadas(temporadas);
-
-        JOptionPane.showMessageDialog(this, "Temporada agregada correctamente.");
-        dispose();
-    }
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             AgregarTemporada frame = new AgregarTemporada();

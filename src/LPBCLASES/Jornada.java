@@ -18,6 +18,12 @@ public class Jornada {
     }
 
     // Constructor personalizado
+    public Jornada(int numero) {
+        // Inicializa los atributos con valores proporcionados
+        this.numero = numero;
+    }
+    
+    // Constructor personalizado que incluye la lista de partidos
     public Jornada(int numero, List<Partido> partidos) {
         // Inicializa los atributos con valores proporcionados
         this.numero = numero;

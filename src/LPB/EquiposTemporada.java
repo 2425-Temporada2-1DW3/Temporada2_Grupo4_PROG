@@ -265,7 +265,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
 	            String logoBasePath = String.format("/imagenes/temporadas/%s/%s/", (String) SelectTemporadas.getSelectedItem(), equipo.getNombre());
-	            String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"}; // Extensiones posibles
+	            String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"};
 	            java.net.URL logoURL = null;
 
 	            for (String ext : possibleExtensions) {

@@ -17,8 +17,15 @@ public class Partido {
       this.puntosLocal = 0;
       this.puntosVisitante = 0;
   }
-
+  
   // Constructor personalizado
+  public Partido(Equipo equipoLocal, Equipo equipoVisitante) {
+      // Inicializa los atributos con valores proporcionados
+      this.equipoLocal = equipoLocal;
+      this.equipoVisitante = equipoVisitante;
+  }
+
+  // Constructor personalizado con resultado
   public Partido(Equipo equipoLocal, Equipo equipoVisitante, int puntosLocal, int puntosVisitante) {
       // Inicializa los atributos con valores proporcionados
       this.equipoLocal = equipoLocal;
@@ -28,12 +35,12 @@ public class Partido {
   }
 
   // Constructor copia
-  public Partido(Partido otroPartido) {
+  public Partido(Partido p) {
       // Copia los valores de otro partido
-      this.equipoLocal = otroPartido.equipoLocal;
-      this.equipoVisitante = otroPartido.equipoVisitante;
-      this.puntosLocal = otroPartido.puntosLocal;
-      this.puntosVisitante = otroPartido.puntosVisitante;
+      this.equipoLocal = p.equipoLocal;
+      this.equipoVisitante = p.equipoVisitante;
+      this.puntosLocal = p.puntosLocal;
+      this.puntosVisitante = p.puntosVisitante;
   }
 
   // Getters y Setters

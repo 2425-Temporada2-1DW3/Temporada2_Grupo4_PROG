@@ -10,13 +10,16 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -36,9 +39,10 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	private JLabel titulo;
 	private JLabel subtitulo;
 	private List<Temporada> temporadas;
-	private JButton btnTemporada;
-	private JButton btnNuevaTemporada;
-	private JButton btnVolverMenu;
+	private BotonRedondeado btnTemporada;
+	private BotonRedondeado btnNuevaTemporada;
+	private BotonRedondeado btnEliminarTemporada;
+	private BotonRedondeado btnVolverMenu;
 	private BackgroundFader fader;
 	private String rol;
 	private String usuario;
@@ -96,7 +100,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
         panelContenido.setBackground(new Color(204, 153, 102));
 
         scrollPane = new JScrollPane(panelContenido);
-        scrollPane.setBounds(50, 160, 300, 250);
+        scrollPane.setBounds(50, 160, 320, 250);
         scrollPane.setBorder(null);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         panelDerecho.add(scrollPane);
@@ -127,6 +131,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	private void cargarTemporadas() {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("temporadas.ser"))) {
         	temporadas = (List<Temporada>) ois.readObject();
+        	panelContenido.removeAll();
             int yPosition = 10;
             int buttonHeight = 40;
             int buttonSpacing = 20;
@@ -159,7 +164,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
     		}
 
             for (Temporada temporada : temporadas) {
-            	JButton btnTemporada = new BotonRedondeado("Temporada " + temporada.getPeriodo(), null);
+            	btnTemporada = new BotonRedondeado("Temporada " + temporada.getPeriodo(), null);
                 btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
                 btnTemporada.setBackground(new Color(0xf46b20));
                 btnTemporada.setForeground(Color.WHITE);
@@ -168,12 +173,37 @@ public class MenuTemporadas extends JFrame implements MouseListener {
                 btnTemporada.addMouseListener(this);
 
                 btnTemporada.addActionListener(e -> {
-                	String temporadaSeleccionada = temporada.getPeriodo();
-					new MenuJornadas(rol, usuario, temporadaSeleccionada).setVisible(true);
+					new MenuJornadas(rol, usuario, temporada).setVisible(true);
         	        dispose();
+                });
+                
+                btnEliminarTemporada = new BotonRedondeado("-", null);
+                btnEliminarTemporada.setFont(new Font("SansSerif", Font.BOLD, 18));
+                btnEliminarTemporada.setBackground(Color.RED);
+                btnEliminarTemporada.setForeground(Color.WHITE);
+                btnEliminarTemporada.setBounds(230, yPosition, 50, 40);
+                btnEliminarTemporada.setFocusPainted(false);
+
+                btnEliminarTemporada.addActionListener(e -> {
+                    int confirm = JOptionPane.showConfirmDialog(
+                        null,
+                        "¿Estás seguro/a de que deseas eliminar la temporada " + temporada.getPeriodo() + "?",
+                        "Confirmar eliminación",
+                        JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        temporadas.remove(temporada);
+                        guardarTemporadas();
+                        cargarTemporadas();
+                    }
                 });
 
                 panelContenido.add(btnTemporada);
+                
+        		if ("Administrador".equals(rol)) {
+        			panelContenido.add(btnEliminarTemporada);
+        		}
+        		
                 yPosition += buttonHeight + buttonSpacing;
             }
     		
@@ -210,6 +240,14 @@ public class MenuTemporadas extends JFrame implements MouseListener {
     		}
         }
     }
+	
+	private void guardarTemporadas() {
+	    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("temporadas.ser"))) {
+	        oos.writeObject(temporadas);
+	    } catch (IOException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
