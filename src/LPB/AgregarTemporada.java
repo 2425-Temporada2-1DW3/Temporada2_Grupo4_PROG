@@ -2,7 +2,8 @@ package LPB;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.io.*;
 
@@ -13,7 +14,6 @@ import LPBCLASES.Temporada;
 public class AgregarTemporada extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private static final String FILE_NAME = "temporadas.ser";
     private JTextField periodoField;
     private JComboBox<String> estadoComboBox;
     private BotonRedondeado btnGuardar, btnCancelar;
@@ -61,7 +61,24 @@ public class AgregarTemporada extends JFrame {
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnGuardar.setFocusPainted(false);
-        btnGuardar.addActionListener(e -> guardarTemporada());
+        btnGuardar.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent ae) {
+		    	try {
+		    	    Temporada nuevaTemporada = new Temporada();
+		    	    nuevaTemporada.setPeriodo(periodoField.getText());
+		    	    nuevaTemporada.setEstado((String) estadoComboBox.getSelectedItem());
+		    	    nuevaTemporada.setEquipos(new ArrayList<>());
+		    	    nuevaTemporada.setJornadas(new ArrayList<>());
+
+		    	    nuevaTemporada.guardarTemporada(nuevaTemporada);
+		            
+		    	    JOptionPane.showMessageDialog(getContentPane(), "Temporada agregada correctamente.");
+		            dispose();
+		    	} catch (IOException e) {
+		    	    System.out.println("Error: " + e.getMessage());
+		    	}
+		    }
+		});
         panel.add(btnGuardar);
 
         // Botón Cancelar
@@ -73,12 +90,5 @@ public class AgregarTemporada extends JFrame {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         panel.add(btnCancelar);
-    }
-
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            AgregarTemporada frame = new AgregarTemporada();
-            frame.setVisible(true);
-        });
     }
 }

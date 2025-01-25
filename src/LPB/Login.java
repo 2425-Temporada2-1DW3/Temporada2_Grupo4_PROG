@@ -119,7 +119,7 @@ public class Login extends JFrame implements MouseListener {
 
             Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
             if (user != null) {
-                JOptionPane.showMessageDialog(null, "Bienvenido, " + user.getRol() + ".");
+                JOptionPane.showMessageDialog(null, "Bienvenido/a, " + user.getUsuario() + ".");
                 new Menu(user.getRol(), user.getUsuario()).setVisible(true);
                 dispose();
             } else {

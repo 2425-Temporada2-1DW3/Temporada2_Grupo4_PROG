@@ -9,7 +9,6 @@ import javax.swing.JScrollPane;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
-import LPBCLASES.Equipo;
 import LPBCLASES.Jornada;
 import LPBCLASES.LineaPanel;
 import LPBCLASES.Partido;
@@ -20,12 +19,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Box;
@@ -145,19 +139,24 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnActivarTemporada.setBounds(285, 90, 165, 30);
 		btnActivarTemporada.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		        generarJornadas(temporada);
 		        comboBoxJornadas.removeAllItems();
-		        
+
+		        temporada.generarJornadas();
+
 		        for (Jornada jornada : temporada.getJornadas()) {
 		            comboBoxJornadas.addItem("Jornada " + jornada.getNumero());
 		        }
-		        
+
 		        lblEstado2.setText("Activa");
 		        temporada.setEstado("Activa");
+		        try {
+					temporada.guardarTemporada(temporada);
+				} catch (IOException e1) {
+					System.out.println("ERROR. No se han encontrado datos de la temporada.");
+				}
 		        cargarPartidos(temporada);
 		        panelIzquierdo.remove(btnActivarTemporada);
 		        panelIzquierdo.add(btnFinalizarTemporada);
-		        guardarTemporada(temporada);
 		    }
 		});
 		btnActivarTemporada.addMouseListener(this);
@@ -176,7 +175,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		    public void actionPerformed(ActionEvent e) {
 		        lblEstado2.setText("Finalizada");
 		        temporada.setEstado("Finalizada");
-		        guardarTemporada(temporada);
 		    }
 		});
 		btnFinalizarTemporada.addMouseListener(this);
@@ -232,7 +230,10 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFocusPainted(false);
         btnGuardar.addMouseListener(this);
-		panelIzquierdo.add(btnGuardar);
+        
+        if (temporada.getEstado().equals("Activa")) {
+    		panelIzquierdo.add(btnGuardar);
+        }
 		
 		btnRestablecer = new BotonRedondeado("Restablecer", null);
 		btnRestablecer.setForeground(Color.WHITE);
@@ -241,7 +242,10 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnRestablecer.setBackground(new Color(84, 84, 84));
 		btnRestablecer.setBounds(235, 500, 150, 40);
 		btnRestablecer.addMouseListener(this);
-		panelIzquierdo.add(btnRestablecer);
+		
+        if (temporada.getEstado().equals("Activa")) {
+    		panelIzquierdo.add(btnRestablecer);
+        }
 		
 		// Panel para la clasificación
 		panelDerecho = new JPanel();
@@ -361,66 +365,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    panelPartido.add(textPtsVisitante);
 
 	    return panelPartido;
-	}
-	
-	// Método para generar las jornadas a través del método RoundRobin
-	private void generarJornadas(Temporada temporada) {
-	    if (!temporada.getJornadas().isEmpty()) {
-	        return;
-	    }
-
-	    // Generar las jornadas solo si no existen
-	    List<Equipo> equipos = new ArrayList<>(temporada.getEquipos());
-	    int numEquipos = equipos.size();
-	    int numJornadas = numEquipos - 1;
-	    int partidosPorJornada = numEquipos / 2;
-
-	    for (int i = 0; i < numJornadas; i++) {
-	        Jornada jornada = new Jornada(i + 1);
-
-	        for (int j = 0; j < partidosPorJornada; j++) {
-	            Equipo local = equipos.get(j);
-	            Equipo visitante = equipos.get(equipos.size() - 1 - j);
-
-	            if (local != null && visitante != null) {
-	                Partido partido = new Partido(local, visitante);
-	                jornada.getPartidos().add(partido);
-	            }
-	        }
-
-	        Equipo ultimo = equipos.remove(equipos.size() - 1);
-	        equipos.add(1, ultimo);
-
-	        temporada.getJornadas().add(jornada);
-	    }
-	}
-
-	
-	public void guardarTemporada(Temporada temporada) {
-	    List<Temporada> temporadas = cargarTemporadas();
-	    
-	    for (int i = 0; i < temporadas.size(); i++) {
-	        if (temporadas.get(i).getPeriodo().equals(temporada.getPeriodo())) {
-	            temporadas.set(i, temporada);
-	            break;
-	        }
-	    }
-	    
-	    try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("temporadas.ser"))) {
-	        oos.writeObject(temporadas);
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    }
-	}
-
-	
-	@SuppressWarnings("unchecked")
-	private List<Temporada> cargarTemporadas() {
-	    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("temporadas.ser"))) {
-	        return (List<Temporada>) ois.readObject();
-	    } catch (IOException | ClassNotFoundException e) {
-	        return null;
-	    }
 	}
 
 	@Override

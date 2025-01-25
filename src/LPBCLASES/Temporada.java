@@ -158,19 +158,59 @@ public class Temporada implements Serializable {
     }
     
     // Carga los datos de la temporada
-    public Temporada cargarTemporada(String periodo) throws IOException, ClassNotFoundException {
+    public static Temporada cargarTemporada(String periodo) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data/temporada_" + periodo + ".ser"))) {
             return (Temporada) ois.readObject();
         }
     }
+    
+    // Genera nuevas jornadas usando el método Round Robin
+    public void generarJornadas() {
+        if (equipos == null || equipos.isEmpty()) {
+            System.out.println("No se pueden crear jornadas porque no hay equipos en la temporada.");
+            return;
+        }
+
+        List<Equipo> listaEquipos = new ArrayList<>(equipos);
+        int numeroEquipos = listaEquipos.size();
+        int numeroJornadas = numeroEquipos - 1;
+        int partidosPorJornada = numeroEquipos / 2;
+
+        for (int i = 0; i < numeroJornadas; i++) {
+            Jornada jornada = new Jornada(i + 1, new ArrayList<>());
+
+            for (int j = 0; j < partidosPorJornada; j++) {
+                int localIndex = j;
+                int visitanteIndex = (numeroEquipos - 1 - j + i) % numeroEquipos;
+
+                Equipo local = listaEquipos.get(localIndex);
+                Equipo visitante = listaEquipos.get(visitanteIndex);
+
+                if (!local.equals(visitante)) {
+                    Partido partido = new Partido(local, visitante);
+                    jornada.getPartidos().add(partido);
+                }
+            }
+
+            if (numeroEquipos % 2 != 0 && jornada.getPartidos().size() > partidosPorJornada - 1) {
+                jornada.getPartidos().remove(jornada.getPartidos().size() - 1);
+            }
+
+            jornadas.add(jornada);
+        }
+
+        System.out.println("Jornadas generadas con éxito.");
+    }
+
 
     // Representación en formato de cadena (toString)
     @Override
     public String toString() {
         // Devuelve una representación de los atributos de la temporada como texto
-        return "Temporada: " +
-                "Periodo = " + periodo +
-                "Jornadas = " + jornadas ;
+        return "Temporada " + periodo + "\n" +
+                "Estado = " + estado + "\n" +
+                "Jornadas = " + jornadas + "\n" +
+                "Equipos = " + equipos;
     }
 
     // Método hashCode

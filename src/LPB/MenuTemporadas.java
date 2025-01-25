@@ -2,21 +2,28 @@
 package LPB;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Temporada;
 
 public class MenuTemporadas extends JFrame implements MouseListener {
 	private static final long serialVersionUID = -1200889095902166795L;
@@ -25,14 +32,17 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	private JLabel labelLogo;
 	private JLabel labelUsuario;
 	private JPanel panelDerecho;
+    private JPanel panelContenido;
+    private JScrollPane scrollPane;
 	private JLabel titulo;
 	private JLabel subtitulo;
-	private JButton btnTemporadas1;
-	private JButton btnTemporadas2;
-	private JButton btnTemporadas3;
-	private JButton btnNuevaTemporada;
-	private JButton btnVolverMenu;
+	private BotonRedondeado btnTemporada;
+	private BotonRedondeado btnNuevaTemporada;
+	private BotonRedondeado btnEliminar;
+	private BotonRedondeado btnVolverMenu;
 	private BackgroundFader fader;
+	private String rol;
+	private String usuario;
 
 	public MenuTemporadas(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -43,6 +53,9 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		getContentPane().setLayout(null);
 
 		fader = new BackgroundFader();
+		
+	    this.rol = rol;
+	    this.usuario = usuario;
 		
 		panelIzquierdo = new JPanel();
 		panelIzquierdo.setBackground(new Color(255, 243, 205));
@@ -72,50 +85,24 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		titulo.setBounds(50, 40, 306, 47);
 		panelDerecho.add(titulo);
 
-		subtitulo = new JLabel("Seleccione una Temporeda:");
+		subtitulo = new JLabel("Seleccione una Temporada:");
 		subtitulo.setForeground(Color.WHITE);
 		subtitulo.setFont(new Font("SansSerif", Font.PLAIN, 18));
 		subtitulo.setBounds(50, 131, 234, 20);
 		panelDerecho.add(subtitulo);
+		
+        panelContenido = new JPanel();
+        panelContenido.setBorder(null);
+        panelContenido.setLayout(null);
+        panelContenido.setBackground(new Color(204, 153, 102));
 
-		btnTemporadas1 = new BotonRedondeado("Temporada 23-24", null);
-		btnTemporadas1.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnTemporadas1.setBackground(new Color(0xf46b20));
-		btnTemporadas1.setForeground(Color.WHITE);
-		btnTemporadas1.setBounds(50, 176, 200, 40);
-		btnTemporadas1.setFocusPainted(false);
-		btnTemporadas1.addMouseListener(this);
-		panelDerecho.add(btnTemporadas1);
-
-		btnTemporadas2 = new BotonRedondeado("Temporada 24-25", null);
-		btnTemporadas2.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnTemporadas2.setBackground(new Color(0xf46b20));
-		btnTemporadas2.setForeground(Color.WHITE);
-		btnTemporadas2.setBounds(50, 236, 200, 40);
-		btnTemporadas2.setFocusPainted(false);
-		btnTemporadas2.addMouseListener(this);
-		panelDerecho.add(btnTemporadas2);
-
-		btnTemporadas3 = new BotonRedondeado("Temporada 25-26", null);
-		btnTemporadas3.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnTemporadas3.setBackground(new Color(0xf46b20));
-		btnTemporadas3.setForeground(Color.WHITE);
-		btnTemporadas3.setBounds(50, 296, 200, 40);
-		btnTemporadas3.setFocusPainted(false);
-		btnTemporadas3.addMouseListener(this);
-		panelDerecho.add(btnTemporadas3);
-
-		btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
-		btnNuevaTemporada.setForeground(Color.WHITE);
-		btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnNuevaTemporada.setBackground(new Color(0x545454));
-		btnNuevaTemporada.setBounds(50, 356, 200, 40);
-		btnNuevaTemporada.setFocusPainted(false);
-		btnNuevaTemporada.addMouseListener(this);
-
-		if ("Administrador".equals(rol)) {
-			panelDerecho.add(btnNuevaTemporada);
-		}
+        scrollPane = new JScrollPane(panelContenido);
+        scrollPane.setBounds(50, 160, 300, 250);
+        scrollPane.setBorder(null);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panelDerecho.add(scrollPane);
+        
+        listarTemporadas();
 		
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -136,6 +123,98 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 
 		getContentPane().add(panelDerecho);
 	}
+	
+    private void listarTemporadas() {
+    	panelContenido.removeAll();
+    	
+    	int yPosition = 10;
+        int buttonHeight = 40;
+        int buttonSpacing = 20;
+
+        btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
+        btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnNuevaTemporada.setBackground(new Color(0x545454));
+        btnNuevaTemporada.setForeground(Color.WHITE);
+        btnNuevaTemporada.setBounds(0, yPosition, 220, 40);
+		btnNuevaTemporada.setFocusPainted(false);
+		btnNuevaTemporada.addMouseListener(this);
+		
+        btnNuevaTemporada.addActionListener(e -> {
+            AgregarTemporada agregarTemporada = new AgregarTemporada();
+            agregarTemporada.setVisible(true);
+            
+            agregarTemporada.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    listarTemporadas();
+                }
+            });
+        });
+		
+        if ("Administrador".equals(rol)) {
+			panelContenido.add(btnNuevaTemporada);
+			yPosition += buttonHeight + buttonSpacing;
+		}
+
+        File folder = new File("data");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser"));
+
+        if (files != null) {
+            for (File file : files) {
+                String nombreTemporada = file.getName().replace("temporada_", "").replace(".ser", "");
+                btnTemporada = new BotonRedondeado("Temporada " + nombreTemporada, null);
+                btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
+                btnTemporada.setBackground(new Color(0xf46b20));
+                btnTemporada.setForeground(Color.WHITE);
+                btnTemporada.setBounds(0, yPosition, 220, 40);
+                btnTemporada.setFocusPainted(false);
+                btnTemporada.addMouseListener(this);
+                
+                btnTemporada.addActionListener(e -> {
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                        Temporada temporada = (Temporada) ois.readObject();
+                        new MenuJornadas(rol, usuario, temporada).setVisible(true);
+                        dispose();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada: " + nombreTemporada, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                });
+                
+                btnEliminar = new BotonRedondeado("-", null);
+                btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
+                btnEliminar.setBackground(Color.RED);
+                btnEliminar.setForeground(Color.WHITE);
+                btnEliminar.setBounds(230, yPosition, 40, 40);
+                btnEliminar.setFocusPainted(false);
+
+                btnEliminar.addActionListener(e -> {
+                    int confirm = JOptionPane.showConfirmDialog(this, 
+                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", 
+                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        if (file.delete()) {
+                            JOptionPane.showMessageDialog(this, "Temporada eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            listarTemporadas();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "No se pudo eliminar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                
+                panelContenido.add(btnTemporada);
+                
+                if ("Administrador".equals(rol)) {
+        			panelContenido.add(btnEliminar);
+        		}
+                
+                yPosition += buttonHeight + buttonSpacing;
+            }
+        }
+
+        panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
+        panelContenido.revalidate();
+    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -153,12 +232,8 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	public void mouseEntered(MouseEvent ae) {
 		Object o = ae.getSource();
 		
-		if (o == btnTemporadas1) {
-			fader.fadeBackground(btnTemporadas1, btnTemporadas1.getBackground(), new Color(0xff7f50));
-		} else if (o == btnTemporadas2) {
-			fader.fadeBackground(btnTemporadas2, btnTemporadas2.getBackground(), new Color(0xff7f50));
-		} else if (o == btnTemporadas3) {
-			fader.fadeBackground(btnTemporadas3, btnTemporadas3.getBackground(), new Color(0xff7f50));
+		if (o == btnTemporada) {
+			fader.fadeBackground(btnTemporada, btnTemporada.getBackground(), new Color(0xff7f50));
 		} else if (o == btnNuevaTemporada) {
 			fader.fadeBackground(btnNuevaTemporada, btnNuevaTemporada.getBackground(), new Color(0x6a6a6a));
 		} else if (o == btnVolverMenu) {
@@ -171,12 +246,8 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	public void mouseExited(MouseEvent ae) {
 		Object o = ae.getSource();
 
-		if (o == btnTemporadas1) {
-			fader.fadeBackground(btnTemporadas1, btnTemporadas1.getBackground(), new Color(0xf46b20));
-		} else if (o == btnTemporadas2) {
-			fader.fadeBackground(btnTemporadas2, btnTemporadas2.getBackground(), new Color(0xf46b20));
-		} else if (o == btnTemporadas3) {
-			fader.fadeBackground(btnTemporadas3, btnTemporadas3.getBackground(), new Color(0xf46b20));
+		if (o == btnTemporada) {
+			fader.fadeBackground(btnTemporada, btnTemporada.getBackground(), new Color(0xf46b20));
 		} else if (o == btnNuevaTemporada) {
 			fader.fadeBackground(btnNuevaTemporada, btnNuevaTemporada.getBackground(), new Color(0x545454));
 		} else if (o == btnVolverMenu) {
