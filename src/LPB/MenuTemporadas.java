@@ -157,7 +157,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		}
 
         File folder = new File("data");
-        File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser"));
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
 
         if (files != null) {
             for (File file : files) {

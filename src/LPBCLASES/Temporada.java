@@ -165,43 +165,53 @@ public class Temporada implements Serializable {
     }
     
     // Genera nuevas jornadas usando el método Round Robin
-    public void generarJornadas() {
-        if (equipos == null || equipos.isEmpty()) {
-            System.out.println("No se pueden crear jornadas porque no hay equipos en la temporada.");
-            return;
+    public int generarJornadas() {
+        if (this.equipos == null || this.equipos.isEmpty()) {
+            return 0;
         }
 
-        List<Equipo> listaEquipos = new ArrayList<>(equipos);
+        List<Equipo> listaEquipos = new ArrayList<>(this.equipos);
         int numeroEquipos = listaEquipos.size();
-        int numeroJornadas = numeroEquipos - 1;
+
         int partidosPorJornada = numeroEquipos / 2;
+        int numeroJornadas = (numeroEquipos - 1) * 2;
 
-        for (int i = 0; i < numeroJornadas; i++) {
-            Jornada jornada = new Jornada(i + 1, new ArrayList<>());
 
-            for (int j = 0; j < partidosPorJornada; j++) {
-                int localIndex = j;
-                int visitanteIndex = (numeroEquipos - 1 - j + i) % numeroEquipos;
+        for (int ronda = 0; ronda < numeroJornadas; ronda++) {
+            List<Partido> partidosJornada = new ArrayList<>();
+
+            for (int partido = 0; partido < partidosPorJornada; partido++) {
+                int localIndex = (ronda + partido) % (numeroEquipos - 1);
+                int visitanteIndex = (numeroEquipos - 1 - partido + ronda) % (numeroEquipos - 1);
+
+                if (partido == 0) {
+                    visitanteIndex = numeroEquipos - 1;
+                }
 
                 Equipo local = listaEquipos.get(localIndex);
                 Equipo visitante = listaEquipos.get(visitanteIndex);
 
                 if (!local.equals(visitante)) {
-                    Partido partido = new Partido(local, visitante);
-                    jornada.getPartidos().add(partido);
+                    Partido partidoGenerado;
+
+                    if (ronda >= numeroJornadas / 2) {
+                        partidoGenerado = new Partido(visitante, local);
+                    } else {
+                        partidoGenerado = new Partido(local, visitante);
+                    }
+
+                    partidosJornada.add(partidoGenerado);
                 }
             }
 
-            if (numeroEquipos % 2 != 0 && jornada.getPartidos().size() > partidosPorJornada - 1) {
-                jornada.getPartidos().remove(jornada.getPartidos().size() - 1);
+            if (!partidosJornada.isEmpty()) {
+                Jornada jornada = new Jornada(ronda + 1, partidosJornada);
+                this.jornadas.add(jornada);
             }
-
-            jornadas.add(jornada);
         }
 
-        System.out.println("Jornadas generadas con éxito.");
+        return this.jornadas.size();
     }
-
 
     // Representación en formato de cadena (toString)
     @Override

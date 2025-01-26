@@ -99,10 +99,7 @@ public class Equipo implements Serializable {
     public String toString() { 
         return "Equipo: " +
                 "Nombre = " + nombre + ", " +
-                "Entrenador = " + entrenador + ", " +
-                "Estadio = " + estadio + ", " +
-                "Año de fundación = " + fundacion + ", " +
-                "Jugadores = " + jugadores;
+                "Logo = " + equipoPath;
     }
     
     // hashCode
