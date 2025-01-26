@@ -6,7 +6,7 @@ import java.util.List;
 
 public class GestorUsuarios {
 
-    private static final String ARCHIVO_USUARIOS = "usuarios.ser";
+    private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
     private static ArrayList<Usuario> usuarios;
 
     // Constructor: carga los usuarios del archivo, si existen

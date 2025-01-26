@@ -9,14 +9,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.util.List;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -35,10 +36,10 @@ public class MenuTemporadas extends JFrame implements MouseListener {
     private JScrollPane scrollPane;
 	private JLabel titulo;
 	private JLabel subtitulo;
-	private List<Temporada> temporadas;
-	private JButton btnTemporada;
-	private JButton btnNuevaTemporada;
-	private JButton btnVolverMenu;
+	private BotonRedondeado btnTemporada;
+	private BotonRedondeado btnNuevaTemporada;
+	private BotonRedondeado btnEliminar;
+	private BotonRedondeado btnVolverMenu;
 	private BackgroundFader fader;
 	private String rol;
 	private String usuario;
@@ -50,11 +51,11 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		setSize(850, 550);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
+
+		fader = new BackgroundFader();
 		
 	    this.rol = rol;
 	    this.usuario = usuario;
-
-		fader = new BackgroundFader();
 		
 		panelIzquierdo = new JPanel();
 		panelIzquierdo.setBackground(new Color(255, 243, 205));
@@ -100,8 +101,8 @@ public class MenuTemporadas extends JFrame implements MouseListener {
         scrollPane.setBorder(null);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         panelDerecho.add(scrollPane);
-		
-		cargarTemporadas();
+        
+        listarTemporadas();
 		
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -123,92 +124,96 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		getContentPane().add(panelDerecho);
 	}
 	
-	@SuppressWarnings("unchecked")
-	private void cargarTemporadas() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("temporadas.ser"))) {
-        	temporadas = (List<Temporada>) ois.readObject();
-            int yPosition = 10;
-            int buttonHeight = 40;
-            int buttonSpacing = 20;
-            
-    		btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
-    		btnNuevaTemporada.setForeground(Color.WHITE);
-    		btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
-    		btnNuevaTemporada.setBackground(new Color(0x545454));
-    		btnNuevaTemporada.setBounds(0, yPosition, 220, 40);
-    		btnNuevaTemporada.setFocusPainted(false);
-    		btnNuevaTemporada.addMouseListener(this);
-    		
-    		btnNuevaTemporada.addActionListener(new ActionListener() {
-    		    public void actionPerformed(ActionEvent e) {
-    		        AgregarTemporada agregarTemporada = new AgregarTemporada();
-    		        agregarTemporada.setVisible(true);
-    		        
-    		        agregarTemporada.addWindowListener(new java.awt.event.WindowAdapter() {
-    		            @Override
-    		            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    		                cargarTemporadas();
-    		            }
-    		        });
-    		    }
-    		});
-    		
-    		if ("Administrador".equals(rol)) {
-    			panelContenido.add(btnNuevaTemporada);
-    			yPosition += buttonHeight + buttonSpacing;
-    		}
+    private void listarTemporadas() {
+    	panelContenido.removeAll();
+    	
+    	int yPosition = 10;
+        int buttonHeight = 40;
+        int buttonSpacing = 20;
 
-            for (Temporada temporada : temporadas) {
-            	JButton btnTemporada = new BotonRedondeado("Temporada " + temporada.getPeriodo(), null);
+        btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
+        btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnNuevaTemporada.setBackground(new Color(0x545454));
+        btnNuevaTemporada.setForeground(Color.WHITE);
+        btnNuevaTemporada.setBounds(0, yPosition, 220, 40);
+		btnNuevaTemporada.setFocusPainted(false);
+		btnNuevaTemporada.addMouseListener(this);
+		
+        btnNuevaTemporada.addActionListener(e -> {
+            AgregarTemporada agregarTemporada = new AgregarTemporada();
+            agregarTemporada.setVisible(true);
+            
+            agregarTemporada.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    listarTemporadas();
+                }
+            });
+        });
+		
+        if ("Administrador".equals(rol)) {
+			panelContenido.add(btnNuevaTemporada);
+			yPosition += buttonHeight + buttonSpacing;
+		}
+
+        File folder = new File("data");
+        File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
+
+        if (files != null) {
+            for (File file : files) {
+                String nombreTemporada = file.getName().replace("temporada_", "").replace(".ser", "");
+                btnTemporada = new BotonRedondeado("Temporada " + nombreTemporada, null);
                 btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
                 btnTemporada.setBackground(new Color(0xf46b20));
                 btnTemporada.setForeground(Color.WHITE);
                 btnTemporada.setBounds(0, yPosition, 220, 40);
                 btnTemporada.setFocusPainted(false);
                 btnTemporada.addMouseListener(this);
-
+                
                 btnTemporada.addActionListener(e -> {
-                	String temporadaSeleccionada = temporada.getPeriodo();
-					new MenuJornadas(rol, usuario, temporadaSeleccionada).setVisible(true);
-        	        dispose();
+                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                        Temporada temporada = (Temporada) ois.readObject();
+                        new MenuJornadas(rol, usuario, temporada).setVisible(true);
+                        dispose();
+                    } catch (IOException | ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada: " + nombreTemporada, "Error", JOptionPane.ERROR_MESSAGE);
+                    }
                 });
+                
+                btnEliminar = new BotonRedondeado("-", null);
+                btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
+                btnEliminar.setBackground(Color.RED);
+                btnEliminar.setForeground(Color.WHITE);
+                btnEliminar.setBounds(230, yPosition, 40, 40);
+                btnEliminar.setFocusPainted(false);
 
+                btnEliminar.addActionListener(e -> {
+                    int confirm = JOptionPane.showConfirmDialog(this, 
+                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", 
+                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        if (file.delete()) {
+                            JOptionPane.showMessageDialog(this, "Temporada eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                            listarTemporadas();
+                        } else {
+                            JOptionPane.showMessageDialog(this, "No se pudo eliminar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                });
+                
                 panelContenido.add(btnTemporada);
+                
+                if ("Administrador".equals(rol)) {
+        			panelContenido.add(btnEliminar);
+        		}
+                
                 yPosition += buttonHeight + buttonSpacing;
             }
-    		
-            panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
-            panelContenido.revalidate();
-
-        } catch (Exception e) {
-            temporadas = List.of();
-            
-    		btnNuevaTemporada = new BotonRedondeado("Nueva Temporada", null);
-    		btnNuevaTemporada.setForeground(Color.WHITE);
-    		btnNuevaTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
-    		btnNuevaTemporada.setBackground(new Color(0x545454));
-    		btnNuevaTemporada.setBounds(0, 10, 220, 40);
-    		btnNuevaTemporada.setFocusPainted(false);
-    		btnNuevaTemporada.addMouseListener(this);
-    		
-    		btnNuevaTemporada.addActionListener(new ActionListener() {
-    		    public void actionPerformed(ActionEvent e) {
-    		        AgregarTemporada agregarTemporada = new AgregarTemporada();
-    		        agregarTemporada.setVisible(true);
-    		        
-    		        agregarTemporada.addWindowListener(new java.awt.event.WindowAdapter() {
-    		            @Override
-    		            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-    		                cargarTemporadas();
-    		            }
-    		        });
-    		    }
-    		});
-    		
-    		if ("Administrador".equals(rol)) {
-    			panelContenido.add(btnNuevaTemporada);
-    		}
         }
+
+        panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
+        panelContenido.revalidate();
     }
 
 	@Override

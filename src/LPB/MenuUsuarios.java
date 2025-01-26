@@ -16,6 +16,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -32,7 +33,9 @@ import javax.swing.JTextField;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Equipo;
 import LPBCLASES.PasswordRedondeado;
+import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 import javax.swing.SwingConstants;
@@ -47,7 +50,9 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     private JLabel titulo;
     private JTextField textUsuario;
     private JPasswordField passwordField;
+    private JLabel lblEquipo;
     private JComboBox<String> comboBoxRol;
+    private JComboBox<String> comboBoxEquipo;
     private JButton btnGuardar, btnEliminar, btnVolver;
     private DefaultListModel<Usuario> dlm;
     private JList<Usuario> listUsuarios;
@@ -58,12 +63,13 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     private JLabel lblContrasena;
     private JLabel lblRol;
     private Object source;
-    private String usuario, contrasena, rol;
+    private String usuario, contrasena, rol, equipo;
     private Usuario usuarioExistente;
     private Usuario nuevoUsuario;
     private int usuarioSeleccionadoIndex = -1;
+    private static boolean actualizacion = false;
 
-    private static final String ARCHIVO_USUARIOS = "usuarios.ser";
+    private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
     
     public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -113,7 +119,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         panelInferior.setLayout(null);
 
         scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 20, 300, 300);
+        scrollPane.setBounds(10, 20, 350, 300);
         dlm = new DefaultListModel<Usuario>();
         listaUsuarios = cargarUsuarios();
 	    actualizarLista();
@@ -132,6 +138,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 		            textUsuario.setText(usuarioSeleccionado.getUsuario());
 		            passwordField.setText(usuarioSeleccionado.getContrasena());
 		            comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
+		            comboBoxEquipo.setSelectedItem(usuarioSeleccionado.getEquipo());
 		        }
 		    }
 		});
@@ -140,33 +147,33 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
         lblUsuario.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblUsuario.setForeground(new Color(0x545454));
-        lblUsuario.setBounds(393, 71, 100, 30);
+        lblUsuario.setBounds(437, 71, 100, 30);
         panelInferior.add(lblUsuario);
 
         textUsuario = new TextoRedondeado(20);
         textUsuario.setColumns(10);
         textUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        textUsuario.setBounds(503, 71, 200, 30);
+        textUsuario.setBounds(547, 71, 200, 30);
         panelInferior.add(textUsuario);
 
         lblContrasena = new JLabel("Contraseña:");
         lblContrasena.setHorizontalAlignment(SwingConstants.RIGHT);
         lblContrasena.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblContrasena.setForeground(new Color(0x545454));
-        lblContrasena.setBounds(393, 121, 100, 30);
+        lblContrasena.setBounds(437, 121, 100, 30);
         panelInferior.add(lblContrasena);
 
         passwordField = new PasswordRedondeado(20);
         passwordField.setColumns(10);
         passwordField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        passwordField.setBounds(503, 121, 200, 30);
+        passwordField.setBounds(547, 121, 200, 30);
         panelInferior.add(passwordField);
 
         lblRol = new JLabel("Rol:");
         lblRol.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRol.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblRol.setForeground(new Color(0x545454));
-        lblRol.setBounds(393, 171, 100, 30);
+        lblRol.setBounds(437, 171, 100, 30);
         panelInferior.add(lblRol);
 
         comboBoxRol = new JComboBox<>();
@@ -175,14 +182,44 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
             comboBoxRol.addItem(rol);
         }
         comboBoxRol.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        comboBoxRol.setBounds(503, 171, 200, 30);
+        comboBoxRol.setBounds(547, 171, 200, 30);
+        
+        comboBoxRol.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String rolSeleccionado = (String) comboBoxRol.getSelectedItem();
+                
+                if ("Entrenador".equals(rolSeleccionado)) {
+                    lblEquipo.setVisible(true);
+                    comboBoxEquipo.setVisible(true);
+                } else {
+                    lblEquipo.setVisible(false);
+                    comboBoxEquipo.setVisible(false);
+                }
+            }
+        });
+        
         panelInferior.add(comboBoxRol);
+        
+        lblEquipo = new JLabel("Equipo:");
+        lblEquipo.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblEquipo.setForeground(new Color(84, 84, 84));
+        lblEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblEquipo.setBounds(437, 223, 100, 30);
+        panelInferior.add(lblEquipo);
+        lblEquipo.setVisible(false);
+        
+        comboBoxEquipo = new JComboBox<String>();
+        comboBoxEquipo.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        comboBoxEquipo.setBounds(547, 223, 200, 30);
+        panelInferior.add(comboBoxEquipo);
+        comboBoxEquipo.setVisible(false);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnGuardar.setBackground(new Color(0x13427E));
         btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setBounds(385, 240, 100, 40);
+        btnGuardar.setBounds(429, 275, 100, 40);
         btnGuardar.setFocusPainted(false);
         btnGuardar.addMouseListener(this);
         btnGuardar.addActionListener(this);
@@ -192,7 +229,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnEliminar.setBackground(new Color(0xf46b20));
         btnEliminar.setForeground(Color.WHITE);
-        btnEliminar.setBounds(505, 240, 100, 40);
+        btnEliminar.setBounds(549, 275, 100, 40);
         btnEliminar.setFocusPainted(false);
         btnEliminar.addMouseListener(this);
         btnEliminar.addActionListener(this);
@@ -202,13 +239,14 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnVolver.setBackground(new Color(0x404040));
         btnVolver.setForeground(Color.WHITE);
-        btnVolver.setBounds(625, 240, 100, 40);
+        btnVolver.setBounds(669, 275, 100, 40);
         btnVolver.setFocusPainted(false);
 		btnVolver.addMouseListener(this);
 		btnVolver.addActionListener(this);
 		panelInferior.add(btnVolver);
 		
 		actualizarLista();
+		cargarEquipos();
 
         getContentPane().add(panelInferior);
     }
@@ -252,10 +290,36 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     public static void guardarUsuarios(ArrayList<Usuario> usuarios) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))) {
             oos.writeObject(usuarios);
-            JOptionPane.showMessageDialog(  null, "Usuario guardado correctamente. ", "Información", JOptionPane.INFORMATION_MESSAGE);
+            if (actualizacion == false) {
+            	JOptionPane.showMessageDialog(  null, "Usuario guardado correctamente. ", "Información", JOptionPane.INFORMATION_MESSAGE);
+            }
+            actualizacion = false;
         } catch (IOException e) {
         	 JOptionPane.showMessageDialog(  null,"Error al guardar los usuarios: " + e.getMessage(), "Error",JOptionPane.ERROR_MESSAGE);
         
+        }
+    }
+    
+    private void cargarEquipos() {
+        File dir = new File("data");
+        
+        File[] archivos = dir.listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
+
+        for (File archivo : archivos) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                Temporada temporada = (Temporada) ois.readObject();
+
+                if ("Activa".equals(temporada.getEstado())) {  
+                    List<Equipo> equipos = temporada.getEquipos();
+                    
+                    for (Equipo equipo : equipos) {
+                        comboBoxEquipo.addItem(equipo.getNombre());
+                    }
+                }
+
+            } catch (IOException | ClassNotFoundException e) {
+                System.err.println("Error al cargar el archivo: " + archivo.getName());
+            }
         }
     }
 
@@ -267,6 +331,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		    usuario = textUsuario.getText().trim();
     		    contrasena = new String(passwordField.getPassword());
     		    rol = (String) comboBoxRol.getSelectedItem();
+    		    equipo =  (String) comboBoxEquipo.getSelectedItem();
 
     		    if (usuario.isEmpty() || contrasena.isEmpty()) {
     		        JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -279,15 +344,17 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		        usuarioExistente.setUsuario(usuario);
     		        usuarioExistente.setContrasena(contrasena);
     		        usuarioExistente.setRol(rol);
+    		        usuarioExistente.setEquipo(equipo);
 
     		        // Actualizar la lista visual
     		        actualizarLista();
+    		        actualizacion = true;
 
     		        JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 
     		    } else {
     		        // Si no hay un usuario seleccionado, se crea uno nuevo
-    		        nuevoUsuario = new Usuario(usuario, contrasena, rol);
+    		        nuevoUsuario = new Usuario(usuario, contrasena, rol, equipo);
     		        listaUsuarios.add(nuevoUsuario);
     		        actualizarLista();
     		    }
@@ -299,6 +366,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		    textUsuario.setText("");
     		    passwordField.setText("");
     		    comboBoxRol.setSelectedIndex(0);
+    		    comboBoxEquipo.setSelectedIndex(0);
     		    usuarioSeleccionadoIndex = -1;
     		}
 
@@ -319,6 +387,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     		    textUsuario.setText("");
     		    passwordField.setText("");
     		    comboBoxRol.setSelectedIndex(0);
+    		    comboBoxEquipo.setSelectedIndex(0);
     		    usuarioSeleccionadoIndex = -1;
     	    }
     	    
@@ -366,6 +435,4 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 			fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x404040)); 
 		}
 	}
-
-    
 }

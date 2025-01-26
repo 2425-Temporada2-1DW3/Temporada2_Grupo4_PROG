@@ -6,17 +6,19 @@ import java.util.Objects;
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String ARCHIVO_USUARIOS = "usuarios.ser";
+    public static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
 
     private String usuario;
     private String contrasena;
     private String rol;
+    private String equipo;
 
     // Constructor por defecto
     public Usuario() {
         this.usuario = "";
         this.contrasena = "";
         this.rol = "Usuario"; // Por defecto, los usuarios son invitados
+        this.equipo = "";
     }
 
     // Constructor copia
@@ -24,6 +26,7 @@ public class Usuario implements Serializable {
         this.usuario = u.usuario;
         this.contrasena = u.contrasena;
         this.rol = u.rol;
+        this.equipo = u.equipo;
     }
 
     // Constructor personalizado
@@ -31,6 +34,7 @@ public class Usuario implements Serializable {
         this.usuario = u;
         this.contrasena = c;
         this.rol = "Usuario"; // Por defecto, el rol es Usuario
+        this.equipo = ""; // Por defecto, el equipo es nulo
     }
 
     // Constructor personalizado con rol
@@ -38,6 +42,15 @@ public class Usuario implements Serializable {
         this.usuario = u;
         this.contrasena = c;
         this.rol = r;
+        this.equipo = "";
+    }
+    
+    // Constructor personalizado con equipo
+    public Usuario(String u, String c, String r, String e) {
+        this.usuario = u;
+        this.contrasena = c;
+        this.rol = r;
+        this.equipo = e;
     }
 
     // Getters y Setters
@@ -64,6 +77,14 @@ public class Usuario implements Serializable {
     public void setRol(String rol) {
         this.rol = rol;
     }
+    
+    public String getEquipo() {
+        return equipo;
+    }
+
+    public void setEquipo(String equipo) {
+        this.equipo = equipo;
+    }
 
     // hashCode
     @Override
@@ -87,6 +108,10 @@ public class Usuario implements Serializable {
     // toString
     @Override
     public String toString() {
-        return "Usuario: " + usuario + " | Rol: " + rol;
+    	if (equipo == null) {
+    		return "Usuario: " + usuario + " | Rol: " + rol;
+    	} else {
+    		return "Usuario: " + usuario + " | Rol: " + rol + " | Equipo: " + equipo;
+    	}
     }
 }
