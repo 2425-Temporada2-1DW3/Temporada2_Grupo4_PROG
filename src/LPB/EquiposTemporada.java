@@ -70,6 +70,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private String rol;
 	private String usuario;
 	private Temporada temporadaSeleccionada;
+	private List<Equipo> equipos;
 	
 	/**
 	 * Launch the application.
@@ -151,7 +152,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	                temporadaSeleccionada = Temporada.cargarTemporada(periodo);
 	                
 	                if (temporadaSeleccionada != null) {
-	                    List<Equipo> equipos = temporadaSeleccionada.getEquipos();
+	                    equipos = temporadaSeleccionada.getEquipos();
 	                    if (equipos != null) {
 	                        equiposPorTemporada.put(periodo, equipos);
 	                        actualizarPanelEquipos(periodo);
@@ -187,7 +188,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
                     try {
                     	String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
                     	String periodo = selectedTemporada.replace("Temporada ", "");
-                        List<Equipo> equipos = temporadaSeleccionada.getEquipos();
+                        equipos = temporadaSeleccionada.getEquipos();
                         equiposPorTemporada.put(periodo, equipos);
 						temporadaSeleccionada = Temporada.cargarTemporada(periodo);
 						actualizarPanelEquipos(periodo);
@@ -220,6 +221,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 			        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de volver?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			        switch (opcion) {
 				        case JOptionPane.YES_OPTION:
+			                try {
+		                        temporadaSeleccionada.setEquipos(equipos);
+		                        temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+							} catch (IOException e1) {
+								System.out.println("ERROR. No se han encontrado los datos de la temporada.");
+							}
 				            new Menu(rol, usuario).setVisible(true);
 				            dispose();
 				            break;
@@ -321,7 +328,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	private void actualizarPanelEquipos(String temporada) {
 	    panelEquipos.removeAll();
-	    List<Equipo> equipos = equiposPorTemporada.get(temporada);
+	    equipos = equiposPorTemporada.get(temporada);
 
 	    if (equipos == null || equipos.isEmpty()) {
 	        JLabel aviso = new JLabel("No hay equipos disponibles para la temporada seleccionada.");
@@ -458,6 +465,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        switch (opcion) {
 	        case JOptionPane.YES_OPTION:
 	            System.exit(0);
+                try {
+                	temporadaSeleccionada.setEquipos(equipos);
+					temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+				} catch (IOException e1) {
+					System.out.println("ERROR. No se han encontrado los datos de la temporada.");
+				}
 	            break;
 	        case JOptionPane.NO_OPTION:
 	            System.exit(0);
