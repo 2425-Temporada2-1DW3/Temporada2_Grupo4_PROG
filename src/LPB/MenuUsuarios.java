@@ -38,6 +38,8 @@ import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
+import LPBCLASES.logClase;
+
 import javax.swing.SwingConstants;
 
 public class MenuUsuarios extends JFrame implements ActionListener, MouseListener,Serializable {
@@ -77,9 +79,12 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
 				try {
 					MenuUsuarios frame = new MenuUsuarios();
 					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+					
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                  
+                }
 			}
 		});
 	}
@@ -131,15 +136,15 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         panelInferior.add(scrollPane);
 
         listUsuarios.addListSelectionListener(e -> {
-		    if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
-		        Usuario usuarioSeleccionado = listUsuarios.getSelectedValue();
-		        usuarioSeleccionadoIndex = listUsuarios.getSelectedIndex(); // Guardar el índice del usuario seleccionado
-		        if (usuarioSeleccionado != null) {
-		            textUsuario.setText(usuarioSeleccionado.getUsuario());
-		            passwordField.setText(usuarioSeleccionado.getContrasena());
-		            comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
-		            comboBoxEquipo.setSelectedItem(usuarioSeleccionado.getEquipo());
-		        }
+        	if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
+                Usuario usuarioSeleccionado = listUsuarios.getSelectedValue();
+                usuarioSeleccionadoIndex = listUsuarios.getSelectedIndex(); // Guardar el índice del usuario seleccionado
+                if (usuarioSeleccionado != null) {
+                    textUsuario.setText(usuarioSeleccionado.getUsuario());
+                    passwordField.setText(usuarioSeleccionado.getContrasena());
+                    comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
+                    comboBoxEquipo.setSelectedItem(usuarioSeleccionado.getEquipo());
+                }
 		    }
 		});
 
@@ -327,74 +332,91 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     public void actionPerformed(ActionEvent e) {
     	 source = e.getSource();
 
-    	 if (source == btnGuardar) {
-    		    usuario = textUsuario.getText().trim();
-    		    contrasena = new String(passwordField.getPassword());
-    		    rol = (String) comboBoxRol.getSelectedItem();
-    		    equipo =  (String) comboBoxEquipo.getSelectedItem();
+    	// === INICIO: LOGGING PARA GUARDAR USUARIO ===
+    	    if (source == btnGuardar) {
+    	        usuario = textUsuario.getText().trim();
+    	        contrasena = new String(passwordField.getPassword());
+    	        rol = (String) comboBoxRol.getSelectedItem();
+    	        equipo = (String) comboBoxEquipo.getSelectedItem();
 
-    		    if (usuario.isEmpty() || contrasena.isEmpty()) {
-    		        JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
-    		        return;
-    		    }
+    	        if (usuario.isEmpty() || contrasena.isEmpty()) {
+    	            JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    	            return;
+    	        }
 
-    		    // Si hay un usuario seleccionado, actualizamos sus datos
-    		    if (usuarioSeleccionadoIndex >= 0) {
-    		        usuarioExistente = listaUsuarios.get(usuarioSeleccionadoIndex);
-    		        usuarioExistente.setUsuario(usuario);
-    		        usuarioExistente.setContrasena(contrasena);
-    		        usuarioExistente.setRol(rol);
-    		        usuarioExistente.setEquipo(equipo);
+    	        // Si hay un usuario seleccionado, actualizamos sus datos
+    	        if (usuarioSeleccionadoIndex >= 0) {
+    	            usuarioExistente = listaUsuarios.get(usuarioSeleccionadoIndex);
+    	            usuarioExistente.setUsuario(usuario);
+    	            usuarioExistente.setContrasena(contrasena);
+    	            usuarioExistente.setRol(rol);
+    	            usuarioExistente.setEquipo(equipo);
 
-    		        // Actualizar la lista visual
-    		        actualizarLista();
-    		        actualizacion = true;
+    	            // Actualizar la lista visual
+    	            actualizarLista();
+    	            actualizacion = true;
 
-    		        JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+    	            JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 
-    		    } else {
-    		        // Si no hay un usuario seleccionado, se crea uno nuevo
-    		        nuevoUsuario = new Usuario(usuario, contrasena, rol, equipo);
-    		        listaUsuarios.add(nuevoUsuario);
-    		        actualizarLista();
-    		    }
+    	            // Registrar el evento en el log
+    	            logClase.logAction("El usuario '" + usuario + "' ha sido modificado (Rol: " + rol + ", Equipo: " + equipo + ").");
 
-    		    // Guardar los cambios en el archivo
-    		    guardarUsuarios(listaUsuarios);
+    	        } else {
+    	            // Si no hay un usuario seleccionado, se crea uno nuevo
+    	            nuevoUsuario = new Usuario(usuario, contrasena, rol, equipo);
+    	            listaUsuarios.add(nuevoUsuario);
+    	            actualizarLista();
 
-    		    // Limpiar los campos y reiniciar el índice
-    		    textUsuario.setText("");
-    		    passwordField.setText("");
-    		    comboBoxRol.setSelectedIndex(0);
-    		    comboBoxEquipo.setSelectedIndex(0);
-    		    usuarioSeleccionadoIndex = -1;
-    		}
+    	            // Registrar el evento en el log
+    	            logClase.logAction("Se ha agregado un nuevo usuario: '" + usuario + "' (Rol: " + rol + ", Equipo: " + equipo + ").");
+    	        }
 
+    	        // Guardar los cambios en el archivo
+    	        guardarUsuarios(listaUsuarios);
+
+    	        // Limpiar los campos y reiniciar el índice
+    	        textUsuario.setText("");
+    	        passwordField.setText("");
+    	        comboBoxRol.setSelectedIndex(0);
+    	        comboBoxEquipo.setSelectedIndex(0);
+    	        usuarioSeleccionadoIndex = -1;
+    	    }
+    	    // === FIN: LOGGING PARA GUARDAR USUARIO ===
+
+    	    // === INICIO: LOGGING PARA ELIMINAR USUARIO ===
     	    if (source == btnEliminar) {
     	        int index = listUsuarios.getSelectedIndex();
     	        if (index >= 0) {
+    	            Usuario usuarioEliminado = listaUsuarios.get(index);
+
     	            listaUsuarios.remove(index);
 
     	            // Actualizar la lista y guardar cambios
     	            actualizarLista();
-    	           guardarUsuarios(listaUsuarios);
+    	            guardarUsuarios(listaUsuarios);
 
+    	            // Registrar el evento en el log
+    	            logClase.logAction("Se ha eliminado el usuario: '" + usuarioEliminado.getUsuario() + "' (Rol: " + usuarioEliminado.getRol() + ", Equipo: " + usuarioEliminado.getEquipo() + ").");
     	        } else {
     	            JOptionPane.showMessageDialog(this, "Selecciona un usuario para eliminar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
     	        }
-    	        
-    	     // Limpiar los campos y reiniciar el índice
-    		    textUsuario.setText("");
-    		    passwordField.setText("");
-    		    comboBoxRol.setSelectedIndex(0);
-    		    comboBoxEquipo.setSelectedIndex(0);
-    		    usuarioSeleccionadoIndex = -1;
+
+    	        // Limpiar los campos y reiniciar el índice
+    	        textUsuario.setText("");
+    	        passwordField.setText("");
+    	        comboBoxRol.setSelectedIndex(0);
+    	        comboBoxEquipo.setSelectedIndex(0);
+    	        usuarioSeleccionadoIndex = -1;
     	    }
-    	    
+    	    // === FIN: LOGGING PARA ELIMINAR USUARIO ===
+
+    	    // === INICIO: LOGGING PARA VOLVER ===
     	    if (source == btnVolver) {
+    	    	logClase.logAction("El administrador ha salido del menú de usuarios.");
     	        new Menu("Administrador", "Admin").setVisible(true);
     	        this.dispose();
     	    }
+    	    // === FIN: LOGGING PARA VOLVER ===
     }
 
 	@Override

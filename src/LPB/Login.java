@@ -21,6 +21,7 @@ import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
+import LPBCLASES.logClase;
 
 public class Login extends JFrame implements MouseListener {
     private static final long serialVersionUID = -410820418148204249L;
@@ -117,13 +118,21 @@ public class Login extends JFrame implements MouseListener {
             String usuario = txtUsuario.getText().trim();
             String contrasena = new String(txtPassword.getPassword()).trim();
 
-            Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
-            if (user != null) {
-                JOptionPane.showMessageDialog(null, "Bienvenido/a, " + user.getUsuario() + ".");
-                new Menu(user.getRol(), user.getUsuario()).setVisible(true);
-                dispose();
-            } else {
-                JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+
+            try {
+                Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
+                if (user != null) {
+                	logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
+                    JOptionPane.showMessageDialog(null, "Bienvenido/a, " + user.getUsuario() + ".");
+                    new Menu(user.getRol(), user.getUsuario()).setVisible(true);
+                    dispose();
+                } else {
+                	logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+                }
+            } catch (Exception ex) {
+            	logClase.logError("Error durante la validación de usuario", ex);
+                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.");
             }
         });
 

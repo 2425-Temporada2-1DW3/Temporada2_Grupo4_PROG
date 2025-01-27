@@ -1,0 +1,10 @@
+[27/ene/2025:09:58:02 +0100] El usuario Admin ha iniciado sesión
+[27/ene/2025:10:02:44 +0100] Se ha iniciado el menú de gestión de usuarios.
+[27/ene/2025:10:02:55 +0100] El usuario Admin ha iniciado sesión
+[27/ene/2025:10:07:22 +0100] El usuario Admin ha iniciado sesión
+[27/ene/2025:10:07:37 +0100] Se ha agregado un nuevo usuario: 'Felipe' (Rol: Usuario, Equipo: Atlanta Hawks).
+[27/ene/2025:10:07:44 +0100] Se ha eliminado el usuario: 'Felipe' (Rol: Usuario, Equipo: Atlanta Hawks).
+[27/ene/2025:10:07:52 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Usuario, Equipo: null).
+[27/ene/2025:10:08:01 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: null).
+[27/ene/2025:10:08:03 +0100] El administrador ha salido del menú de usuarios.
+[27/ene/2025:10:08:53 +0100] El usuario Admin ha iniciado sesión
