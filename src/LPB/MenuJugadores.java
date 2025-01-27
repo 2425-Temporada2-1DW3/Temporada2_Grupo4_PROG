@@ -84,7 +84,7 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
         setTitle("LPB Basketball - Menú de Jugadores");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1202, 550);
+        setSize(800, 550);
         setLocationRelativeTo(null);
         getContentPane().setLayout(null);
 
@@ -106,14 +106,34 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         titulo.setForeground(new Color(0x13427e));
         panelSuperior.add(titulo);
         getContentPane().add(panelSuperior);
+                
+        btnSeleccionar = new BotonRedondeado("Seleccionar", null);
+        btnSeleccionar.setBounds(436, 46, 139, 40);
+        panelSuperior.add(btnSeleccionar);
+        btnSeleccionar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnSeleccionar.setBackground(new Color(0x404040));
+        btnSeleccionar.setForeground(Color.WHITE);
+        btnSeleccionar.setFocusPainted(false);
+        
+        btnAgregar = new BotonRedondeado("Agregar", null);
+        btnAgregar.setBounds(610, 46, 100, 40);
+        panelSuperior.add(btnAgregar);
+        btnAgregar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnAgregar.setBackground(new Color(0x13427E));
+        btnAgregar.setForeground(Color.WHITE);
+        btnAgregar.setFocusPainted(false);
+        btnAgregar.addMouseListener(this);
+        btnAgregar.addActionListener(this);
+        btnSeleccionar.addMouseListener(this);
+        btnSeleccionar.addActionListener(this);
 
         panelInferior = new JPanel();
         panelInferior.setBackground(new Color(204, 153, 102));
-        panelInferior.setBounds(0, 110, 1188, 403);
+        panelInferior.setBounds(0, 110, 786, 403);
         panelInferior.setLayout(null);
-
+        
         scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 20, 430, 360);
+        scrollPane.setBounds(10, 20, 430, 348);
         dlm = new DefaultListModel<>();
         cargarJugadores();
         
@@ -121,104 +141,108 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         listJugadores.setModel(dlm);
         listJugadores.setFont(new Font("SansSerif", Font.PLAIN, 16));
         scrollPane.setViewportView(listJugadores);
+        listJugadores.addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                Jugador jugadorSeleccionado = listJugadores.getSelectedValue();
+                if (jugadorSeleccionado != null) {
+                    textNombre.setText(jugadorSeleccionado.getNombre());
+                    textApellido.setText(jugadorSeleccionado.getApellidos());
+                    textDorsal.setText(String.valueOf(jugadorSeleccionado.getDorsal()));
+                    comboBoxPosicion.setSelectedItem(jugadorSeleccionado.getPosicion());
+
+                    // Actualizar la foto del jugador
+                    actualizarFoto(jugadorSeleccionado);
+                }
+            }
+        });
         panelInferior.add(scrollPane);
+        
+        btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen", null);
+        btnSeleccionarImagen.setForeground(new Color(255, 255, 255));
+        btnSeleccionarImagen.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnSeleccionarImagen.setBounds(461, 29, 187, 40);
+        btnSeleccionarImagen.setBackground(new Color(0xf46b20));
+        btnSeleccionarImagen.addActionListener(this);
+        btnSeleccionarImagen.setFocusPainted(false);
+        btnSeleccionarImagen.addMouseListener(this);
+        panelInferior.add(btnSeleccionarImagen);
+        
+        lblFoto = new JLabel("Foto del jugador");
+        lblFoto.setBounds(680, 10, 80, 80);
+        lblFoto.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblFoto.setHorizontalAlignment(SwingConstants.CENTER);
+        panelInferior.add(lblFoto);
         
         lblNombre = new JLabel("Nombre:");
         lblNombre.setHorizontalAlignment(SwingConstants.RIGHT);
-        lblNombre.setFont(new Font("Tahoma", Font.PLAIN, 18));
+        lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 18));
         lblNombre.setForeground(new Color(0x545454));
-        lblNombre.setBounds(476, 193, 100, 30);
+        lblNombre.setBounds(474, 100, 70, 30);
         panelInferior.add(lblNombre);
 
         textNombre = new TextoRedondeado(20);
         textNombre.setColumns(10);
         textNombre.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        textNombre.setBounds(586, 193, 200, 30);
+        textNombre.setBounds(561, 100, 200, 30);
         panelInferior.add(textNombre);
 
-        lblApellido = new JLabel("Apellido:");
+        lblApellido = new JLabel("Apellidos:");
         lblApellido.setHorizontalAlignment(SwingConstants.RIGHT);
         lblApellido.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblApellido.setForeground(new Color(0x545454));
-        lblApellido.setBounds(476, 243, 100, 30);
+        lblApellido.setBounds(463, 150, 81, 30);
         panelInferior.add(lblApellido);
 
         textApellido = new TextoRedondeado(20);
         textApellido.setColumns(10);
         textApellido.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        textApellido.setBounds(586, 243, 200, 30);
+        textApellido.setBounds(561, 150, 200, 30);
         panelInferior.add(textApellido);
 
         lblDorsal = new JLabel("Dorsal:");
         lblDorsal.setHorizontalAlignment(SwingConstants.RIGHT);
         lblDorsal.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblDorsal.setForeground(new Color(0x545454));
-        lblDorsal.setBounds(808, 193, 100, 30);
+        lblDorsal.setBounds(474, 200, 70, 30);
         panelInferior.add(lblDorsal);
 
         textDorsal = new TextoRedondeado(20);
         textDorsal.setColumns(10);
         textDorsal.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        textDorsal.setBounds(918, 193, 200, 30);
+        textDorsal.setBounds(561, 200, 200, 30);
         panelInferior.add(textDorsal);
 
         lblPosicion = new JLabel("Posición:");
         lblPosicion.setHorizontalAlignment(SwingConstants.RIGHT);
         lblPosicion.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblPosicion.setForeground(new Color(0x545454));
-        lblPosicion.setBounds(808, 243, 100, 30);
+        lblPosicion.setBounds(463, 250, 81, 30);
         panelInferior.add(lblPosicion);
 
         comboBoxPosicion = new JComboBox<>();
-        String[] posiciones = {"Base", "Escolta", "Alero", "Ala Pivot", "Pivot"};
+        String[] posiciones = {"Base", "Escolta", "Alero", "Ala-pívot", "Pívot"};
         for (String pos : posiciones) {
             comboBoxPosicion.addItem(pos);
         }
         comboBoxPosicion.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        comboBoxPosicion.setBounds(918, 243, 200, 30);
+        comboBoxPosicion.setBounds(561, 250, 200, 30);
         panelInferior.add(comboBoxPosicion);
-
-        lblFoto = new JLabel("Foto del jugador");
-        lblFoto.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        lblFoto.setHorizontalAlignment(SwingConstants.CENTER);
-        lblFoto.setBounds(787, 20, 150, 150);
-        panelInferior.add(lblFoto);
-    
-        btnSeleccionarImagen = new BotonRedondeado("Seleccionar Imagen", null);
-        btnSeleccionarImagen.setForeground(new Color(255, 255, 255));
-        btnSeleccionarImagen.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnSeleccionarImagen.setBounds(566, 74, 187, 40);
-        btnSeleccionarImagen.setBackground(new Color(0xf46b20));
-        btnSeleccionarImagen.addActionListener(this);
-        btnSeleccionarImagen.setFocusPainted(false);
-        btnSeleccionarImagen.addMouseListener(this);
-        panelInferior.add(btnSeleccionarImagen);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnGuardar.setBackground(new Color(0x13427E));
         btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setBounds(777, 307, 100, 40);
+        btnGuardar.setBounds(513, 290, 100, 40);
         btnGuardar.setFocusPainted(false);
         btnGuardar.addMouseListener(this);
         btnGuardar.addActionListener(this);
         panelInferior.add(btnGuardar);
 
-        btnAgregar = new BotonRedondeado("Agregar", null);
-        btnAgregar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnAgregar.setBackground(new Color(0x13427E));
-        btnAgregar.setForeground(Color.WHITE);
-        btnAgregar.setBounds(661, 307, 100, 40);
-        btnAgregar.setFocusPainted(false);
-        btnAgregar.addMouseListener(this);
-        btnAgregar.addActionListener(this);
-        panelInferior.add(btnAgregar);
-
         btnEliminar = new BotonRedondeado("Eliminar", null);
         btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnEliminar.setBackground(new Color(0xf46b20));
         btnEliminar.setForeground(Color.WHITE);
-        btnEliminar.setBounds(897, 307, 100, 40);
+        btnEliminar.setBounds(628, 290, 100, 40);
         btnEliminar.setFocusPainted(false);
         btnEliminar.addMouseListener(this);
         btnEliminar.addActionListener(this);
@@ -228,38 +252,26 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnVolver.setBackground(new Color(0x404040));
         btnVolver.setForeground(Color.WHITE);
-        btnVolver.setBounds(1017, 307, 100, 40);
+        btnVolver.setBounds(661, 340, 100, 40);
         btnVolver.setFocusPainted(false);
         btnVolver.addMouseListener(this);
         btnVolver.addActionListener(this);
         panelInferior.add(btnVolver);
 
-        btnSeleccionar = new BotonRedondeado("Seleccionar", null);
-        btnSeleccionar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnSeleccionar.setBackground(new Color(0x404040));
-        btnSeleccionar.setForeground(Color.WHITE);
-        btnSeleccionar.setBounds(512, 307, 139, 40);
-        btnSeleccionar.setFocusPainted(false);
-        btnSeleccionar.addMouseListener(this);
-        btnSeleccionar.addActionListener(this);
-        panelInferior.add(btnSeleccionar);
-
-        btnGuardarSeleccion = new BotonRedondeado("Guardar Selección", null);
-        btnGuardarSeleccion.setForeground(Color.WHITE);
-        btnGuardarSeleccion.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnGuardarSeleccion.setFocusPainted(false);
-        btnGuardarSeleccion.setBackground(new Color(244, 107, 32));
-        btnGuardarSeleccion.addActionListener(this);
-        panelInferior.add(btnGuardarSeleccion);
-
-        lblJugadoresTotales = new JLabel("Jugadores en la Liga:");
+        lblJugadoresTotales = new JLabel("Jugadores en la temporada:");
+        lblJugadoresTotales.setLocation(20, 372);
+        lblJugadoresTotales.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblJugadoresTotales.setSize(180, 20);
         panelInferior.add(lblJugadoresTotales);
 
         contador = dlm.getSize();
         lblContador = new JLabel("" + contador);
+        lblContador.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblContador.setSize(40, 20);
+        lblContador.setLocation(205, 372);
         panelInferior.add(lblContador);
         getContentPane().add(panelInferior);
-}
+    }
 
     // Métodos de funcionalidad
     public void agregarJugador() {
@@ -290,6 +302,22 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
             datosmodificados = true;
         }
     }
+    
+    private void actualizarFoto(Jugador jugador) {
+        try {
+            String rutaFoto = jugador.getPhotoPath();
+            if (rutaFoto == null || rutaFoto.isEmpty()) {
+                lblFoto.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+            } else {
+                BufferedImage imagen = ImageIO.read(new File(rutaFoto));
+                ImageIcon fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
+                lblFoto.setIcon(fotoIcono);
+            }
+        } catch (IOException ex) {
+            System.err.println("Error al cargar la foto del jugador: " + ex.getMessage());
+            lblFoto.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+        }
+    }
 
     public void seleccionarImagen() {
     	selectorArchivo = new JnaFileChooser();
@@ -307,7 +335,7 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
                     return;
                 }
 
-                BufferedImage imagenEscalada = Scalr.resize(imagenOriginal, Scalr.Method.QUALITY, 150, 150);
+                BufferedImage imagenEscalada = Scalr.resize(imagenOriginal, Scalr.Method.QUALITY, 70, 70);
 
                 // Obtener el nombre y apellido del jugador
                 String nombre = textNombre.getText().trim();
@@ -377,9 +405,9 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         }
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        Object o = e.getSource();
+	@Override
+	public void actionPerformed(ActionEvent e) {
+    	Object o = e.getSource();
 
         if (o == btnAgregar) {
             if (textNombre.getText().isEmpty() && textDorsal.getText().isEmpty()) {
@@ -409,23 +437,24 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else if (o == btnSeleccionarImagen) {
             seleccionarImagen();
-        }else if (o == btnGuardarSeleccion) {
-        editarSeleccion();
-    } else if (o == btnVolver) {
-        if (datosmodificados) {
-            int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados, ¿Desea guardarlos?", "Info", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
-            switch (opcion) {
-                case JOptionPane.YES_OPTION:
-                    guardarDatos();
-                    break;
-                case JOptionPane.CANCEL_OPTION:
-                case JOptionPane.CLOSED_OPTION:
-                    return;
-            }
+        } else if (o == btnGuardarSeleccion) {
+        	editarSeleccion();
+        } else if (o == btnVolver) {
+        	if (datosmodificados) {
+	            int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados, ¿Desea guardarlos?", "Info", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);
+	            switch (opcion) {
+	                case JOptionPane.YES_OPTION:
+	                    guardarDatos();
+	                    break;
+	                case JOptionPane.CANCEL_OPTION:
+	                case JOptionPane.CLOSED_OPTION:
+	                    return;
+	            }
+        	}
+	        datosguardados = true;
+	        System.exit(0);
         }
-        datosguardados = true;
-        System.exit(0);
-    }}
+    }
 
 
     private void editarSeleccion() {
