@@ -5,17 +5,24 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.*;
-import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
+import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
+import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.BotonRedondeado;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class AgregarEquipo extends JFrame {
 
@@ -26,13 +33,12 @@ public class AgregarEquipo extends JFrame {
 	private JTextField anioFundacion;
 	private JLabel logoLabel;
 	private File logoFile;
-	private EquiposTemporada equiposTemporadaFrame;
 	private BotonRedondeado btnLogo;
 	private JScrollPane scrollPane;
 	private BotonRedondeado btnAgregarJugador;
 	private BotonRedondeado btnGuardar;
+	private BotonRedondeado btnEliminarJugador;
 	private ArrayList<Jugador> jugadores;
-	private Equipo nuevoEquipo;
 	private JPanel panelIzquierdo;
 	private JPanel panelDerecho;
 	private JLabel nombreEquipoLabel;
@@ -42,15 +48,15 @@ public class AgregarEquipo extends JFrame {
 	private JLabel jugadoresLabel;
 	private File selectedFile;
 	private String selectedFileExtension;
-	private String temporada, nombre, entrenador, estadio, equipoPath;
+	Temporada temporada;
+	private String nombre, entrenador, estadio, equipoPath;
 	private int fundacion;
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
 
-	public AgregarEquipo(EquiposTemporada equiposTemporadaFrame, String temporada) {
+	public AgregarEquipo(Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		this.temporada = temporada;
-		this.equiposTemporadaFrame = equiposTemporadaFrame;
 		setTitle("Agregar Nuevo Equipo");
 		setSize(900, 600);
 		setLocationRelativeTo(null);
@@ -126,7 +132,37 @@ public class AgregarEquipo extends JFrame {
 		btnAgregarJugador.setForeground(Color.WHITE);
 		btnAgregarJugador.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnAgregarJugador.setFocusPainted(false);
-		btnAgregarJugador.addActionListener(_ -> agregarJugador());
+		
+		btnAgregarJugador.addActionListener(e -> {
+		    AgregarJugador agregarJugador = new AgregarJugador(this);
+		    agregarJugador.setVisible(true);
+		    
+		    agregarJugador.addWindowListener(new java.awt.event.WindowAdapter() {
+		        @Override
+		        public void windowClosed(java.awt.event.WindowEvent e) {
+		            Jugador nuevoJugador = agregarJugador.getJugador();
+		            if (nuevoJugador != null) {
+		                jugadores.add(nuevoJugador);
+
+		    			Image originalIcon = new ImageIcon(nuevoJugador.getPhotoPath()).getImage();
+		    			
+		    			int height = 40;
+		    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
+
+		    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+		    			ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
+		                tableModel.addRow(new Object[]{
+		                		fotoIcon,
+		                        nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos(),
+		                        nuevoJugador.getPosicion(),
+		                        nuevoJugador.getDorsal()
+		                });
+		            }
+		        }
+		    });
+		});
+		
 		panelIzquierdo.add(btnAgregarJugador);
 
 		btnGuardar = new BotonRedondeado("Guardar", null);
@@ -144,62 +180,143 @@ public class AgregarEquipo extends JFrame {
 		jugadoresLabel.setBounds(20, 20, 200, 30);
 		panelDerecho.add(jugadoresLabel);
 
-		 String[] nombreColumnas = {"Foto", "Nombre", "Apellido", "Posición", "Dorsal"};
-		    tableModel = new DefaultTableModel(nombreColumnas, 0) {
+		String[] nombreColumnas = {"", "Nombre", "Posición", "Dorsal"};
+	    
+		tableModel = new DefaultTableModel(nombreColumnas, 0) {
+
+			private static final long serialVersionUID = -5930205779290303837L;
+
+			@Override
+	        public boolean isCellEditable(int row, int column) {
+	           return false;
+	        }
+	    };
+	    
+	    tablaJugadores = new JTable(tableModel);
+	    tablaJugadores.setRowHeight(50);
+	    tablaJugadores.getTableHeader().setReorderingAllowed(false);
+	    tablaJugadores.setFont(new Font("SansSerif", Font.PLAIN, 12));
+	    tablaJugadores.setShowGrid(false);
+	    tablaJugadores.setBackground(new Color(217, 217, 217));
+	    tablaJugadores.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
+	    tablaJugadores.getTableHeader().setPreferredSize(new Dimension(tablaJugadores.getTableHeader().getPreferredSize().width, 40));
+	    
+	    DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
+	        private static final long serialVersionUID = 1L;
+
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            label.setOpaque(true);
+	            label.setBackground(new Color(112, 117, 126));
+	            label.setForeground(Color.WHITE);
+	            label.setFont(new Font("SansSerif", Font.BOLD, 16));
+	            label.setHorizontalAlignment(SwingConstants.CENTER);
+	            return label;
+	        }
+	    };
+
+	    for (int i = 0; i < tablaJugadores.getColumnModel().getColumnCount(); i++) {
+	        tablaJugadores.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+	    }
+	    
+	    DefaultTableCellRenderer centrarTexto = new DefaultTableCellRenderer();
+	    centrarTexto.setHorizontalAlignment(SwingConstants.CENTER);
+
+	    for (int i = 1; i < tablaJugadores.getColumnModel().getColumnCount(); i++) {
+	        tablaJugadores.getColumnModel().getColumn(i).setCellRenderer(centrarTexto);
+	    }
+
+	    tablaJugadores.getColumnModel().getColumn(0).setCellRenderer(new DefaultTableCellRenderer() {
+	        private static final long serialVersionUID = 3745127078281392738L;
+
+	        @Override
+	        protected void setValue(Object value) {
+	            if (value instanceof ImageIcon) {
+	                setIcon((ImageIcon) value);
+	                setText("");
+	            } else {
+	                super.setValue(value);
+	            }
+	        }
+
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            label.setHorizontalAlignment(SwingConstants.CENTER);
+	            return label;
+	        }
+	    });
+
+		scrollPane = new JScrollPane(tablaJugadores);
+		scrollPane.setBackground(new Color(0xd9d9d9));
+		scrollPane.getViewport().setBackground(new Color(0xd9d9d9));
+		scrollPane.setBounds(20, 60, 400, 400);
+		panelDerecho.add(scrollPane);
+		
+		btnEliminarJugador = new BotonRedondeado("Eliminar Jugador", (ImageIcon) null);
+		btnEliminarJugador.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        int[] selectedRows = tablaJugadores.getSelectedRows();
 		        
-				private static final long serialVersionUID = 4426702124875665016L;
-
-				@Override
-		        public Class<?> getColumnClass(int column) {
-		            if (column == 0) {
-		                return ImageIcon.class;
+		        if (selectedRows.length > 0) {
+		            Arrays.sort(selectedRows);
+		            for (int i = selectedRows.length - 1; i >= 0; i--) {
+		                int selectedRow = selectedRows[i];
+		                
+		                tableModel.removeRow(selectedRow);
+		                jugadores.remove(selectedRow);
 		            }
-		            return String.class;
-		        }
 
-		        @Override
-		        public boolean isCellEditable(int row, int column) {
-		            return false;
-		        }
-		    };
-		    tablaJugadores = new JTable(tableModel);
-		    tablaJugadores.getTableHeader().setReorderingAllowed(false);
-		    tablaJugadores.setFont(new Font("SansSerif", Font.PLAIN, 12));
-		    tablaJugadores.setShowGrid(false);
-		    tablaJugadores.setBackground(new Color(0xd9d9d9));
-		    tablaJugadores.setRowHeight(50);
-		    tablaJugadores.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
-		    
-		    
-		    
-		    DefaultTableCellRenderer centrarTexto = new DefaultTableCellRenderer();
-		    centrarTexto.setHorizontalAlignment(SwingConstants.CENTER);
+		            tableModel.setRowCount(0);
+		            for (Jugador jugador : jugadores) {
+		                Image originalIcon = new ImageIcon(jugador.getPhotoPath()).getImage();
+		                
+		                int height = 40;
+		                int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
 
-		    for (int i = 1; i < tablaJugadores.getColumnCount(); i++) {
-		        tablaJugadores.getColumnModel().getColumn(i).setCellRenderer(centrarTexto);
+		                Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+		                ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
+		                tableModel.addRow(new Object[]{
+		                    fotoIcon,
+		                    jugador.getNombre() + " " + jugador.getApellidos(),
+		                    jugador.getPosicion(),
+		                    jugador.getDorsal()
+		                });
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(
+		                null,
+		                "Por favor, selecciona al menos un jugador para eliminarlo.",
+		                "Advertencia",
+		                JOptionPane.WARNING_MESSAGE
+		            );
+		        }
 		    }
-
-			scrollPane = new JScrollPane(tablaJugadores);
-			scrollPane.setBackground(new Color(0xd9d9d9));
-			scrollPane.getViewport().setBackground(new Color(0xd9d9d9));
-			scrollPane.setBounds(20, 60, 400, 400);
-			panelDerecho.add(scrollPane);
+		});
+		btnEliminarJugador.setForeground(Color.WHITE);
+		btnEliminarJugador.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnEliminarJugador.setFocusPainted(false);
+		btnEliminarJugador.setBackground(new Color(228, 82, 39));
+		btnEliminarJugador.setBounds(252, 486, 168, 40);
+		panelDerecho.add(btnEliminarJugador);
 
 		jugadores = new ArrayList<>();
 	}
 
+	// Método para seleccionar la imagen
 	private void seleccionarImagen(JLabel label, boolean isLogo) {
-	    JFileChooser fileChooser = new JFileChooser();
-	    FileNameExtensionFilter imageFilter = new FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif");
-	    fileChooser.setFileFilter(imageFilter);
+		JnaFileChooser fileChooser = new JnaFileChooser();
+		fileChooser.setTitle("Selecciona una foto");
+		fileChooser.addFilter("Imágenes (*.jpg; *.jpeg; *.png; *.gif)", "jpg", "jpeg", "png", "gif");
+		fileChooser.addFilter("Todos los Archivos", "*");
 
-	    int result = fileChooser.showOpenDialog(this);
-	    if (result == JFileChooser.APPROVE_OPTION) {
+		if (fileChooser.showOpenDialog(this)) {
 	        selectedFile = fileChooser.getSelectedFile();
 	        if (selectedFile.exists()) {
 	            label.setText(selectedFile.getName());
 
-	            // Obtener extensión del archivo
 	            String fileName = selectedFile.getName();
 	            int lastIndex = fileName.lastIndexOf('.');
 	            selectedFileExtension = (lastIndex == -1) ? "" : fileName.substring(lastIndex + 1);
@@ -208,28 +325,6 @@ public class AgregarEquipo extends JFrame {
 	                logoFile = selectedFile;
 	            }
 	        }
-	    }
-	}
-
-	private void agregarJugador() {
-	    AgregarJugador dialog = new AgregarJugador(this);
-	    dialog.setVisible(true);
-
-	    if (dialog.isGuardado()) {
-	        String nombre = dialog.getNombre();
-	        String apellidos = dialog.getApellidos();
-	        String posicion = dialog.getPosicion();
-	        int dorsal = dialog.getDorsal();
-	        File foto = dialog.getJugadorFoto();
-
-	        ImageIcon icon = null;
-	        if (foto != null) {
-	            icon = new ImageIcon(new ImageIcon(foto.getAbsolutePath())
-	                .getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH));
-	        }
-
-	        tableModel.addRow(new Object[]{icon, nombre, apellidos, posicion, dorsal});
-	        jugadores.add(new Jugador(nombre, apellidos, posicion, dorsal, foto != null ? foto.getAbsolutePath() : null));
 	    }
 	}
 
@@ -244,33 +339,82 @@ public class AgregarEquipo extends JFrame {
 	        return;
 	    }
 
-	    // Mover el archivo seleccionado al directorio de destino
 	    if (logoFile != null) {
 	        try {
-	            // Construir la ruta de destino dentro de los recursos
-	            String logoDestinationPath = String.format("src/imagenes/temporadas/%s/%s/%s.%s",
-	                this.temporada, nombre, nombre, selectedFileExtension);
+	            String logoDestinationPath = String.format("src/imagenes/temporadas/Temporada %s/%s/%s.%s",
+	                this.temporada.getPeriodo(), nombre, nombre, selectedFileExtension);
 	            File logoDestinationFile = new File(logoDestinationPath);
 
-	            // Crear directorios si no existen
 	            logoDestinationFile.getParentFile().mkdirs();
 
-	            // Copiar el archivo del logo
 	            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	            
+	            equipoPath = logoDestinationFile.getAbsolutePath();
 
-	            // Mostrar mensaje de éxito (opcional)
-	            System.out.println("El logo se ha guardado correctamente en: " + logoDestinationFile.getAbsolutePath());
+	            System.out.println("El logo se ha guardado correctamente en: " + equipoPath);
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
 	                "Error", JOptionPane.ERROR_MESSAGE);
 	            return;
 	        }
 	    }
+	    
+        try {
+            String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/";
+            Files.createDirectories(Paths.get(basePath));
 
-	    // Crear y guardar el equipo
-	    nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
-	    equiposTemporadaFrame.agregarNuevoEquipoDesdeFormulario(nuevoEquipo);
-	    JOptionPane.showMessageDialog(this, "Equipo agregado correctamente");
-	    dispose();
+            for (Jugador jugador : jugadores) {
+                String fotoPath = jugador.getPhotoPath();
+                String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
+                String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+
+                Path source = Paths.get(fotoPath);
+                Path destination = Paths.get(nuevoPath);
+
+                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                jugador.setPhotoPath(nuevoPath);
+            }
+
+        } catch (IOException e1) {
+            System.out.println("Error al mover las fotos de los jugadores: " + e1.getMessage());
+        }
+
+	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
+
+	    try {
+	        String temporadaFilePath = String.format("data/temporada_%s.ser", this.temporada.getPeriodo());
+	        File temporadaFile = new File(temporadaFilePath);
+
+	        if (temporadaFile.exists()) {
+	            Temporada temporadaCargada = Temporada.cargarTemporada(this.temporada.getPeriodo());
+	            if (temporadaCargada != null) {
+	                boolean equipoExistente = false;
+	                for (Equipo equipo : temporadaCargada.getEquipos()) {
+	                    if (equipo.getNombre().equalsIgnoreCase(nombre)) {
+	                        equipoExistente = true;
+	                        break;
+	                    }
+	                }
+
+	                if (equipoExistente) {
+	                    JOptionPane.showMessageDialog(this, "Ya existe un equipo con ese nombre en la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	                } else {
+	                    List<Equipo> listaEquipos = temporadaCargada.getEquipos();
+	                    listaEquipos.add(nuevoEquipo);
+	                    temporadaCargada.setEquipos(listaEquipos);
+	                    temporadaCargada.guardarTemporada(temporadaCargada);
+	                    JOptionPane.showMessageDialog(this, "El equipo ha sido guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	                    dispose();
+	                }
+	            } else {
+	                JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	            }
+	        } else {
+	            JOptionPane.showMessageDialog(this, "No se encontró el archivo de la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    } catch (IOException | ClassNotFoundException e) {
+	        JOptionPane.showMessageDialog(this, "Error al guardar el equipo en la temporada: " + e.getMessage(),
+	            "Error", JOptionPane.ERROR_MESSAGE);
+	    }
 	}
 }

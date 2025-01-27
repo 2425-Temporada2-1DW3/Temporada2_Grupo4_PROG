@@ -3,25 +3,24 @@ package LPB;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.io.File;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.filechooser.FileNameExtensionFilter;
 
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Jugador;
 import LPBCLASES.TextoRedondeado;
+import jnafilechooser.api.JnaFileChooser;
+
 import javax.swing.SwingConstants;
-import javax.swing.JMenuBar;
 
 public class AgregarJugador extends JDialog {
     /**
@@ -34,8 +33,6 @@ public class AgregarJugador extends JDialog {
     private JTextField dorsalField;
     private JButton btnGuardar;
     private JButton btnCancelar;
-    private File jugadorFoto;
-    private boolean guardado;
     private JLabel lblSeleccioneUnaFoto;
     private JPanel panel;
     private JLabel nombreLabel;
@@ -43,10 +40,11 @@ public class AgregarJugador extends JDialog {
     private JLabel posicionLabel;
     private JLabel dorsalLabel;
     private JButton btnCargarFoto;
-    private JFileChooser fileChooser;
-    private FileNameExtensionFilter imageFilter;
+    private File selectedFile;
     private ImageIcon logo;
     private JLabel labelLogo;
+    private Jugador jugador;
+    private int dorsal;
 
     public AgregarJugador(JFrame parent) {
         super(parent, "Agregar Jugador", true);
@@ -96,7 +94,7 @@ public class AgregarJugador extends JDialog {
         posicionLabel.setBounds(93, 161, 180, 25);
 		panel.add(posicionLabel);
 		
-        String[] posiciones = {"Base", "Escolta", "Alero", "Ala Pivot", "Pivot"};
+        String[] posiciones = {"Ala-pívot", "Alero", "Base", "Escolta", "Pívot"};
         posicionComboBox = new JComboBox<>(posiciones);
         posicionComboBox.setFont(new Font("SansSerif", Font.PLAIN, 16));
         posicionComboBox.setSize(200, 40);
@@ -129,7 +127,7 @@ public class AgregarJugador extends JDialog {
         lblSeleccioneUnaFoto.setHorizontalAlignment(SwingConstants.RIGHT);
         lblSeleccioneUnaFoto.setForeground(new Color(0x545454));
         lblSeleccioneUnaFoto.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblSeleccioneUnaFoto.setBounds(93, 268, 180, 25);
+        lblSeleccioneUnaFoto.setBounds(10, 268, 263, 25);
 		panel.add(lblSeleccioneUnaFoto);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
@@ -154,23 +152,34 @@ public class AgregarJugador extends JDialog {
     }
 
     private void cargarFoto() {
-        fileChooser = new JFileChooser();
-        imageFilter = new FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif");
-        fileChooser.setFileFilter(imageFilter);
-        int result = fileChooser.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            jugadorFoto = fileChooser.getSelectedFile();
+        JnaFileChooser fc = new JnaFileChooser();
+
+        fc.setTitle("Selecciona una foto");
+        fc.addFilter("Imágenes (*.jpg; *.jpeg; *.png; *.gif)", "jpg", "jpeg", "png", "gif");
+        fc.addFilter("Todos los Archivos", "*");
+
+        if (fc.showOpenDialog(this)) {
+            selectedFile = fc.getSelectedFile();
+            lblSeleccioneUnaFoto.setText(selectedFile.getName());
+            lblSeleccioneUnaFoto.setForeground(new Color(0x007B00));
+        } else {
+            lblSeleccioneUnaFoto.setText("No se seleccionó ninguna foto.");
+            lblSeleccioneUnaFoto.setForeground(Color.RED);
         }
     }
 
     private void guardarJugador() {
-        if (nombreField.getText().isEmpty() || apellidosField.getText().isEmpty() || dorsalField.getText().isEmpty()) {
+        String nombre = nombreField.getText();
+        String apellidos = apellidosField.getText();
+        String posicion = (String) posicionComboBox.getSelectedItem();
+        
+        if (nombre.isEmpty() || apellidos.isEmpty() || posicion.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         try {
-            int dorsal = Integer.parseInt(dorsalField.getText());
+            dorsal = Integer.parseInt(dorsalField.getText());
             if (dorsal < 0 || dorsal > 99) {
                 JOptionPane.showMessageDialog(this, "El dorsal debe estar entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
@@ -179,33 +188,16 @@ public class AgregarJugador extends JDialog {
             JOptionPane.showMessageDialog(this, "El dorsal debe ser un número válido entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
-        guardado = true;
-        dispose();
+        
+        if (selectedFile == null) {
+        	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+        } else {
+            jugador = new Jugador(nombre, apellidos, posicion, dorsal, selectedFile.getAbsolutePath());
+            dispose();
+        }
     }
-
-
-    public boolean isGuardado() {
-        return guardado;
-    }
-
-    public String getNombre() {
-        return nombreField.getText();
-    }
-
-    public String getApellidos() {
-        return apellidosField.getText();
-    }
-
-    public String getPosicion() {
-        return (String) posicionComboBox.getSelectedItem();
-    }
-
-    public int getDorsal() {
-        return Integer.parseInt(dorsalField.getText());
-    }
-
-    public File getJugadorFoto() {
-        return jugadorFoto;
+    
+    public Jugador getJugador() {
+        return jugador;
     }
 }

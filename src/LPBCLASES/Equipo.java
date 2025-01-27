@@ -98,9 +98,8 @@ public class Equipo implements Serializable {
     @Override
     public String toString() { 
         return "Equipo: " +
-                "Nombre = " + nombre + '\'' +
-                ", Estadio = " + estadio + '\'' +
-                ", Jugadores = " + jugadores;
+                "Nombre = " + nombre + ", " +
+                "Logo = " + equipoPath;
     }
     
     // hashCode

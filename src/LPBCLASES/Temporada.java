@@ -1,4 +1,10 @@
 package LPBCLASES;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +18,7 @@ public class Temporada implements Serializable {
     private String periodo; // Año de la temporada (20XX-20XX)
     private String estado; // Estado de la temporada (Activa, Finalizada, En proceso)
     private List<Jornada> jornadas; // Lista de jornadas de la temporada
+    private List<Equipo> equipos; // Lista de equipos de la temporada
 
     // Constructor por defecto
     public Temporada() {
@@ -19,14 +26,23 @@ public class Temporada implements Serializable {
         this.periodo = "";
         this.estado = "En proceso";
         this.jornadas = new ArrayList<>();
+        this.equipos = new ArrayList<>();
     }
-
+    
     // Constructor personalizado
-    public Temporada(String periodo, String estado, List<Jornada> jornadas) {
-        // Inicializa los atributos con valores proporcionados
+    public Temporada(String periodo, String estado) {
         this.periodo = periodo;
         this.estado = estado;
-        this.jornadas = new ArrayList<>(jornadas); // Crea una copia de la lista de jornadas
+        this.jornadas = new ArrayList<>();
+        this.equipos = new ArrayList<>();
+    }
+
+    // Constructor personalizado con las jornadas y los equipos
+    public Temporada(String periodo, String estado, List<Jornada> jornadas, List<Equipo> equipos) {
+        this.periodo = periodo;
+        this.estado = estado;
+        this.jornadas = new ArrayList<>(jornadas);
+        this.equipos = new ArrayList<>(equipos);
     }
 
     // Constructor copia
@@ -34,7 +50,8 @@ public class Temporada implements Serializable {
         // Copia los valores de otra temporada
         this.periodo = t.periodo;
         this.estado = t.estado;
-        this.jornadas = new ArrayList<>(t.jornadas); // Crea una copia de la lista de jornadas
+        this.jornadas = new ArrayList<>(t.jornadas);
+        this.equipos = new ArrayList<>(t.equipos);
     }
 
     // Getters y Setters
@@ -61,31 +78,149 @@ public class Temporada implements Serializable {
 
     // Obtiene la lista de jornadas
     public List<Jornada> getJornadas() {
-        return new ArrayList<>(jornadas); // Devuelve una copia para evitar modificaciones externas
+        return new ArrayList<>(jornadas);
     }
 
     // Establece la lista de jornadas
     public void setJornadas(List<Jornada> jornadas) {
-        this.jornadas = new ArrayList<>(jornadas); // Crea una copia de la lista
+        this.jornadas = new ArrayList<>(jornadas);
+    }
+    
+    // Obtiene la lista de equipos
+    public List<Equipo> getEquipos() {
+        return new ArrayList<>(equipos);
     }
 
-    // Añade una jornada a la temporada
-    public void agregarJornada(Jornada jornada) {
-        this.jornadas.add(jornada);
+    // Establece la lista de equipos
+    public void setEquipos(List<Equipo> equipos) {
+        this.equipos = new ArrayList<>(equipos);
     }
 
-    // Elimina una jornada de la temporada
-    public void eliminarJornada(Jornada jornada) {
-        this.jornadas.remove(jornada);
+    // Método para agregar un equipo
+    public void agregarEquipo(String periodo, Equipo nuevoEquipo) throws IOException, ClassNotFoundException {
+        // Cargar la temporada desde el archivo
+        Temporada temporada = cargarTemporada(periodo);
+
+        // Agregar el nuevo equipo a la lista de equipos
+        List<Equipo> equipos = temporada.getEquipos();
+        if (!equipos.contains(nuevoEquipo)) {
+            equipos.add(nuevoEquipo);
+            System.out.println("Equipo agregado: " + nuevoEquipo.getNombre());
+        } else {
+            System.out.println("El equipo ya existe en la temporada.");
+        }
+
+        // Guardar la temporada actualizada
+        guardarTemporada(temporada);
+    }
+    
+    // Método para agregar un jugador a un equipo
+    public void agregarJugador(String periodo, String nombreEquipo, Jugador nuevoJugador) throws IOException, ClassNotFoundException {
+        // Cargar la temporada desde el archivo
+        Temporada temporada = cargarTemporada(periodo);
+
+        // Buscar el equipo en la temporada
+        Equipo equipoEncontrado = null;
+        for (Equipo equipo : temporada.getEquipos()) {
+            if (equipo.getNombre().equalsIgnoreCase(nombreEquipo)) {
+                equipoEncontrado = equipo;
+                break;
+            }
+        }
+
+        if (equipoEncontrado != null) {
+            // Agregar el jugador al equipo si no existe ya
+            List<Jugador> jugadores = equipoEncontrado.getJugadores();
+            if (!jugadores.contains(nuevoJugador)) {
+                jugadores.add(nuevoJugador);
+                System.out.println("Jugador agregado: " + nuevoJugador.getNombre());
+            } else {
+                System.out.println("El jugador ya existe en el equipo.");
+            }
+
+            // Guardar la temporada actualizada
+            guardarTemporada(temporada);
+        } else {
+            System.out.println("El equipo no existe en esta temporada.");
+        }
+    }
+    
+    // Guarda los datos de la temporada
+    public void guardarTemporada(Temporada temporada) throws IOException {
+        File directory = new File("data");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+        
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("data/temporada_" + temporada.getPeriodo() + ".ser"))) {
+            oos.writeObject(temporada);
+        }
+    }
+    
+    // Carga los datos de la temporada
+    public static Temporada cargarTemporada(String periodo) throws IOException, ClassNotFoundException {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data/temporada_" + periodo + ".ser"))) {
+            return (Temporada) ois.readObject();
+        }
+    }
+    
+    // Genera nuevas jornadas usando el método Round Robin
+    public int generarJornadas() {
+        if (this.equipos == null || this.equipos.isEmpty()) {
+            return 0;
+        }
+
+        List<Equipo> listaEquipos = new ArrayList<>(this.equipos);
+        int numeroEquipos = listaEquipos.size();
+
+        int partidosPorJornada = numeroEquipos / 2;
+        int numeroJornadas = (numeroEquipos - 1) * 2;
+
+
+        for (int ronda = 0; ronda < numeroJornadas; ronda++) {
+            List<Partido> partidosJornada = new ArrayList<>();
+
+            for (int partido = 0; partido < partidosPorJornada; partido++) {
+                int localIndex = (ronda + partido) % (numeroEquipos - 1);
+                int visitanteIndex = (numeroEquipos - 1 - partido + ronda) % (numeroEquipos - 1);
+
+                if (partido == 0) {
+                    visitanteIndex = numeroEquipos - 1;
+                }
+
+                Equipo local = listaEquipos.get(localIndex);
+                Equipo visitante = listaEquipos.get(visitanteIndex);
+
+                if (!local.equals(visitante)) {
+                    Partido partidoGenerado;
+
+                    if (ronda >= numeroJornadas / 2) {
+                        partidoGenerado = new Partido(visitante, local);
+                    } else {
+                        partidoGenerado = new Partido(local, visitante);
+                    }
+
+                    partidosJornada.add(partidoGenerado);
+                }
+            }
+
+            if (!partidosJornada.isEmpty()) {
+                Jornada jornada = new Jornada(ronda + 1, partidosJornada);
+                this.jornadas.add(jornada);
+            }
+        }
+
+        return this.jornadas.size();
     }
 
     // Representación en formato de cadena (toString)
     @Override
     public String toString() {
         // Devuelve una representación de los atributos de la temporada como texto
-        return "Temporada: " +
-                "Periodo = " + periodo +
-                "Jornadas = " + jornadas ;
+        return "Temporada " + periodo + "\n" +
+                "Estado = " + estado + "\n" +
+                "Jornadas = " + jornadas + "\n" +
+                "Equipos = " + equipos;
     }
 
     // Método hashCode

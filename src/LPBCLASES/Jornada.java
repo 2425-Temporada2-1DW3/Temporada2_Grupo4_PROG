@@ -1,12 +1,16 @@
 package LPBCLASES;
 
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Jornada {
-    // Atributos de la clase Jornada
+public class Jornada implements Serializable {
+
+	private static final long serialVersionUID = 1L;
+	
+	// Atributos de la clase Jornada
     private int numero; // Número de la jornada
     private List<Partido> partidos; // Lista de partidos en la jornada
 
@@ -18,6 +22,12 @@ public class Jornada {
     }
 
     // Constructor personalizado
+    public Jornada(int numero) {
+        // Inicializa los atributos con valores proporcionados
+        this.numero = numero;
+    }
+    
+    // Constructor personalizado que incluye la lista de partidos
     public Jornada(int numero, List<Partido> partidos) {
         // Inicializa los atributos con valores proporcionados
         this.numero = numero;
@@ -45,12 +55,12 @@ public class Jornada {
 
     // Obtiene la lista de partidos
     public List<Partido> getPartidos() {
-        return new ArrayList<>(partidos); // Devuelve una copia para evitar modificaciones externas
+        return partidos; // Devuelve una copia para evitar modificaciones externas
     }
 
     // Establece la lista de partidos
     public void setPartidos(List<Partido> partidos) {
-        this.partidos = new ArrayList<>(partidos); // Crea una copia de la lista
+        this.partidos = partidos; // Crea una copia de la lista
     }
 
     // Añade un partido a la jornada
@@ -67,9 +77,8 @@ public class Jornada {
     @Override
     public String toString() {
         // Devuelve una representación de los atributos de la jornada como texto
-        return "Jornada: " +
-                "Número = " + numero +
-                "Partidos = " + partidos ;
+        return "Jornada " + numero +
+                ", Partidos = " + partidos ;
     }
 
     // Método hashCode

@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import java.io.Serializable;
 
-public class Jugador implements Comparable<Jugador>,Serializable {
+public class Jugador implements Comparable<Jugador>, Serializable {
 
 	private static final long serialVersionUID = -1748708748101586932L;
 	
@@ -39,7 +39,7 @@ public class Jugador implements Comparable<Jugador>,Serializable {
   	}
 
   
-	//C onstructor personalizado
+	// Constructor personalizado
   	public Jugador(String nombre, String apellidos, String posicion, int dorsal, String photoPath) {
      	// Inicializa los atributos con valores proporcionados
      	this.nombre = nombre;
