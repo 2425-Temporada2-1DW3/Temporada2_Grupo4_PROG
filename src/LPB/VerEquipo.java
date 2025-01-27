@@ -57,6 +57,7 @@ public class VerEquipo extends JFrame {
 	private BotonRedondeado btnCancelar;
 	private BotonRedondeado btnAñadir;
 	private BotonRedondeado btnEliminar;
+	private BotonRedondeado btnCambiarFoto;
 
 	private static final long serialVersionUID = 1L;
 
@@ -268,6 +269,15 @@ public class VerEquipo extends JFrame {
 		});
 
 		panelIzquierdo.add(btnEditar);
+		
+		btnCambiarFoto = new BotonRedondeado("Añadir Jugador", null);
+		btnCambiarFoto.setText("Cambiar Logo");
+		btnCambiarFoto.setBounds(50, 167, 150, 40);
+		panelIzquierdo.add(btnCambiarFoto);
+		btnCambiarFoto.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnCambiarFoto.setBackground(new Color(0xdaa881));
+		btnCambiarFoto.setForeground(new Color(255, 255, 255));
+		btnCambiarFoto.setFocusPainted(false);
 
 		panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));
