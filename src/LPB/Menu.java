@@ -22,6 +22,7 @@ public class Menu extends JFrame implements MouseListener {
 	private JButton btnTemporadas;
 	private JButton btnEquipos;
 	private JButton btnUsuarios;
+	private JButton btnJugadores;
 	private JButton btnCerrarSesion;
 	private JPanel panelIzquierdo;
 	private JLabel labelLogo;
@@ -116,6 +117,26 @@ public class Menu extends JFrame implements MouseListener {
 				dispose();
 			}
 		});
+		
+		btnJugadores = new BotonRedondeado("Jugadores", null);		
+		btnJugadores.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnJugadores.setBackground(new Color(0xfff3cc));
+		btnJugadores.setForeground(new Color(0x535353));
+		btnJugadores.setBounds(50, 311, 200, 40);
+		btnJugadores.setFocusPainted(false);
+		
+		btnJugadores.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				new MenuJugadores().setVisible(true);
+				dispose();
+			}
+		});
+		
+		btnJugadores.addMouseListener(this);
+
+		if (rol.equals("Administrador")) {
+			panelDerecho.add(btnJugadores);
+		}
 
 		btnUsuarios = new BotonRedondeado("Usuarios", null);
 		btnUsuarios.addActionListener(new ActionListener() {
@@ -128,7 +149,7 @@ public class Menu extends JFrame implements MouseListener {
 		btnUsuarios.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnUsuarios.setBackground(new Color(0x545454));
 		btnUsuarios.setForeground(Color.WHITE);
-		btnUsuarios.setBounds(50, 311, 200, 40);
+		btnUsuarios.setBounds(50, 371, 200, 40);
 		btnUsuarios.setFocusPainted(false);
 		btnUsuarios.addMouseListener(this);
 
@@ -176,6 +197,8 @@ public class Menu extends JFrame implements MouseListener {
 			fader.fadeBackground(btnTemporadas, btnTemporadas.getBackground(), new Color(0x1a5bae));
 		} else if (o == btnEquipos) {
 			fader.fadeBackground(btnEquipos, btnEquipos.getBackground(), new Color(0xff7f50));
+		} else if (o == btnJugadores) {
+			fader.fadeBackground(btnJugadores, btnJugadores.getBackground(), new Color(0xFFFBF2));
 		} else if (o == btnUsuarios) {
 			fader.fadeBackground(btnUsuarios, btnUsuarios.getBackground(), new Color(0x6a6a6a));
 		} else if (o == btnCerrarSesion) {
@@ -191,6 +214,8 @@ public class Menu extends JFrame implements MouseListener {
 			fader.fadeBackground(btnTemporadas, btnTemporadas.getBackground(), new Color(0x13427E));
 		} else if (o == btnEquipos) {
 			fader.fadeBackground(btnEquipos, btnEquipos.getBackground(), new Color(0xf46b20));
+		} else if (o == btnJugadores) {
+			fader.fadeBackground(btnJugadores, btnJugadores.getBackground(), new Color(0xfff3cc));
 		} else if (o == btnUsuarios) {
 			fader.fadeBackground(btnUsuarios, btnUsuarios.getBackground(), new Color(0x545454));
 		} else if (o == btnCerrarSesion) {

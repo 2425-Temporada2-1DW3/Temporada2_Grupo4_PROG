@@ -206,6 +206,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		    }
 		});
 		btnFinalizarTemporada.addMouseListener(this);
+		btnFinalizarTemporada.setVisible(false);
 		
 		if (rol.equals("Administrador") && temporada.getEstado().equals("Activa")) {
 			panelIzquierdo.add(btnFinalizarTemporada);
@@ -276,6 +277,41 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnRestablecer.setFocusPainted(false);
 		btnRestablecer.setBackground(new Color(84, 84, 84));
 		btnRestablecer.setBounds(235, 500, 150, 40);
+		
+		btnRestablecer.addActionListener(new ActionListener() {
+		    public void actionPerformed(ActionEvent e) {
+		        if (jornadaSeleccionada != null) {
+		        	Component view = scrollPane.getViewport().getView();
+		        	
+		        	panelPartidos = (JPanel) view;
+		        	Component[] componentes = panelPartidos.getComponents();
+
+		        	for (Component componente : componentes) {
+		        	    if (componente instanceof JPanel) {
+		        	        panelPartido = (JPanel) componente;
+
+		        	        for (Partido partido : partidos) {
+		        	            for (Component subComponente : panelPartido.getComponents()) {
+		        	                if (subComponente instanceof TextoRedondeado) {
+		        	                    TextoRedondeado textField = (TextoRedondeado) subComponente;
+
+		        	                    if (textField.getName().equals("local_" + partido.getEquipoLocal().getNombre())) {
+		        	                        textField.setText("0");
+		        	                        partido.setPuntosLocal(0);
+		        	                    } else if (textField.getName().equals("visitante_" + partido.getEquipoVisitante().getNombre())) {
+		        	                        textField.setText("0");
+		        	                        partido.setPuntosVisitante(0);
+		        	                    }
+		        	                }
+		        	            }
+		        	        }
+		        	    }
+		        	}
+
+		        }
+		    }
+		});
+		
 		btnRestablecer.addMouseListener(this);
 		
         if (temporada.getEstado().equals("Activa")) {
@@ -312,6 +348,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		panelDerecho.add(btnVolverMenu);
 		
 		mostrarClasificacion(temporada);
+		verificarPuntosCompletados();
 	}
 	
 	// Método cargarPartidos()
@@ -570,7 +607,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        }
 	    }
 
-	    tablaClasificacion.getColumnModel().getColumn(1).setPreferredWidth(270);
+	    tablaClasificacion.getColumnModel().getColumn(0).setPreferredWidth(30);
+	    tablaClasificacion.getColumnModel().getColumn(1).setPreferredWidth(280);
 	    
 	    for (int col = 3; col < 6; col++) {
 	        tablaClasificacion.getColumnModel().getColumn(col).setPreferredWidth(40);
@@ -607,6 +645,30 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    scrollPaneClasificacion.setBorder(BorderFactory.createEmptyBorder());
 	    panelDerecho.add(scrollPaneClasificacion);
 	}
+	
+	// Método para comprobar si todos los puntos están rellenados
+	private void verificarPuntosCompletados() {
+	    boolean todosLosPuntosRellenados = true;
+	    for (Jornada jornada : temporada.getJornadas()) {
+	        for (Partido partido : jornada.getPartidos()) {
+	            if (partido.getPuntosLocal() == 0 || partido.getPuntosVisitante() == 0) {
+	                todosLosPuntosRellenados = false;
+	                break;
+	            }
+	        }
+
+	        if (!todosLosPuntosRellenados) {
+	            break;
+	        }
+	    }
+
+	    if (todosLosPuntosRellenados) {
+	        btnFinalizarTemporada.setVisible(true);
+	    } else {
+	        btnFinalizarTemporada.setVisible(false);
+	    }
+	}
+
 	
 	// Método para guardar los resultados de los partidos
 	private void guardarResultados() {
@@ -659,6 +721,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        temporada.guardarTemporada(temporada);
 	        JOptionPane.showMessageDialog(this, "Resultados guardados correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 	        mostrarClasificacion(temporada);
+	        verificarPuntosCompletados();
 
 	    } catch (Exception ex) {
 	        JOptionPane.showMessageDialog(this, "Ocurrió un error al guardar los resultados: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

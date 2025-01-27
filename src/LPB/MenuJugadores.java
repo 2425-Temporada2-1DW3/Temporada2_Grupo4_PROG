@@ -1,7 +1,6 @@
 package LPB;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -11,7 +10,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
-import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -20,12 +18,13 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.List;
+
 import javax.imageio.ImageIO;
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -36,21 +35,24 @@ import javax.swing.JTextField;
 
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Equipo;
 import LPBCLASES.TextoRedondeado;
+import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.Jugador;
+import LPBCLASES.Temporada;
+
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
 
 import org.imgscalr.Scalr;
 
-public class MenuJugador extends JFrame implements ActionListener, MouseListener, WindowListener, Serializable {
+public class MenuJugadores extends JFrame implements ActionListener, MouseListener, WindowListener, Serializable {
 
     private static final long serialVersionUID = 1L;
-    private static final String ARCHIVO_JUGADORES = "jugadores.ser";
 
     // Atributos de la clase
     private JPanel panelSuperior;
     private JPanel panelInferior;
+    private JnaFileChooser selectorArchivo;
     private ImageIcon logo;
     private JLabel labelLogo;
     private JLabel titulo;
@@ -76,31 +78,9 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
     private boolean datosguardados = false;
 
 	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-	    try {
-	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
-	    
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MenuJugador frame = new MenuJugador();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
-
-	/**
 	 * Create the frame.
 	 */
-    public MenuJugador() {
+    public MenuJugadores() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
         setTitle("LPB Basketball - Menú de Jugadores");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -135,7 +115,6 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
         scrollPane = new JScrollPane();
         scrollPane.setBounds(10, 20, 430, 360);
         dlm = new DefaultListModel<>();
-        cargarDatos();
         cargarJugadores();
         
         listJugadores = new JList<>();
@@ -313,13 +292,12 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
     }
 
     public void seleccionarImagen() {
-        JFileChooser selectorArchivo = new JFileChooser();
-        selectorArchivo.setDialogTitle("Seleccionar Imagen del Jugador");
-        selectorArchivo.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes JPG & PNG", "jpg", "png"));
+    	selectorArchivo = new JnaFileChooser();
+        selectorArchivo.setTitle("Selecciona una foto");
+        selectorArchivo.addFilter("Imágenes (*.jpg; *.jpeg; *.png; *.gif)", "jpg", "jpeg", "png", "gif");
+        selectorArchivo.addFilter("Todos los Archivos", "*");
 
-        int resultado = selectorArchivo.showOpenDialog(null);
-
-        if (resultado == JFileChooser.APPROVE_OPTION) {
+        if (selectorArchivo.showOpenDialog(this)) {
             File archivoSeleccionado = selectorArchivo.getSelectedFile();
             try {
                 BufferedImage imagenOriginal = ImageIO.read(archivoSeleccionado);
@@ -357,50 +335,45 @@ public class MenuJugador extends JFrame implements ActionListener, MouseListener
         }
     }
 
-
-
+    // Método para cargas los jugadores al dlm
     private void cargarJugadores() {
-        File archivo = new File(ARCHIVO_JUGADORES);
-        if (!archivo.exists()) {
-            System.out.println("El archivo " + ARCHIVO_JUGADORES + " no existe. Creando una nueva lista vacía.");
+        File carpetaTemporadas = new File("data");
+        File[] archivosTemporadas = carpetaTemporadas.listFiles((dir, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
+
+        if (archivosTemporadas == null || archivosTemporadas.length == 0) {
+            System.out.println("No se han encontrado archivos de temporada.");
             return;
         }
 
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARCHIVO_JUGADORES))) {
-            while (true) {
-                try {
-                    Jugador jugador = (Jugador) ois.readObject();
-                    dlm.addElement(jugador);
-                } catch (EOFException eof) {
-                    // Fin del archivo alcanzado, salir del bucle
+        Temporada temporadaActiva = null;
+        // Buscar la temporada activa
+        for (File archivo : archivosTemporadas) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                Temporada temporada = (Temporada) ois.readObject();
+                if ("Activa".equals(temporada.getEstado())) {
+                    temporadaActiva = temporada;
                     break;
                 }
+            } catch (FileNotFoundException e) {
+                System.err.println("Archivo no encontrado: " + e.getMessage());
+            } catch (IOException e) {
+                System.err.println("Error al leer el archivo de temporada: " + e.getMessage());
+            } catch (ClassNotFoundException e) {
+                System.err.println("Error al cargar la temporada: " + e.getMessage());
             }
-        } catch (FileNotFoundException e) {
-            System.err.println("Archivo no encontrado: " + e.getMessage());
-        } catch (IOException e) {
-            System.err.println("Error al leer el archivo: " + e.getMessage());
-        } catch (ClassNotFoundException e) {
-            System.err.println("Error al cargar los datos del jugador: " + e.getMessage());
         }
-    }
 
+        if (temporadaActiva == null) {
+            System.out.println("No se ha encontrado una temporada activa.");
+            return;
+        }
 
-    private void cargarDatos() {
-        try (FileInputStream fis = new FileInputStream("jugadores.ser");
-             ObjectInputStream ois = new ObjectInputStream(fis)) {
-            while (true) {
-                try {
-                    Jugador jugador = (Jugador) ois.readObject();
-                    dlm.addElement(jugador);
-                } catch (EOFException eof) {
-                    break;
-                }
+        List<Equipo> equipos = temporadaActiva.getEquipos();
+        for (Equipo equipo : equipos) {
+            List<Jugador> jugadores = equipo.getJugadores();
+            for (Jugador jugador : jugadores) {
+                dlm.addElement(jugador);
             }
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Archivo no encontrado: jugadores.ser", "Error", JOptionPane.ERROR_MESSAGE);
-        } catch (IOException | ClassNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar datos: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
