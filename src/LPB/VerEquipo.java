@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -154,6 +156,7 @@ public class VerEquipo extends JFrame {
 		    if (rol.equals("Administrador")) {
 				btnAñadir.setVisible(true);
 				btnEliminar.setVisible(true);
+				btnCambiarFoto.setVisible(true);
 			}
 
 		    entrenadorLabel.setText("Entrenador:");
@@ -234,6 +237,7 @@ public class VerEquipo extends JFrame {
 		        btnAñadir.setVisible(false);
 		        btnEliminar.setVisible(false);
 		        btnEditar.setVisible(true);
+		        btnCambiarFoto.setVisible(false);
 		        
 		        try {
 					temporada.guardarTemporada(temporada);
@@ -265,6 +269,7 @@ public class VerEquipo extends JFrame {
 		        btnAñadir.setVisible(false);
 		        btnEliminar.setVisible(false);
 		        btnEditar.setVisible(true);
+		        btnCambiarFoto.setVisible(false);
 		    });
 		});
 
@@ -273,11 +278,45 @@ public class VerEquipo extends JFrame {
 		btnCambiarFoto = new BotonRedondeado("Añadir Jugador", null);
 		btnCambiarFoto.setText("Cambiar Logo");
 		btnCambiarFoto.setBounds(50, 167, 150, 40);
-		panelIzquierdo.add(btnCambiarFoto);
 		btnCambiarFoto.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnCambiarFoto.setBackground(new Color(0xdaa881));
 		btnCambiarFoto.setForeground(new Color(255, 255, 255));
 		btnCambiarFoto.setFocusPainted(false);
+		
+		btnCambiarFoto.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.setDialogTitle("Seleccionar nuevo logo");
+		        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif"));
+		        
+		        int returnValue = fileChooser.showOpenDialog(null);
+		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		            File selectedFile = fileChooser.getSelectedFile();
+		            try {
+		                // Cargar la imagen seleccionada
+		                ImageIcon newLogo = new ImageIcon(selectedFile.getAbsolutePath());
+		                Image scaledImage = newLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+		                escudoLabel.setIcon(new ImageIcon(scaledImage));
+
+		                // Guardar la imagen en la ubicación correspondiente
+		                Path destinationPath = Paths.get("src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/" + selectedFile.getName());
+		                Files.createDirectories(destinationPath.getParent());
+		                Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+		                // Actualizar la ruta del logo en el equipo
+		                equipo.setEquipoPath(destinationPath.toString());
+		                JOptionPane.showMessageDialog(null, "Logo actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		            } catch (IOException ex) {
+		                JOptionPane.showMessageDialog(null, "Error al guardar el logo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        }
+		    }
+		});
+		
+		panelIzquierdo.add(btnCambiarFoto);
+		btnCambiarFoto.setVisible(false);
+
 
 		panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));
