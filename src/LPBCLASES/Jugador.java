@@ -105,7 +105,7 @@ public class Jugador implements Comparable<Jugador>, Serializable {
   	@Override
   	public String toString() {
       	// Devuelve una representación de los atributos del jugador como texto
-      	return "Jugador: " + nombre + " " + apellidos + ", Posicion: " + posicion + ", Dorsal: " + dorsal;         
+      	return nombre + " " + apellidos + ", Posicion: " + posicion + ", Dorsal: " + dorsal;         
   	}
 
   	// Método hashCode
