@@ -1,4 +1,3 @@
-
 package LPB;
 
 import java.awt.Color;
@@ -492,3 +491,4 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	public void windowDeactivated(WindowEvent e) {
 	}
 }
+
