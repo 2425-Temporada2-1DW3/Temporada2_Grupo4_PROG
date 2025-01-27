@@ -1,5 +1,6 @@
 package LPBCLASES;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -11,7 +12,18 @@ public class logClase {
 
     static {
         try {
-            FileHandler fileHandler = new FileHandler("Applog.log", true);
+            // Verificar si la carpeta "log" existe, si no, crearla
+            File logDir = new File("log");
+            if (!logDir.exists()) {
+                if (logDir.mkdir()) {
+                	
+                } else {
+                    System.err.println("Error al crear la carpeta 'log'.");
+                }
+            }
+
+            // Configurar el FileHandler para guardar en "log/access.log"
+            FileHandler fileHandler = new FileHandler("log/access.log", true);
             fileHandler.setFormatter(new CustomLogFormatter());
             logger.addHandler(fileHandler);
             logger.setUseParentHandlers(false); // Evita que los logs se impriman en consola
@@ -48,4 +60,3 @@ public class logClase {
         }
     }
 }
-
