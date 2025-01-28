@@ -172,9 +172,22 @@ public class AgregarJugador extends JDialog {
         String nombre = nombreField.getText();
         String apellidos = apellidosField.getText();
         String posicion = (String) posicionComboBox.getSelectedItem();
-        
+
+        // Validaciones de campos vacíos
         if (nombre.isEmpty() || apellidos.isEmpty() || posicion.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Validación de solo letras para nombre
+        if (!nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            JOptionPane.showMessageDialog(this, "El campo 'Nombre' solo puede contener letras.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Validación de solo letras para apellidos
+        if (!apellidos.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            JOptionPane.showMessageDialog(this, "El campo 'Apellidos' solo puede contener letras.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -188,14 +201,15 @@ public class AgregarJugador extends JDialog {
             JOptionPane.showMessageDialog(this, "El dorsal debe ser un número válido entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
+
         if (selectedFile == null) {
-        	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
             jugador = new Jugador(nombre, apellidos, posicion, dorsal, selectedFile.getAbsolutePath());
             dispose();
         }
     }
+
     
     public Jugador getJugador() {
         return jugador;
