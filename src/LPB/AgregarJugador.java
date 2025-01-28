@@ -18,6 +18,7 @@ import javax.swing.JTextField;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Jugador;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.logClase;
 import jnafilechooser.api.JnaFileChooser;
 
 import javax.swing.SwingConstants;
@@ -192,6 +193,8 @@ public class AgregarJugador extends JDialog {
         if (selectedFile == null) {
         	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
+        	 // 🔴 Log cuando se agrega un jugador
+            logClase.logAction("Jugador agregado: " + nombre + ", Posición: " + posicion + ", Dorsal: " + dorsal);
             jugador = new Jugador(nombre, apellidos, posicion, dorsal, selectedFile.getAbsolutePath());
             dispose();
         }

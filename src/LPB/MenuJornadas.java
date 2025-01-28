@@ -16,6 +16,7 @@ import LPBCLASES.LineaPanel;
 import LPBCLASES.Partido;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.logClase;
 
 import java.awt.Font;
 import java.awt.Image;
@@ -153,10 +154,16 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnActivarTemporada.setBounds(285, 85, 165, 30);
 		btnActivarTemporada.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
+		    	 // === INICIO: LOGGING PARA ACTIVAR TEMPORADA ===
+		        logClase.logAction("Intentando activar la temporada: " + temporada.getPeriodo());
+		        // === FIN: LOGGING PARA ACTIVAR TEMPORADA ===
 
 		        int generacionJornadas = temporada.generarJornadas();
 		        
 		        if (generacionJornadas == 0) {
+		        	// === INICIO: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
+		        	logClase.logError("No se puede activar la temporada: No hay equipos registrados.", null);
+		            // === FIN: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
 		        	JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque no hay equipos registrados.", "Error", JOptionPane.ERROR_MESSAGE);
 		        } else {
 			        comboBoxJornadas.removeAllItems();
@@ -169,7 +176,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 			        temporada.setEstado("Activa");
 			        try {
 						temporada.guardarTemporada(temporada);
+						 // === INICIO: LOGGING PARA TEMPORADA ACTIVADA ===
+		                logClase.logAction("Temporada activada correctamente: " + temporada.getPeriodo() + ". Jornadas generadas: " + temporada.getJornadas().size());
+		                // === FIN: LOGGING PARA TEMPORADA ACTIVADA ===
 					} catch (IOException e1) {
+						 // === INICIO: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
+		                logClase.logError("Error al guardar la temporada después de activarla.", e1);
+		                // === FIN: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
 						System.out.println("ERROR. No se han encontrado datos de la temporada.");
 					}
 			        cargarPartidos(temporada, jornadaSeleccionada);
@@ -201,7 +214,14 @@ public class MenuJornadas extends JFrame implements MouseListener {
 			        btnRestablecer.setVisible(false);
 			        try {
 						temporada.guardarTemporada(temporada);
+
+		                // === INICIO: LOGGING PARA TEMPORADA FINALIZADA ===
+		                logClase.logAction("La temporada ha sido finalizada: " + temporada.getPeriodo());
+		                // === FIN: LOGGING PARA TEMPORADA FINALIZADA ===
 					} catch (IOException e1) {
+						 // === INICIO: LOGGING PARA ERROR AL FINALIZAR TEMPORADA ===
+		                logClase.logError("Error al guardar la temporada al finalizarla.", e1);
+		                // === FIN: LOGGING PARA ERROR AL FINALIZAR TEMPORADA ===
 						System.out.println("ERROR. No se han encontrado datos de la temporada.");
 					}
 		    	}
@@ -282,6 +302,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		btnRestablecer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
+		    	  // === INICIO: LOGGING PARA RESTABLECER PUNTOS ===
+		        logClase.logAction("Intentando restablecer los puntos de los partidos para la jornada: " + jornadaSeleccionada.getNumero());
+		        // === FIN: LOGGING PARA RESTABLECER PUNTOS ===
 		        if (jornadaSeleccionada != null) {
 		        	Component view = scrollPane.getViewport().getView();
 		        	
@@ -310,6 +333,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		        	    }
 		        	}
 
+		            // === INICIO: LOGGING PARA PUNTOS RESTABLECIDOS ===
+		            logClase.logAction("Los puntos de los partidos para la jornada " + jornadaSeleccionada.getNumero() + " han sido restablecidos a 0.");
+		            // === FIN: LOGGING PARA PUNTOS RESTABLECIDOS ===
+		        } else {
+		            // === INICIO: LOGGING PARA ERROR AL RESTABLECER PUNTOS ===
+		        	logClase.logError("No se puede restablecer los puntos: La jornada seleccionada es nula.", null);
+		            // === FIN: LOGGING PARA ERROR AL RESTABLECER PUNTOS ===
 		        }
 		    }
 		});
@@ -728,7 +758,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	                                    partido.setPuntosLocal(Integer.parseInt(textField.getText()));
 	                                } else if (textField.getName().equals("visitante_" + partido.getEquipoVisitante().getNombre())) {
 	                                    partido.setPuntosVisitante(Integer.parseInt(textField.getText()));
+	                                    
 	                                }
+	                            
 	                            } catch (NumberFormatException ex) {
 	                                JOptionPane.showMessageDialog(this, "Error en el formato de los puntos. Introduce números válidos.", "Error", JOptionPane.ERROR_MESSAGE);
 	                                return;
@@ -764,6 +796,20 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        }
 	    } else if (e.getSource() == btnGuardar) {
 	        guardarResultados();
+	        // Aquí se asume que se guardan resultados de partidos
+	        if (jornadaSeleccionada != null) {
+	            for (Partido partido : jornadaSeleccionada.getPartidos()) {
+	                // Simula guardar los resultados del partido actual
+	                // === INICIO: LOGGING PARA GUARDAR RESULTADOS ===
+	                logClase.logAction("Se han guardado los resultados del partido: " +
+	                        partido.getEquipoLocal().getNombre() + " vs " + partido.getEquipoVisitante().getNombre() +
+	                        " | Resultado: " + partido.getPuntosLocal() + " - " + partido.getPuntosVisitante());
+	                // === FIN: LOGGING PARA GUARDAR RESULTADOS ===
+	            }
+
+	            JOptionPane.showMessageDialog(null, "Resultados guardados correctamente.");
+	        }
+	     
 	    }
 	}
 

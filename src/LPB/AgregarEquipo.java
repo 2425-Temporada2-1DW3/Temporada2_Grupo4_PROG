@@ -19,6 +19,7 @@ import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.logClase;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.BotonRedondeado;
 import java.awt.event.ActionListener;
@@ -54,6 +55,7 @@ public class AgregarEquipo extends JFrame {
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
 
+	
 	public AgregarEquipo(Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		this.temporada = temporada;
@@ -143,6 +145,7 @@ public class AgregarEquipo extends JFrame {
 		            Jugador nuevoJugador = agregarJugador.getJugador();
 		            if (nuevoJugador != null) {
 		                jugadores.add(nuevoJugador);
+		                
 
 		    			Image originalIcon = new ImageIcon(nuevoJugador.getPhotoPath()).getImage();
 		    			
@@ -158,6 +161,7 @@ public class AgregarEquipo extends JFrame {
 		                        nuevoJugador.getPosicion(),
 		                        nuevoJugador.getDorsal()
 		                });
+		                
 		            }
 		        }
 		    });
@@ -266,6 +270,7 @@ public class AgregarEquipo extends JFrame {
 		                
 		                tableModel.removeRow(selectedRow);
 		                jugadores.remove(selectedRow);
+		               
 		            }
 
 		            tableModel.setRowCount(0);
@@ -293,6 +298,8 @@ public class AgregarEquipo extends JFrame {
 		                JOptionPane.WARNING_MESSAGE
 		            );
 		        }
+		        // 🔴 Log cuando se elimina un jugador
+                logClase.logAction("Jugador eliminado: " + nombre);
 		    }
 		});
 		btnEliminarJugador.setForeground(Color.WHITE);
@@ -416,5 +423,6 @@ public class AgregarEquipo extends JFrame {
 	        JOptionPane.showMessageDialog(this, "Error al guardar el equipo en la temporada: " + e.getMessage(),
 	            "Error", JOptionPane.ERROR_MESSAGE);
 	    }
+	    
 	}
 }
