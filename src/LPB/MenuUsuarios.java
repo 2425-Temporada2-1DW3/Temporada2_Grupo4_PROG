@@ -65,7 +65,9 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     private JLabel lblContrasena;
     private JLabel lblRol;
     private Object source;
-    private String usuario, contrasena, rol, equipo;
+    private String usuario, contrasena, rol;
+    private Equipo equipo;
+    private Equipo equipoSeleccionado;
     private Usuario usuarioExistente;
     private Usuario nuevoUsuario;
     private int usuarioSeleccionadoIndex = -1;
@@ -136,17 +138,44 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
         panelInferior.add(scrollPane);
 
         listUsuarios.addListSelectionListener(e -> {
-        	if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
+            if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
                 Usuario usuarioSeleccionado = listUsuarios.getSelectedValue();
                 usuarioSeleccionadoIndex = listUsuarios.getSelectedIndex(); // Guardar el índice del usuario seleccionado
                 if (usuarioSeleccionado != null) {
                     textUsuario.setText(usuarioSeleccionado.getUsuario());
                     passwordField.setText(usuarioSeleccionado.getContrasena());
                     comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
-                    comboBoxEquipo.setSelectedItem(usuarioSeleccionado.getEquipo());
+
+                    Equipo equipoSeleccionado = usuarioSeleccionado.getEquipo();
+                    String nombreEquipo = equipoSeleccionado.getNombre();
+                    
+                    boolean esNuevo = false;
+                    for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
+                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                            Temporada temporada = (Temporada) ois.readObject();
+                            if (temporada.getEstado().equals("En proceso")) {
+                                List<Equipo> equipos = temporada.getEquipos();
+                                for (Equipo eq : equipos) {
+                                    if (eq.getNombre().equals(nombreEquipo)) {
+                                        esNuevo = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (IOException | ClassNotFoundException ex) {
+                            System.err.println("Error al cargar el archivo: " + ex.getMessage());
+                        }
+                        if (esNuevo) break;
+                    }
+
+                    if (esNuevo) {
+                        nombreEquipo += " (Nuevo)";
+                    }
+
+                    comboBoxEquipo.setSelectedItem(nombreEquipo);
                 }
-		    }
-		});
+            }
+        });
 
         lblUsuario = new JLabel("Usuario:");
         lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -267,13 +296,30 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     }
 
     @SuppressWarnings("unchecked")
-	public static ArrayList<Usuario> cargarUsuarios() {
+    public static ArrayList<Usuario> cargarUsuarios() {
         File archivo = new File(ARCHIVO_USUARIOS);
+        
+        // Si el archivo no existe, crear el usuario por defecto
         if (!archivo.exists()) {
-            System.out.println("El archivo " + ARCHIVO_USUARIOS + " no existe. Creando una nueva lista vacía.");
-            return new ArrayList<>();
+            System.out.println("El archivo " + ARCHIVO_USUARIOS + " no existe. Creando usuario 'Admin' por defecto.");
+
+            // Crear la lista con el usuario predeterminado
+            ArrayList<Usuario> usuarios = new ArrayList<>();
+            Usuario admin = new Usuario("Admin", "123", "Administrador", null);
+            usuarios.add(admin);
+
+            // Guardar el usuario en el archivo
+            try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivo))) {
+                oos.writeObject(usuarios);
+                System.out.println("Usuario 'Admin' creado y guardado correctamente.");
+            } catch (IOException e) {
+                System.err.println("Error al guardar el usuario predeterminado: " + e.getMessage());
+            }
+
+            return usuarios;
         }
 
+        // Si el archivo existe, cargar los usuarios
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(ARCHIVO_USUARIOS))) {
             return (ArrayList<Usuario>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
@@ -281,6 +327,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
             return new ArrayList<>();
         }
     }
+
     
     public static Usuario validarUsuario(String usuario, String contrasena) {
         ArrayList<Usuario> usuarios = cargarUsuarios(); // Cargar los usuarios desde el archivo
@@ -314,11 +361,15 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
                 Temporada temporada = (Temporada) ois.readObject();
 
-                if ("Activa".equals(temporada.getEstado())) {  
+                if ("Activa".equals(temporada.getEstado()) || "En proceso".equals(temporada.getEstado())) {
                     List<Equipo> equipos = temporada.getEquipos();
-                    
+
                     for (Equipo equipo : equipos) {
-                        comboBoxEquipo.addItem(equipo.getNombre());
+                        if ("En proceso".equals(temporada.getEstado())) {
+                            comboBoxEquipo.addItem(equipo.getNombre() + " (Nuevo)");
+                        } else {
+                            comboBoxEquipo.addItem(equipo.getNombre());
+                        }
                     }
                 }
 
@@ -337,11 +388,42 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     	        usuario = textUsuario.getText().trim();
     	        contrasena = new String(passwordField.getPassword());
     	        rol = (String) comboBoxRol.getSelectedItem();
-    	        equipo = (String) comboBoxEquipo.getSelectedItem();
+    	        String nombreEquipoSeleccionado = (String) comboBoxEquipo.getSelectedItem();
+    	        
+    	        if (nombreEquipoSeleccionado.endsWith(" (Nuevo)")) {
+    	            nombreEquipoSeleccionado = nombreEquipoSeleccionado.substring(0, nombreEquipoSeleccionado.length() - 8);
+    	        }
 
     	        if (usuario.isEmpty() || contrasena.isEmpty()) {
     	            JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
     	            return;
+    	        }
+
+    	        if ("Entrenador".equals(rol)) {
+    	            for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
+    	                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+    	                    Temporada temporada = (Temporada) ois.readObject();
+    	                    List<Equipo> equipos = temporada.getEquipos();
+
+    	                    // Buscar el equipo que coincida con el nombre seleccionado
+    	                    for (Equipo eq : equipos) {
+    	                        if (eq.getNombre().equals(nombreEquipoSeleccionado)) {
+    	                            equipoSeleccionado = eq;
+    	                            break;
+    	                        }
+    	                    }
+    	                } catch (IOException | ClassNotFoundException e1) {
+    	                    System.err.println("Error al cargar el archivo: " + archivo.getName());
+    	                }
+
+    	                if (equipoSeleccionado != null) break;
+    	            }
+
+    	            // Si no se encontró el equipo, mostrar un mensaje de error
+    	            if (equipoSeleccionado == null) {
+    	                JOptionPane.showMessageDialog(this, "No se pudo encontrar el equipo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
+    	                return;
+    	            }
     	        }
 
     	        // Si hay un usuario seleccionado, actualizamos sus datos
@@ -350,7 +432,7 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     	            usuarioExistente.setUsuario(usuario);
     	            usuarioExistente.setContrasena(contrasena);
     	            usuarioExistente.setRol(rol);
-    	            usuarioExistente.setEquipo(equipo);
+    	            usuarioExistente.setEquipo(equipoSeleccionado);
 
     	            // Actualizar la lista visual
     	            actualizarLista();
@@ -359,11 +441,11 @@ public class MenuUsuarios extends JFrame implements ActionListener, MouseListene
     	            JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
 
     	            // Registrar el evento en el log
-    	            logClase.logAction("El usuario '" + usuario + "' ha sido modificado (Rol: " + rol + ", Equipo: " + equipo + ").");
+    	            logClase.logAction("El usuario '" + usuario + "' ha sido modificado (Rol: " + rol + ", Equipo: " + equipoSeleccionado + ").");
 
     	        } else {
     	            // Si no hay un usuario seleccionado, se crea uno nuevo
-    	            nuevoUsuario = new Usuario(usuario, contrasena, rol, equipo);
+    	            nuevoUsuario = new Usuario(usuario, contrasena, rol, equipoSeleccionado);
     	            listaUsuarios.add(nuevoUsuario);
     	            actualizarLista();
 
