@@ -177,6 +177,16 @@ public class AgregarJugador extends JDialog {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+        
+        if (!nombre.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            JOptionPane.showMessageDialog(this, "El campo 'Nombre' solo puede contener letras.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        // Validación de solo letras para apellidos
+        if (!apellidos.matches("[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+")) {
+            JOptionPane.showMessageDialog(this, "El campo 'Apellidos' solo puede contener letras.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
 
         try {
             dorsal = Integer.parseInt(dorsalField.getText());
