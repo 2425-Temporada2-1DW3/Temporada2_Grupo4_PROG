@@ -65,7 +65,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private BufferedImage scaledImage;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
-	private Boolean datosModificados;
+	private Boolean datosModificados = false;
 	private Map<String, List<Equipo>> equiposPorTemporada;
 	private String rol;
 	private String usuario;
@@ -257,11 +257,8 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		getContentPane().add(scrollPane);
 		getContentPane().add(panelInferior);
 
-	    datosModificados = false;
 	    equiposPorTemporada = new HashMap<>();
 	    listarTemporadas();
-	    datosModificados = false;
-	    actualizarTitulo();
 	    
 	    if (SelectTemporadas.getItemCount() > 0) {
 	        String temporadaActiva = (String) SelectTemporadas.getSelectedItem();
@@ -319,11 +316,11 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	}
 	
 	private void actualizarTitulo() {
-	    if (datosModificados) {
-	        setTitle("*LPB Basketball - Equipos");
-	    } else {
-	        setTitle("LPB Basketball - Equipos");
-	    }
+        String title = "LPB Basketball - Equipos";
+        if (datosModificados) {
+            title = "*" + title;
+        }
+        setTitle(title);
 	}
 
 	private void actualizarPanelEquipos(String temporada) {
@@ -408,6 +405,13 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 				public void actionPerformed(ActionEvent e) {
 					VerEquipoFrame = new VerEquipo(temporadaSeleccionada, equipo, rol, usuario);
 					VerEquipoFrame.setVisible(true);
+					
+					VerEquipoFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+				        @Override
+				        public void windowClosed(java.awt.event.WindowEvent e) {
+				        	actualizarPanelEquipos(temporada);
+				        }
+				    });
 				}
 			});
 

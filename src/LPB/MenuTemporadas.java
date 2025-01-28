@@ -98,7 +98,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
         panelContenido.setBackground(new Color(204, 153, 102));
 
         scrollPane = new JScrollPane(panelContenido);
-        scrollPane.setBounds(50, 160, 300, 250);
+        scrollPane.setBounds(50, 160, 319, 250);
         scrollPane.setBorder(null);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         panelDerecho.add(scrollPane);
@@ -190,7 +190,7 @@ public class MenuTemporadas extends JFrame implements MouseListener {
                 btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
                 btnEliminar.setBackground(Color.RED);
                 btnEliminar.setForeground(Color.WHITE);
-                btnEliminar.setBounds(230, yPosition, 40, 40);
+                btnEliminar.setBounds(230, yPosition, 45, 40);
                 btnEliminar.setFocusPainted(false);
 
                 btnEliminar.addActionListener(e -> {

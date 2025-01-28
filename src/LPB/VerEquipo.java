@@ -8,9 +8,10 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.image.RenderedImage;
+import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -19,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -37,6 +37,7 @@ import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.Usuario;
 
 public class VerEquipo extends JFrame {
 	private JPanel panelIzquierdo;
@@ -154,12 +155,9 @@ public class VerEquipo extends JFrame {
 		
 		btnEditar.addActionListener(e -> {
 		    btnEditar.setVisible(false);
-			
-		    if (rol.equals("Administrador")) {
-				btnAñadir.setVisible(true);
-				btnEliminar.setVisible(true);
-				btnCambiarFoto.setVisible(true);
-			}
+			btnAñadir.setVisible(true);
+			btnEliminar.setVisible(true);
+      btnCambiarFoto.setVisible(true);
 
 		    entrenadorLabel.setText("Entrenador:");
 		    estadioLabel.setText("Estadio:");
@@ -285,6 +283,18 @@ public class VerEquipo extends JFrame {
 		});
 
 		panelIzquierdo.add(btnEditar);
+	    
+	    if (rol.equals("Administrador")) {
+	        btnEditar.setVisible(true);
+	    } else if (rol.equals("Entrenador") && temporada.getEstado() == "En proceso") {
+	        try {
+	            btnEditar.setVisible(verificarEquipoEntrenador(usuario, equipo));
+	        } catch (IOException | ClassNotFoundException e) {
+	            btnEditar.setVisible(false);
+	        }
+	    } else {
+	        btnEditar.setVisible(false);
+	    }
 		
 		btnCambiarFoto = new BotonRedondeado("Añadir Jugador", null);
 		btnCambiarFoto.setText("Cambiar Logo");
@@ -327,7 +337,6 @@ public class VerEquipo extends JFrame {
 		
 		panelIzquierdo.add(btnCambiarFoto);
 		btnCambiarFoto.setVisible(false);
-
 
 		panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));
@@ -529,5 +538,24 @@ public class VerEquipo extends JFrame {
 		
 		panelDerecho.add(btnAñadir);
 		btnAñadir.setVisible(false);
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean verificarEquipoEntrenador(String usuario, Equipo equipo) throws IOException, ClassNotFoundException {
+	    String archivoUsuarios = "data/usuarios.ser";
+	    try (FileInputStream fis = new FileInputStream(archivoUsuarios);
+	         ObjectInputStream ois = new ObjectInputStream(fis)) {
+
+	        ArrayList<Usuario> usuarios = (ArrayList<Usuario>) ois.readObject();
+
+	        for (Usuario u : usuarios) {
+	            if (u.getUsuario().equals(usuario)) {
+	            	System.out.println("Usuario: " + usuario + "\nUsuario obtenido: " + u.getUsuario() + "\nEquipo: " + equipo + "Equipo obtenido: " + u.getEquipo());
+	                return u.getEquipo().equals(equipo);
+	            }
+	        }
+	    }
+
+	    return false;
 	}
 }
