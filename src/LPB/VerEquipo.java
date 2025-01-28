@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -194,57 +196,66 @@ public class VerEquipo extends JFrame {
 		    panelIzquierdo.add(btnGuardar);
 		    btnGuardar.setVisible(true);
 
-		    btnGuardar.addActionListener(save -> {
-		        equipo.setEntrenador(entrenadorField.getText());
-		        equipo.setEstadio(estadioField.getText());
-		        equipo.setFundacion(Integer.valueOf(fundacionField.getText()));
-		        equipo.setJugadores(jugadores);
-		        
-		        try {
-		            String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/";
-		            Files.createDirectories(Paths.get(basePath));
+			btnGuardar.addActionListener(save -> {
+				equipo.setEntrenador(entrenadorField.getText());
+				equipo.setEstadio(estadioField.getText());
+				equipo.setFundacion(Integer.valueOf(fundacionField.getText()));
+				equipo.setJugadores(jugadores);
 
-		            for (Jugador jugador : jugadores) {
-		                String fotoPath = jugador.getPhotoPath();
-		                String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
-		                String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+				try {
+					String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/"
+							+ equipo.getNombre() + "/";
+					Files.createDirectories(Paths.get(basePath));
+					
+					File selectedFile = new File(equipo.getEquipoPath());
+	                if (selectedFile.exists()) {
+	                    Path destinationPath = Paths.get(basePath + "escudo.png");
+	                    Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+	                    equipo.setEquipoPath(destinationPath.toString());
+	                }
 
-		                Path source = Paths.get(fotoPath);
-		                Path destination = Paths.get(nuevoPath);
+					for (Jugador jugador : jugadores) {
+						String fotoPath = jugador.getPhotoPath();
+						String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
+						String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
 
-		                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-		                jugador.setPhotoPath(nuevoPath);
-		            }
+						Path source = Paths.get(fotoPath);
+						Path destination = Paths.get(nuevoPath);
 
-		        } catch (IOException e1) {
-		            System.out.println("Error al mover las fotos de los jugadores: " + e1.getMessage());
-		        }
+						Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+						jugador.setPhotoPath(nuevoPath);
+					}
+					
+				} catch (IOException e1) {
+					System.out.println(
+							"Error al mover las fotos de los jugadores o guardar el escudo: " + e1.getMessage());
+				}
 
-		        entrenadorLabel.setText("Entrenador: " + equipo.getEntrenador());
-		        estadioLabel.setText("Estadio: " + equipo.getEstadio());
-		        fundacionLabel.setText("Fundación: " + equipo.getFundacion());
+				entrenadorLabel.setText("Entrenador: " + equipo.getEntrenador());
+				estadioLabel.setText("Estadio: " + equipo.getEstadio());
+				fundacionLabel.setText("Fundación: " + equipo.getFundacion());
 
-		        entrenadorLabel.setVisible(true);
-		        estadioLabel.setVisible(true);
-		        fundacionLabel.setVisible(true);
+				entrenadorLabel.setVisible(true);
+				estadioLabel.setVisible(true);
+				fundacionLabel.setVisible(true);
 
-		        entrenadorField.setVisible(false);
-		        estadioField.setVisible(false);
-		        fundacionField.setVisible(false);
+				entrenadorField.setVisible(false);
+				estadioField.setVisible(false);
+				fundacionField.setVisible(false);
 
-		        btnGuardar.setVisible(false);
-		        btnCancelar.setVisible(false);
-		        btnAñadir.setVisible(false);
-		        btnEliminar.setVisible(false);
-		        btnEditar.setVisible(true);
-		        btnCambiarFoto.setVisible(false);
-		        
-		        try {
+				btnGuardar.setVisible(false);
+				btnCancelar.setVisible(false);
+				btnAñadir.setVisible(false);
+				btnEliminar.setVisible(false);
+				btnEditar.setVisible(true);
+				btnCambiarFoto.setVisible(false);
+
+				try {
 					temporada.guardarTemporada(temporada);
 				} catch (IOException e1) {
 					System.out.println("ERROR. No se han encontrado los datos de la temporada.");
 				}
-		    });
+			});
 
 		    btnCancelar = new BotonRedondeado("Cancelar", (ImageIcon) null);
 		    btnCancelar.setForeground(Color.WHITE);
@@ -279,7 +290,7 @@ public class VerEquipo extends JFrame {
 		btnCambiarFoto.setText("Cambiar Logo");
 		btnCambiarFoto.setBounds(50, 167, 150, 40);
 		btnCambiarFoto.setFont(new Font("SansSerif", Font.BOLD, 16));
-		btnCambiarFoto.setBackground(new Color(0xdaa881));
+		btnCambiarFoto.setBackground(new Color(204, 153, 102));
 		btnCambiarFoto.setForeground(new Color(255, 255, 255));
 		btnCambiarFoto.setFocusPainted(false);
 		
@@ -300,7 +311,7 @@ public class VerEquipo extends JFrame {
 		                escudoLabel.setIcon(new ImageIcon(scaledImage));
 
 		                // Guardar la imagen en la ubicación correspondiente
-		                Path destinationPath = Paths.get("src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/" + selectedFile.getName());
+		                Path destinationPath = Paths.get("bin/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/" + selectedFile.getName());
 		                Files.createDirectories(destinationPath.getParent());
 		                Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
 
