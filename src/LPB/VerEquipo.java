@@ -89,7 +89,7 @@ public class VerEquipo extends JFrame {
 		escudoLabel = new JLabel();
 		escudoLabel.setBounds(50, 40, 100, 100);
 		try {
-			String logoBasePath = String.format("/imagenes/temporadas/Temporada %s/%s/", temporada.getPeriodo(), equipo.getNombre());
+			String logoBasePath = String.format("src/imagenes/temporadas/Temporada %s/%s/", temporada.getPeriodo(), equipo.getNombre());
 			String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"};
 
 			boolean logoCargado = false;
@@ -97,7 +97,7 @@ public class VerEquipo extends JFrame {
 			for (String extension : possibleExtensions) {
 			    try {
 			        String fullPath = logoBasePath + equipo.getNombre() + "." + extension;
-			        ImageIcon escudoIcon = new ImageIcon(getClass().getResource(fullPath));
+			        ImageIcon escudoIcon = new ImageIcon(fullPath);
 			        
 			        escudoLabel.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
 			        logoCargado = true;
@@ -157,7 +157,7 @@ public class VerEquipo extends JFrame {
 		    btnEditar.setVisible(false);
 			btnAñadir.setVisible(true);
 			btnEliminar.setVisible(true);
-      btnCambiarFoto.setVisible(true);
+			btnCambiarFoto.setVisible(true);
 
 		    entrenadorLabel.setText("Entrenador:");
 		    estadioLabel.setText("Estadio:");
@@ -207,7 +207,7 @@ public class VerEquipo extends JFrame {
 					
 					File selectedFile = new File(equipo.getEquipoPath());
 	                if (selectedFile.exists()) {
-	                    Path destinationPath = Paths.get(basePath + "escudo.png");
+	                    Path destinationPath = Paths.get(basePath + equipo.getNombre() + ".png");
 	                    Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
 	                    equipo.setEquipoPath(destinationPath.toString());
 	                }
@@ -284,9 +284,9 @@ public class VerEquipo extends JFrame {
 
 		panelIzquierdo.add(btnEditar);
 	    
-	    if (rol.equals("Administrador")) {
+	    if ("Administrador".equals(rol)) {
 	        btnEditar.setVisible(true);
-	    } else if (rol.equals("Entrenador") && temporada.getEstado() == "En proceso") {
+	    } else if ("Entrenador".equals(rol) && "En proceso".equals(temporada.getEstado())) {
 	        try {
 	            btnEditar.setVisible(verificarEquipoEntrenador(usuario, equipo));
 	        } catch (IOException | ClassNotFoundException e) {
@@ -550,7 +550,6 @@ public class VerEquipo extends JFrame {
 
 	        for (Usuario u : usuarios) {
 	            if (u.getUsuario().equals(usuario)) {
-	            	System.out.println("Usuario: " + usuario + "\nUsuario obtenido: " + u.getUsuario() + "\nEquipo: " + equipo + "Equipo obtenido: " + u.getEquipo());
 	                return u.getEquipo().equals(equipo);
 	            }
 	        }
