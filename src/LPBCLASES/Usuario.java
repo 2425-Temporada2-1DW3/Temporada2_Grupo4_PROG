@@ -11,14 +11,14 @@ public class Usuario implements Serializable {
     private String usuario;
     private String contrasena;
     private String rol;
-    private String equipo;
+    private Equipo equipo;
 
     // Constructor por defecto
     public Usuario() {
         this.usuario = "";
         this.contrasena = "";
         this.rol = "Usuario"; // Por defecto, los usuarios son invitados
-        this.equipo = "";
+        this.equipo = new Equipo();
     }
 
     // Constructor copia
@@ -34,7 +34,7 @@ public class Usuario implements Serializable {
         this.usuario = u;
         this.contrasena = c;
         this.rol = "Usuario"; // Por defecto, el rol es Usuario
-        this.equipo = ""; // Por defecto, el equipo es nulo
+        this.equipo = new Equipo(); // Por defecto, el equipo es nulo
     }
 
     // Constructor personalizado con rol
@@ -42,11 +42,11 @@ public class Usuario implements Serializable {
         this.usuario = u;
         this.contrasena = c;
         this.rol = r;
-        this.equipo = "";
+        this.equipo = new Equipo();
     }
     
     // Constructor personalizado con equipo
-    public Usuario(String u, String c, String r, String e) {
+    public Usuario(String u, String c, String r, Equipo e) {
         this.usuario = u;
         this.contrasena = c;
         this.rol = r;
@@ -78,11 +78,11 @@ public class Usuario implements Serializable {
         this.rol = rol;
     }
     
-    public String getEquipo() {
+    public Equipo getEquipo() {
         return equipo;
     }
 
-    public void setEquipo(String equipo) {
+    public void setEquipo(Equipo equipo) {
         this.equipo = equipo;
     }
 

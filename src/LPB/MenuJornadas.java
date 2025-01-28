@@ -90,6 +90,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private List<Partido> partidos;
 	private DefaultTableModel dtmClasificacion;
 	private Temporada temporada;
+	private String rol;
 	
 	private BackgroundFader fader;
 
@@ -106,6 +107,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		getContentPane().setLayout(null);
 		
 		this.temporada = temporada;
+		this.rol = rol;
 		
 		fader = new BackgroundFader();
 		
@@ -267,7 +269,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
         btnGuardar.setFocusPainted(false);
         btnGuardar.addMouseListener(this);
         
-        if (temporada.getEstado().equals("Activa")) {
+        if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
     		panelIzquierdo.add(btnGuardar);
         }
 		
@@ -314,7 +316,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		btnRestablecer.addMouseListener(this);
 		
-        if (temporada.getEstado().equals("Activa")) {
+		if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
     		panelIzquierdo.add(btnRestablecer);
         }
 		
@@ -414,26 +416,35 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblLogoLocal.setBounds(45, 11, 40, 40);
 	    panelPartido.add(lblLogoLocal);
 
-	    textPtsLocal = new TextoRedondeado(20);
-	    textPtsLocal.setFont(new Font("SansSerif", Font.PLAIN, 14));
-	    textPtsLocal.setHorizontalAlignment(SwingConstants.CENTER);
-	    textPtsLocal.setBounds(304, 15, 50, 30);
-	    textPtsLocal.setText(String.valueOf(partido.getPuntosLocal()));
-	    textPtsLocal.setName("local_" + partido.getEquipoLocal().getNombre());
-	    textPtsLocal.addFocusListener(new FocusListener() {
-	        @Override
-	        public void focusGained(FocusEvent e) {
-	            TextoRedondeado source = (TextoRedondeado) e.getSource();
-	            source.select(0, source.getText().length());
-	        }
+	    if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
+	        textPtsLocal = new TextoRedondeado(20);
+	        textPtsLocal.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	        textPtsLocal.setHorizontalAlignment(SwingConstants.CENTER);
+	        textPtsLocal.setBounds(304, 15, 50, 30);
+	        textPtsLocal.setText(String.valueOf(partido.getPuntosLocal()));
+	        textPtsLocal.setName("local_" + partido.getEquipoLocal().getNombre());
+	        textPtsLocal.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	                TextoRedondeado source = (TextoRedondeado) e.getSource();
+	                source.select(0, source.getText().length());
+	            }
 
-	        @Override
-	        public void focusLost(FocusEvent e) {
-	            TextoRedondeado source = (TextoRedondeado) e.getSource();
-	            source.select(0, 0);
-	        }
-	    });
-	    panelPartido.add(textPtsLocal);
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	                TextoRedondeado source = (TextoRedondeado) e.getSource();
+	                source.select(0, 0);
+	            }
+	        });
+	        panelPartido.add(textPtsLocal);
+	    } else {
+	        JLabel lblPtsLocal = new JLabel(String.valueOf(partido.getPuntosLocal()));
+	        lblPtsLocal.setFont(new Font("SansSerif", Font.BOLD, 16));
+	        lblPtsLocal.setHorizontalAlignment(SwingConstants.CENTER);
+	        lblPtsLocal.setBounds(304, 15, 50, 30);
+	        lblPtsLocal.setForeground(new Color(84, 84, 84));
+	        panelPartido.add(lblPtsLocal);
+	    }
 
 	    linea = new LineaPanel();
 	    linea.setForeground(new Color(166, 166, 166));
@@ -455,6 +466,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    linea_2.setBounds(223, 53, 130, 4);
 	    panelPartido.add(linea_2);
 
+	    // Equipo visitante
 	    lblEquipoVisitante = new JLabel(partido.getEquipoVisitante().getNombre());
 	    lblEquipoVisitante.setBounds(104, 64, 190, 30);
 	    lblEquipoVisitante.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -469,26 +481,35 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblLogoVisitante.setBounds(45, 60, 40, 40);
 	    panelPartido.add(lblLogoVisitante);
 
-	    textPtsVisitante = new TextoRedondeado(20);
-	    textPtsVisitante.setFont(new Font("SansSerif", Font.PLAIN, 14));
-	    textPtsVisitante.setHorizontalAlignment(SwingConstants.CENTER);
-	    textPtsVisitante.setBounds(304, 65, 50, 30);
-	    textPtsVisitante.setText(String.valueOf(partido.getPuntosVisitante()));
-	    textPtsVisitante.setName("visitante_" + partido.getEquipoVisitante().getNombre());
-	    textPtsVisitante.addFocusListener(new FocusListener() {
-	        @Override
-	        public void focusGained(FocusEvent e) {
-	            TextoRedondeado source = (TextoRedondeado) e.getSource();
-	            source.select(0, source.getText().length());
-	        }
+	    if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
+	        textPtsVisitante = new TextoRedondeado(20);
+	        textPtsVisitante.setFont(new Font("SansSerif", Font.PLAIN, 14));
+	        textPtsVisitante.setHorizontalAlignment(SwingConstants.CENTER);
+	        textPtsVisitante.setBounds(304, 65, 50, 30);
+	        textPtsVisitante.setText(String.valueOf(partido.getPuntosVisitante()));
+	        textPtsVisitante.setName("visitante_" + partido.getEquipoVisitante().getNombre());
+	        textPtsVisitante.addFocusListener(new FocusListener() {
+	            @Override
+	            public void focusGained(FocusEvent e) {
+	                TextoRedondeado source = (TextoRedondeado) e.getSource();
+	                source.select(0, source.getText().length());
+	            }
 
-	        @Override
-	        public void focusLost(FocusEvent e) {
-	            TextoRedondeado source = (TextoRedondeado) e.getSource();
-	            source.select(0, 0);
-	        }
-	    });
-	    panelPartido.add(textPtsVisitante);
+	            @Override
+	            public void focusLost(FocusEvent e) {
+	                TextoRedondeado source = (TextoRedondeado) e.getSource();
+	                source.select(0, 0);
+	            }
+	        });
+	        panelPartido.add(textPtsVisitante);
+	    } else {
+	        JLabel lblPtsVisitante = new JLabel(String.valueOf(partido.getPuntosVisitante()));
+	        lblPtsVisitante.setFont(new Font("SansSerif", Font.BOLD, 16));
+	        lblPtsVisitante.setHorizontalAlignment(SwingConstants.CENTER);
+	        lblPtsVisitante.setBounds(304, 65, 50, 30);
+	        lblPtsVisitante.setForeground(new Color(84, 84, 84));
+	        panelPartido.add(lblPtsVisitante);
+	    }
 
 	    return panelPartido;
 	}
