@@ -8,6 +8,8 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.RenderedImage;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,7 +19,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -57,6 +61,7 @@ public class VerEquipo extends JFrame {
 	private BotonRedondeado btnCancelar;
 	private BotonRedondeado btnAñadir;
 	private BotonRedondeado btnEliminar;
+	private BotonRedondeado btnCambiarFoto;
 
 	private static final long serialVersionUID = 1L;
 
@@ -153,6 +158,7 @@ public class VerEquipo extends JFrame {
 		    if (rol.equals("Administrador")) {
 				btnAñadir.setVisible(true);
 				btnEliminar.setVisible(true);
+				btnCambiarFoto.setVisible(true);
 			}
 
 		    entrenadorLabel.setText("Entrenador:");
@@ -190,56 +196,66 @@ public class VerEquipo extends JFrame {
 		    panelIzquierdo.add(btnGuardar);
 		    btnGuardar.setVisible(true);
 
-		    btnGuardar.addActionListener(save -> {
-		        equipo.setEntrenador(entrenadorField.getText());
-		        equipo.setEstadio(estadioField.getText());
-		        equipo.setFundacion(Integer.valueOf(fundacionField.getText()));
-		        equipo.setJugadores(jugadores);
-		        
-		        try {
-		            String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/";
-		            Files.createDirectories(Paths.get(basePath));
+			btnGuardar.addActionListener(save -> {
+				equipo.setEntrenador(entrenadorField.getText());
+				equipo.setEstadio(estadioField.getText());
+				equipo.setFundacion(Integer.valueOf(fundacionField.getText()));
+				equipo.setJugadores(jugadores);
 
-		            for (Jugador jugador : jugadores) {
-		                String fotoPath = jugador.getPhotoPath();
-		                String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
-		                String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+				try {
+					String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/"
+							+ equipo.getNombre() + "/";
+					Files.createDirectories(Paths.get(basePath));
+					
+					File selectedFile = new File(equipo.getEquipoPath());
+	                if (selectedFile.exists()) {
+	                    Path destinationPath = Paths.get(basePath + "escudo.png");
+	                    Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+	                    equipo.setEquipoPath(destinationPath.toString());
+	                }
 
-		                Path source = Paths.get(fotoPath);
-		                Path destination = Paths.get(nuevoPath);
+					for (Jugador jugador : jugadores) {
+						String fotoPath = jugador.getPhotoPath();
+						String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
+						String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
 
-		                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-		                jugador.setPhotoPath(nuevoPath);
-		            }
+						Path source = Paths.get(fotoPath);
+						Path destination = Paths.get(nuevoPath);
 
-		        } catch (IOException e1) {
-		            System.out.println("Error al mover las fotos de los jugadores: " + e1.getMessage());
-		        }
+						Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+						jugador.setPhotoPath(nuevoPath);
+					}
+					
+				} catch (IOException e1) {
+					System.out.println(
+							"Error al mover las fotos de los jugadores o guardar el escudo: " + e1.getMessage());
+				}
 
-		        entrenadorLabel.setText("Entrenador: " + equipo.getEntrenador());
-		        estadioLabel.setText("Estadio: " + equipo.getEstadio());
-		        fundacionLabel.setText("Fundación: " + equipo.getFundacion());
+				entrenadorLabel.setText("Entrenador: " + equipo.getEntrenador());
+				estadioLabel.setText("Estadio: " + equipo.getEstadio());
+				fundacionLabel.setText("Fundación: " + equipo.getFundacion());
 
-		        entrenadorLabel.setVisible(true);
-		        estadioLabel.setVisible(true);
-		        fundacionLabel.setVisible(true);
+				entrenadorLabel.setVisible(true);
+				estadioLabel.setVisible(true);
+				fundacionLabel.setVisible(true);
 
-		        entrenadorField.setVisible(false);
-		        estadioField.setVisible(false);
-		        fundacionField.setVisible(false);
+				entrenadorField.setVisible(false);
+				estadioField.setVisible(false);
+				fundacionField.setVisible(false);
 
-		        btnGuardar.setVisible(false);
-		        btnCancelar.setVisible(false);
-		        btnAñadir.setVisible(false);
-		        btnEliminar.setVisible(false);
-		        btnEditar.setVisible(true);
-		        
-		        try {
+				btnGuardar.setVisible(false);
+				btnCancelar.setVisible(false);
+				btnAñadir.setVisible(false);
+				btnEliminar.setVisible(false);
+				btnEditar.setVisible(true);
+				btnCambiarFoto.setVisible(false);
+
+				try {
 					temporada.guardarTemporada(temporada);
 				} catch (IOException e1) {
 					System.out.println("ERROR. No se han encontrado los datos de la temporada.");
 				}
-		    });
+			});
 
 		    btnCancelar = new BotonRedondeado("Cancelar", (ImageIcon) null);
 		    btnCancelar.setForeground(Color.WHITE);
@@ -264,10 +280,54 @@ public class VerEquipo extends JFrame {
 		        btnAñadir.setVisible(false);
 		        btnEliminar.setVisible(false);
 		        btnEditar.setVisible(true);
+		        btnCambiarFoto.setVisible(false);
 		    });
 		});
 
 		panelIzquierdo.add(btnEditar);
+		
+		btnCambiarFoto = new BotonRedondeado("Añadir Jugador", null);
+		btnCambiarFoto.setText("Cambiar Logo");
+		btnCambiarFoto.setBounds(50, 167, 150, 40);
+		btnCambiarFoto.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnCambiarFoto.setBackground(new Color(204, 153, 102));
+		btnCambiarFoto.setForeground(new Color(255, 255, 255));
+		btnCambiarFoto.setFocusPainted(false);
+		
+		btnCambiarFoto.addActionListener(new ActionListener() {
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+		        JFileChooser fileChooser = new JFileChooser();
+		        fileChooser.setDialogTitle("Seleccionar nuevo logo");
+		        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Imágenes", "jpg", "jpeg", "png", "gif"));
+		        
+		        int returnValue = fileChooser.showOpenDialog(null);
+		        if (returnValue == JFileChooser.APPROVE_OPTION) {
+		            File selectedFile = fileChooser.getSelectedFile();
+		            try {
+		                // Cargar la imagen seleccionada
+		                ImageIcon newLogo = new ImageIcon(selectedFile.getAbsolutePath());
+		                Image scaledImage = newLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+		                escudoLabel.setIcon(new ImageIcon(scaledImage));
+
+		                // Guardar la imagen en la ubicación correspondiente
+		                Path destinationPath = Paths.get("bin/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/" + selectedFile.getName());
+		                Files.createDirectories(destinationPath.getParent());
+		                Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+
+		                // Actualizar la ruta del logo en el equipo
+		                equipo.setEquipoPath(destinationPath.toString());
+		                JOptionPane.showMessageDialog(null, "Logo actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		            } catch (IOException ex) {
+		                JOptionPane.showMessageDialog(null, "Error al guardar el logo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        }
+		    }
+		});
+		
+		panelIzquierdo.add(btnCambiarFoto);
+		btnCambiarFoto.setVisible(false);
+
 
 		panelDerecho = new JPanel();
 		panelDerecho.setBackground(new Color(204, 153, 102));

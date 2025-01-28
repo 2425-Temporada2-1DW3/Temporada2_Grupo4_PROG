@@ -35,28 +35,28 @@ public class AgregarTemporada extends JFrame {
         // Etiqueta y campo para el período
         JLabel lblPeriodo = new JLabel("Período de la temporada:");
         lblPeriodo.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        lblPeriodo.setBounds(20, 30, 200, 30);
+        lblPeriodo.setBounds(21, 52, 200, 30);
         panel.add(lblPeriodo);
 
         periodoField = new TextoRedondeado(20);
         periodoField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        periodoField.setBounds(240, 30, 200, 30);
+        periodoField.setBounds(241, 52, 200, 30);
         panel.add(periodoField);
 
         // Etiqueta y combo box para el estado
         JLabel lblEstado = new JLabel("Estado de la temporada:");
         lblEstado.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        lblEstado.setBounds(20, 90, 200, 30);
+        lblEstado.setBounds(21, 112, 200, 30);
         panel.add(lblEstado);
 
         estadoComboBox = new JComboBox<>(new String[]{"Activa", "Finalizada", "En proceso"});
         estadoComboBox.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        estadoComboBox.setBounds(240, 90, 200, 30);
+        estadoComboBox.setBounds(241, 112, 200, 30);
         panel.add(estadoComboBox);
 
         // Botón Guardar
         btnGuardar = new BotonRedondeado("Guardar", null);
-        btnGuardar.setBounds(240, 180, 100, 40);
+        btnGuardar.setBounds(232, 200, 100, 40);
         btnGuardar.setBackground(new Color(0x13427e));
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -83,10 +83,10 @@ public class AgregarTemporada extends JFrame {
 
         // Botón Cancelar
         btnCancelar = new BotonRedondeado("Cancelar", null);
-        btnCancelar.setBounds(360, 180, 100, 40);
+        btnCancelar.setBounds(352, 200, 110, 40);
         btnCancelar.setBackground(new Color(0xf46b20));
         btnCancelar.setForeground(Color.WHITE);
-        btnCancelar.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        btnCancelar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         panel.add(btnCancelar);
