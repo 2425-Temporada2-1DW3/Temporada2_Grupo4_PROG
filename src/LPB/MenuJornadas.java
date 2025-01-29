@@ -46,6 +46,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ActionEvent;
 
+
+
 public class MenuJornadas extends JFrame implements MouseListener {
 
 	private static final long serialVersionUID = 1L;

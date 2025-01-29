@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="lib/imgscalr-lib-4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jna-5.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-5.16.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ik_1dw3a/Downloads/itext-pdfa-5.5.13.3/itext-pdfa-5.5.13.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
