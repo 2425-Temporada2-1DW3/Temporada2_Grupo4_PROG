@@ -38,6 +38,7 @@ import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
+import LPBCLASES.logClase;
 
 public class VerEquipo extends JFrame {
 	private JPanel panelIzquierdo;
@@ -225,9 +226,12 @@ public class VerEquipo extends JFrame {
 					}
 					
 				} catch (IOException e1) {
-					System.out.println(
-							"Error al mover las fotos de los jugadores o guardar el escudo: " + e1.getMessage());
-				}
+					JOptionPane.showMessageDialog(this, 
+							"Error al mover las fotos de los jugadores o guardar el escudo: " + e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+					
+					// 🔴 Log del error al mover fotos o escudo
+			        logClase.logError("Error al mover las fotos o guardar el escudo del equipo: " + equipo.getNombre(), e1);
+			    }
 
 				entrenadorLabel.setText("Entrenador: " + equipo.getEntrenador());
 				estadioLabel.setText("Estadio: " + equipo.getEstadio());
@@ -250,9 +254,16 @@ public class VerEquipo extends JFrame {
 
 				try {
 					temporada.guardarTemporada(temporada);
+					
+					 // 🔴 Log cuando se guarda el equipo editado
+			        logClase.logAction("Equipo actualizado: " + equipo.getNombre() + ", Entrenador: " + equipo.getEntrenador() + ", Estadio: " + equipo.getEstadio() + ", Fundación: " + equipo.getFundacion());
+			        
 				} catch (IOException e1) {
-					System.out.println("ERROR. No se han encontrado los datos de la temporada.");
-				}
+					JOptionPane.showMessageDialog(this, "ERROR. No se han encontrado los datos de la temporada.","Error", JOptionPane.ERROR_MESSAGE);
+					
+					// 🔴 Log del error al guardar la temporada
+			        logClase.logError("Error al guardar los datos de la temporada después de actualizar el equipo " + equipo.getNombre(), e1);
+			    }
 			});
 
 		    btnCancelar = new BotonRedondeado("Cancelar", (ImageIcon) null);
@@ -327,9 +338,15 @@ public class VerEquipo extends JFrame {
 
 		                // Actualizar la ruta del logo en el equipo
 		                equipo.setEquipoPath(destinationPath.toString());
+
+		                // 🔴 Log cuando se cambia el logo del equipo
+		                logClase.logAction("Logo cambiado para el equipo " + equipo.getNombre() + ": " + selectedFile.getName());
+
 		                JOptionPane.showMessageDialog(null, "Logo actualizado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 		            } catch (IOException ex) {
 		                JOptionPane.showMessageDialog(null, "Error al guardar el logo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+		             // 🔴 Log del error al cambiar el logo
+		                logClase.logError("Error al cambiar el logo del equipo " + equipo.getNombre(), ex);
 		            }
 		        }
 		    }
@@ -480,6 +497,9 @@ public class VerEquipo extends JFrame {
 		                        nuevoJugador.getPosicion(),
 		                        nuevoJugador.getDorsal()
 		                });
+		                
+		                // 🔴 Log cuando se añade un jugador
+		                logClase.logAction("Jugador agregado al equipo " + equipo.getNombre() + ": " + nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos() + ", Posición: " + nuevoJugador.getPosicion() + ", Dorsal: " + nuevoJugador.getDorsal());
 		            }
 		        }
 		    });
@@ -501,6 +521,11 @@ public class VerEquipo extends JFrame {
 		            for (int i = selectedRows.length - 1; i >= 0; i--) {
 		                int selectedRow = selectedRows[i];
 		                
+		                Jugador jugadorEliminado = jugadores.get(selectedRow);
+		                
+		                // 🔴 Log cuando se elimina un jugador
+		                logClase.logAction("Jugador eliminado del equipo " + equipo.getNombre() + ": " + jugadorEliminado.getNombre() + " " + jugadorEliminado.getApellidos());
+
 		                tableModel.removeRow(selectedRow);
 		                jugadores.remove(selectedRow);
 		            }
@@ -550,7 +575,9 @@ public class VerEquipo extends JFrame {
 
 	        for (Usuario u : usuarios) {
 	            if (u.getUsuario().equals(usuario)) {
-	            	System.out.println("Usuario: " + usuario + "\nUsuario obtenido: " + u.getUsuario() + "\nEquipo: " + equipo + "Equipo obtenido: " + u.getEquipo());
+	            	 JOptionPane.showMessageDialog(null,"Usuario: " + usuario + "\nUsuario obtenido: " + u.getUsuario() + "\nEquipo: " + equipo + "Equipo obtenido: " + u.getEquipo(),
+	 		                "Advertencia",
+			                JOptionPane.WARNING_MESSAGE);
 	                return u.getEquipo().equals(equipo);
 	            }
 	        }
