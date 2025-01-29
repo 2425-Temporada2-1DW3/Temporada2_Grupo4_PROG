@@ -130,7 +130,7 @@ public class Jugador implements Comparable<Jugador>, Serializable {
 	@Override
 	public int compareTo(Jugador otroJugador) {
 		// Compara jugadores en función de sus puntos totales
-		return Integer.compare(this.dorsal, otroJugador.dorsal);
+		return this.nombre.compareToIgnoreCase(otroJugador.getNombre());
 	}
 
 	// toXML

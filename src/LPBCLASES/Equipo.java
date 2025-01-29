@@ -116,8 +116,6 @@ public class Equipo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Equipo other = (Equipo) obj;
-		return Objects.equals(entrenador, other.entrenador) && Objects.equals(estadio, other.estadio)
-				&& Objects.equals(fundacion, other.fundacion) && Objects.equals(jugadores, other.jugadores)
-				&& Objects.equals(nombre, other.nombre);
+		return nombre.equals(other.nombre);
 	}
 }
