@@ -408,7 +408,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblEquipoLocal.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoLocal);
 
-	    logoLocal = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoLocal().getNombre() + "/" + partido.getEquipoLocal().getNombre() + ".png"));
+	    logoLocal = new ImageIcon(partido.getEquipoLocal().getRutaFoto());
 	    imgLocal = logoLocal.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 	    logoLocal = new ImageIcon(imgLocal);
 
@@ -473,7 +473,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblEquipoVisitante.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoVisitante);
 
-	    logoVisitante = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoVisitante().getNombre() + "/" + partido.getEquipoVisitante().getNombre() + ".png"));
+	    logoVisitante = new ImageIcon(partido.getEquipoVisitante().getRutaFoto());
 	    imgVisitante = logoVisitante.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
 	    logoVisitante = new ImageIcon(imgVisitante);
 

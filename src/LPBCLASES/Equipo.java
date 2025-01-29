@@ -14,7 +14,7 @@ public class Equipo implements Serializable {
     private List<Jugador> jugadores;
     private String estadio;
     private int fundacion;
-    private String equipoPath;
+    private String rutaFoto;
     
     // Constructor por defecto
     public Equipo() {
@@ -24,7 +24,7 @@ public class Equipo implements Serializable {
         this.jugadores = new ArrayList<>();
         this.estadio = "";
         this.fundacion = 1900;
-        this.equipoPath = "";
+        this.rutaFoto = "";
     }
     
   	// Constructor copia
@@ -34,16 +34,16 @@ public class Equipo implements Serializable {
         this.jugadores = e.jugadores;
         this.estadio = e.estadio;
         this.fundacion = e.fundacion;
-        this.equipoPath = e.equipoPath;
+        this.rutaFoto = e.rutaFoto;
   	}
 
-    public Equipo(String nombre, String entrenador, List<Jugador> jugadores, String estadio, int fundacion, String equipoPath) {
+    public Equipo(String nombre, String entrenador, List<Jugador> jugadores, String estadio, int fundacion, String rutaFoto) {
         this.nombre = nombre;
         this.entrenador = entrenador;
         this.jugadores = jugadores;
         this.estadio = estadio;
         this.fundacion = fundacion;
-        this.equipoPath = equipoPath;
+        this.rutaFoto = rutaFoto;
     }
 
     public String getNombre() { 
@@ -86,12 +86,12 @@ public class Equipo implements Serializable {
         this.fundacion = fundacion; 
     }
     
-    public String getEquipoPath() { 
-        return equipoPath; 
+    public String getRutaFoto() { 
+        return rutaFoto; 
     }
 
-    public void setEquipoPath(String equipoPath) { 
-        this.equipoPath = equipoPath; 
+    public void setRutaFoto(String rutaFoto) { 
+        this.rutaFoto = rutaFoto; 
     }
 
     // toString
@@ -103,7 +103,7 @@ public class Equipo implements Serializable {
     // hashCode
     @Override
 	public int hashCode() {
-		return Objects.hash(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
+		return Objects.hash(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
 	}
     
     // equals
@@ -116,8 +116,6 @@ public class Equipo implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Equipo other = (Equipo) obj;
-		return Objects.equals(entrenador, other.entrenador) && Objects.equals(estadio, other.estadio)
-				&& Objects.equals(fundacion, other.fundacion) && Objects.equals(jugadores, other.jugadores)
-				&& Objects.equals(nombre, other.nombre);
+		return nombre.equals(other.nombre);
 	}
 }

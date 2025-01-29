@@ -49,7 +49,7 @@ public class AgregarEquipo extends JFrame {
 	private File selectedFile;
 	private String selectedFileExtension;
 	Temporada temporada;
-	private String nombre, entrenador, estadio, equipoPath;
+	private String nombre, entrenador, estadio, rutaFoto;
 	private int fundacion;
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
@@ -141,22 +141,33 @@ public class AgregarEquipo extends JFrame {
 		        @Override
 		        public void windowClosed(java.awt.event.WindowEvent e) {
 		            Jugador nuevoJugador = agregarJugador.getJugador();
+		            
 		            if (nuevoJugador != null) {
 		                jugadores.add(nuevoJugador);
 
-		    			Image originalIcon = new ImageIcon(nuevoJugador.getPhotoPath()).getImage();
-		    			
-		    			int height = 40;
-		    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
+		                String rutaFoto = nuevoJugador.getRutaFoto();
+		                ImageIcon fotoIcon = null;
+		                
+		                if (rutaFoto != null && !rutaFoto.isEmpty()) {
+		                    // Cargar la imagen desde la ruta
+			    			Image originalIcon = new ImageIcon(rutaFoto).getImage();
+			    			
+			    			int height = 40;
+			    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
 
-		    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+			    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
-		    			ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
+			    			fotoIcon = new ImageIcon(scaledPlayerImage);
+		                } else {
+		                    // Si no tiene foto, usar la imagen predeterminada
+		                    fotoIcon = new ImageIcon("src/imagenes/user.png");
+		                }
+		                
 		                tableModel.addRow(new Object[]{
-		                		fotoIcon,
-		                        nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos(),
-		                        nuevoJugador.getPosicion(),
-		                        nuevoJugador.getDorsal()
+		                    fotoIcon,
+		                    nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos(),
+		                    nuevoJugador.getPosicion(),
+		                    nuevoJugador.getDorsal()
 		                });
 		            }
 		        }
@@ -269,21 +280,38 @@ public class AgregarEquipo extends JFrame {
 		            }
 
 		            tableModel.setRowCount(0);
+		            
+		            nombre = nombreEquipoField.getText();
+		            
 		            for (Jugador jugador : jugadores) {
-		                Image originalIcon = new ImageIcon(jugador.getPhotoPath()).getImage();
-		                
-		                int height = 40;
-		                int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
+			            
+			            if (jugador != null) {
+			                jugadores.add(jugador);
 
-		                Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+			                String rutaFoto = jugador.getRutaFoto();
+			                ImageIcon fotoIcon = null;
+			                
+			                if (rutaFoto != null && !rutaFoto.isEmpty()) {
+				    			Image originalIcon = new ImageIcon(rutaFoto).getImage();
+				    			
+				    			int height = 40;
+				    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
 
-		                ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
-		                tableModel.addRow(new Object[]{
-		                    fotoIcon,
-		                    jugador.getNombre() + " " + jugador.getApellidos(),
-		                    jugador.getPosicion(),
-		                    jugador.getDorsal()
-		                });
+				    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+
+				    			fotoIcon = new ImageIcon(scaledPlayerImage);
+			                } else {
+			                    // Si no tiene foto, usar la imagen predeterminada
+			                    fotoIcon = new ImageIcon("src/imagenes/user.png");
+			                }
+			                
+			                tableModel.addRow(new Object[]{
+			                    fotoIcon,
+			                    jugador.getNombre() + " " + jugador.getApellidos(),
+			                    jugador.getPosicion(),
+			                    jugador.getDorsal()
+			                });
+			            }
 		            }
 		        } else {
 		            JOptionPane.showMessageDialog(
@@ -333,6 +361,7 @@ public class AgregarEquipo extends JFrame {
 	    entrenador = nombreEntrenadorField.getText();
 	    estadio = estadioField.getText();
 	    fundacion = Integer.valueOf(anioFundacion.getText());
+	    rutaFoto = selectedFile.getAbsolutePath();
 
 	    if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || anioFundacion.getText().isEmpty()) {
 	        JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -349,9 +378,6 @@ public class AgregarEquipo extends JFrame {
 
 	            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	            
-	            equipoPath = logoDestinationFile.getAbsolutePath();
-
-	            System.out.println("El logo se ha guardado correctamente en: " + equipoPath);
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
 	                "Error", JOptionPane.ERROR_MESSAGE);
@@ -364,22 +390,24 @@ public class AgregarEquipo extends JFrame {
             Files.createDirectories(Paths.get(basePath));
 
             for (Jugador jugador : jugadores) {
-                String fotoPath = jugador.getPhotoPath();
-                String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
-                String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+            	String rutaAbsoluta = jugador.getRutaFoto();
+                String fotoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos();
+                String extension = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
+                String nuevoPath = fotoPath + extension;
 
-                Path source = Paths.get(fotoPath);
+                Path source = Paths.get(rutaAbsoluta);
                 Path destination = Paths.get(nuevoPath);
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                jugador.setPhotoPath(nuevoPath);
+                
+                jugador.setRutaFoto(nuevoPath);
             }
 
         } catch (IOException e1) {
             System.out.println("Error al mover las fotos de los jugadores: " + e1.getMessage());
         }
 
-	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
+	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
 
 	    try {
 	        String temporadaFilePath = String.format("data/temporada_%s.ser", this.temporada.getPeriodo());

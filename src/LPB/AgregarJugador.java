@@ -192,7 +192,8 @@ public class AgregarJugador extends JDialog {
         if (selectedFile == null) {
         	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
-            jugador = new Jugador(nombre, apellidos, posicion, dorsal, selectedFile.getAbsolutePath());
+            String rutaFoto = selectedFile.getAbsolutePath();
+            jugador = new Jugador(nombre, apellidos, posicion, dorsal, rutaFoto);
             dispose();
         }
     }
