@@ -181,9 +181,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
                     try {
                     	String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
                     	String periodo = selectedTemporada.replace("Temporada ", "");
+                    	temporadaSeleccionada = Temporada.cargarTemporada(periodo);
                         equipos = temporadaSeleccionada.getEquipos();
                         equiposPorTemporada.put(periodo, equipos);
-						temporadaSeleccionada = Temporada.cargarTemporada(periodo);
 						actualizarPanelEquipos(periodo);
 					} catch (ClassNotFoundException e) {
 						System.out.println("ERROR. No se ha encontrado la clase Temporada.");
@@ -342,21 +342,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-	            String logoBasePath = String.format("src/imagenes/temporadas/%s/%s/", (String) SelectTemporadas.getSelectedItem(), equipo.getNombre());
-	            String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"};
-
-				for (String extension : possibleExtensions) {
-				    try {
-				        String fullPath = logoBasePath + equipo.getNombre() + "." + extension;
-				        ImageIcon escudoIcon = new ImageIcon(fullPath);
-				        
-				        btnEquipo.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
-				        break;
-				    } catch (Exception e) {
-				        System.err.println("No se encontró el logo en: " + logoBasePath + "logo." + extension);
-				        btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-				    }
-				}
+		        ImageIcon escudoIcon = new ImageIcon(equipo.getRutaFoto());
+		        
+		        btnEquipo.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH)));
 	        } catch (NullPointerException e) {
 	            JOptionPane.showMessageDialog(null, "Error: Ruta de imagen nula para el equipo: " + equipo.getNombre(), "Error de Ruta", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
