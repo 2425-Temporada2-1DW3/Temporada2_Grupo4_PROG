@@ -11,6 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -22,6 +24,7 @@ import LPBCLASES.TextoRedondeado;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.BotonRedondeado;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 
 public class AgregarEquipo extends JFrame {
@@ -278,41 +281,7 @@ public class AgregarEquipo extends JFrame {
 		                tableModel.removeRow(selectedRow);
 		                jugadores.remove(selectedRow);
 		            }
-
-		            tableModel.setRowCount(0);
-		            
-		            nombre = nombreEquipoField.getText();
-		            
-		            for (Jugador jugador : jugadores) {
-			            
-			            if (jugador != null) {
-			                jugadores.add(jugador);
-
-			                String rutaFoto = jugador.getRutaFoto();
-			                ImageIcon fotoIcon = null;
-			                
-			                if (rutaFoto != null && !rutaFoto.isEmpty()) {
-				    			Image originalIcon = new ImageIcon(rutaFoto).getImage();
-				    			
-				    			int height = 40;
-				    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
-
-				    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-				    			fotoIcon = new ImageIcon(scaledPlayerImage);
-			                } else {
-			                    // Si no tiene foto, usar la imagen predeterminada
-			                    fotoIcon = new ImageIcon("src/imagenes/user.png");
-			                }
-			                
-			                tableModel.addRow(new Object[]{
-			                    fotoIcon,
-			                    jugador.getNombre() + " " + jugador.getApellidos(),
-			                    jugador.getPosicion(),
-			                    jugador.getDorsal()
-			                });
-			            }
-		            }
+		            System.out.println(jugadores);
 		        } else {
 		            JOptionPane.showMessageDialog(
 		                null,
@@ -343,14 +312,26 @@ public class AgregarEquipo extends JFrame {
 		if (fileChooser.showOpenDialog(this)) {
 	        selectedFile = fileChooser.getSelectedFile();
 	        if (selectedFile.exists()) {
-	            label.setText(selectedFile.getName());
+	            try {
+	                BufferedImage imagen = ImageIO.read(selectedFile);
+	                if (imagen == null) {
+	                    throw new IOException("Formato de imagen no soportado o corrupto");
+	                }
 
-	            String fileName = selectedFile.getName();
-	            int lastIndex = fileName.lastIndexOf('.');
-	            selectedFileExtension = (lastIndex == -1) ? "" : fileName.substring(lastIndex + 1);
+	                label.setText(selectedFile.getName());
 
-	            if (isLogo) {
-	                logoFile = selectedFile;
+	                String fileName = selectedFile.getName();
+	                int lastIndex = fileName.lastIndexOf('.');
+	                selectedFileExtension = (lastIndex == -1) ? "" : fileName.substring(lastIndex + 1);
+
+	                if (isLogo) {
+	                    logoFile = selectedFile;
+	                }
+	            } catch (IOException e) {
+	                JOptionPane.showMessageDialog(null, 
+	                    "La imagen está corrupta, prueba con otra imagen.", 
+	                    "Error", 
+	                    JOptionPane.ERROR_MESSAGE);
 	            }
 	        }
 	    }

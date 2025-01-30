@@ -8,6 +8,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.io.FileInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -90,24 +92,28 @@ public class VerEquipo extends JFrame {
 		escudoLabel.setBounds(50, 40, 100, 100);
 		try {
 		    String rutaLogo = equipo.getRutaFoto();
-		    
+
 		    boolean logoCargado = false;
 
 		    if (rutaLogo != null && !rutaLogo.isEmpty()) {
 
 		        try {
 		            ImageIcon escudoIcon = new ImageIcon(rutaLogo);
-		            
-		            escudoLabel.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
+		            Image originalImage = escudoIcon.getImage();
+
+		            int nuevoAlto = 100;
+		            int nuevoAncho = (int) ((double) originalImage.getWidth(null) / originalImage.getHeight(null) * nuevoAlto);
+
+		            escudoLabel.setIcon(new ImageIcon(originalImage.getScaledInstance(nuevoAncho, nuevoAlto, java.awt.Image.SCALE_SMOOTH)));
 		            logoCargado = true;
 		        } catch (Exception e) {
 		            System.err.println("No se pudo cargar el logo desde: " + rutaLogo);
 		        }
 		    }
 
-			if (!logoCargado) {
-			    escudoLabel.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-			}
+		    if (!logoCargado) {
+		        escudoLabel.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+		    }
 		} catch (Exception e) {
 		    System.err.println("No se pudo cargar el escudo para el equipo: " + equipo.getNombre());
 		}
@@ -327,23 +333,40 @@ public class VerEquipo extends JFrame {
 				fileChooser.addFilter("Todos los Archivos", "*");
 		        
 				if (fileChooser.showOpenDialog(null)) {
-		            File selectedFile = fileChooser.getSelectedFile();
-		            try {
-		                // Cargar la imagen seleccionada
-		                ImageIcon newLogo = new ImageIcon(selectedFile.getAbsolutePath());
-		                Image scaledImage = newLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-		                escudoLabel.setIcon(new ImageIcon(scaledImage));
+				    File selectedFile = fileChooser.getSelectedFile();
+				    try {
+				        // Verificar si la imagen está corrupta
+				        BufferedImage imagen = ImageIO.read(selectedFile);
+				        if (imagen == null) {
+				            throw new IOException("Formato de imagen no soportado o archivo corrupto.");
+				        }
 
-		                // Guardar la imagen en la ubicación correspondiente
-		                String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + "/" + selectedFile.getName();
-		                Path destinationPath = Paths.get(basePath);
-		                Files.createDirectories(destinationPath.getParent());
-		                Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
-		                equipo.setRutaFoto(basePath);
-		            } catch (IOException ex) {
-		                JOptionPane.showMessageDialog(null, "Error al guardar el logo: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-		            }
-		        }
+				        // Cargar y escalar la imagen
+				        ImageIcon newLogo = new ImageIcon(selectedFile.getAbsolutePath());
+				        Image scaledImage = newLogo.getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+				        escudoLabel.setIcon(new ImageIcon(scaledImage));
+
+				        // Obtener la extensión del archivo original
+				        String fileName = selectedFile.getName();
+				        int lastIndex = fileName.lastIndexOf('.');
+				        String extension = (lastIndex == -1) ? "" : fileName.substring(lastIndex);
+
+				        // Ruta de destino con el nombre del equipo y la extensión original
+				        String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipo.getNombre() + extension;
+				        Path destinationPath = Paths.get(basePath);
+
+				        // Crear directorios si no existen y guardar la imagen
+				        Files.createDirectories(destinationPath.getParent());
+				        Files.copy(selectedFile.toPath(), destinationPath, StandardCopyOption.REPLACE_EXISTING);
+				        equipo.setRutaFoto(basePath);
+
+				    } catch (IOException ex) {
+				        JOptionPane.showMessageDialog(null, 
+				            "La imagen está corrupta, prueba con otra imagen.", 
+				            "Error", 
+				            JOptionPane.ERROR_MESSAGE);
+				    }
+				}
 		    }
 		});
 		

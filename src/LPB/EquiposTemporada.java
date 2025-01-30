@@ -7,6 +7,7 @@ import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -342,9 +343,14 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-		        ImageIcon escudoIcon = new ImageIcon(equipo.getRutaFoto());
-		        
-		        btnEquipo.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(50, 50, java.awt.Image.SCALE_SMOOTH)));
+	            ImageIcon escudoIcon = new ImageIcon(equipo.getRutaFoto());
+	            Image originalImage = escudoIcon.getImage();
+
+	            int nuevoAlto = 50;
+	            int nuevoAncho = (int) ((double) originalImage.getWidth(null) / originalImage.getHeight(null) * nuevoAlto);
+
+	            ImageIcon iconoEscalado = new ImageIcon(originalImage.getScaledInstance(nuevoAncho, nuevoAlto, Image.SCALE_SMOOTH));
+	            btnEquipo.setIcon(iconoEscalado);
 	        } catch (NullPointerException e) {
 	            JOptionPane.showMessageDialog(null, "Error: Ruta de imagen nula para el equipo: " + equipo.getNombre(), "Error de Ruta", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();

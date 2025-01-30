@@ -409,7 +409,12 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    panelPartido.add(lblEquipoLocal);
 
 	    logoLocal = new ImageIcon(partido.getEquipoLocal().getRutaFoto());
-	    imgLocal = logoLocal.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    Image originalImageLocal = logoLocal.getImage();
+
+	    int nuevoAltoLocal = 40;
+	    int nuevoAnchoLocal = (int) ((double) originalImageLocal.getWidth(null) / originalImageLocal.getHeight(null) * nuevoAltoLocal);
+
+	    imgLocal = originalImageLocal.getScaledInstance(nuevoAnchoLocal, nuevoAltoLocal, Image.SCALE_SMOOTH);
 	    logoLocal = new ImageIcon(imgLocal);
 
 	    lblLogoLocal = new JLabel(logoLocal);
@@ -472,9 +477,14 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblEquipoVisitante.setFont(new Font("SansSerif", Font.PLAIN, 16));
 	    lblEquipoVisitante.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoVisitante);
-
+	    
 	    logoVisitante = new ImageIcon(partido.getEquipoVisitante().getRutaFoto());
-	    imgVisitante = logoVisitante.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    Image originalImageVisitante = logoVisitante.getImage();
+
+	    int nuevoAltoVisitante = 40;
+	    int nuevoAnchoVisitante = (int) ((double) originalImageVisitante.getWidth(null) / originalImageVisitante.getHeight(null) * nuevoAltoVisitante);
+
+	    imgVisitante = originalImageVisitante.getScaledInstance(nuevoAnchoVisitante, nuevoAltoVisitante, Image.SCALE_SMOOTH);
 	    logoVisitante = new ImageIcon(imgVisitante);
 
 	    lblLogoVisitante = new JLabel(logoVisitante);
