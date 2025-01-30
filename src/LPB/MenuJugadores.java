@@ -5,8 +5,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
@@ -19,7 +17,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -34,7 +31,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
 import LPBCLASES.TextoRedondeado;
@@ -47,7 +43,7 @@ import javax.swing.SwingConstants;
 
 import org.imgscalr.Scalr;
 
-public class MenuJugadores extends JFrame implements ActionListener, MouseListener, WindowListener, Serializable {
+public class MenuJugadores extends JFrame implements ActionListener, WindowListener, Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -66,7 +62,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
     private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnSeleccionarImagen;
     private DefaultListModel<Jugador> dlm;
     private JList<Jugador> listJugadores;
-    private BackgroundFader fader;
     private JScrollPane scrollPane;
     private JLabel lblNombre;
     private JLabel lblDorsal;
@@ -91,8 +86,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         setSize(800, 600);
         setLocationRelativeTo(null);
         getContentPane().setLayout(null);
-
-        fader = new BackgroundFader();
  
         panelSuperior = new JPanel();
         panelSuperior.setBackground(new Color(255, 243, 205));
@@ -160,7 +153,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         btnSeleccionarImagen.setBackground(new Color(0xf46b20));
         btnSeleccionarImagen.addActionListener(this);
         btnSeleccionarImagen.setFocusPainted(false);
-        btnSeleccionarImagen.addMouseListener(this);
         panelInferior.add(btnSeleccionarImagen);
         
         lblFoto = new JLabel("");
@@ -242,7 +234,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setBounds(452, 369, 100, 40);
         btnGuardar.setFocusPainted(false);
-        btnGuardar.addMouseListener(this);
         btnGuardar.addActionListener(this);
         panelInferior.add(btnGuardar);
 
@@ -252,7 +243,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         btnEliminar.setForeground(Color.WHITE);
         btnEliminar.setBounds(562, 369, 100, 40);
         btnEliminar.setFocusPainted(false);
-        btnEliminar.addMouseListener(this);
         btnEliminar.addActionListener(this);
         panelInferior.add(btnEliminar);
 
@@ -262,7 +252,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         btnVolver.setForeground(Color.WHITE);
         btnVolver.setBounds(671, 369, 90, 40);
         btnVolver.setFocusPainted(false);
-        btnVolver.addMouseListener(this);
         btnVolver.addActionListener(this);
         panelInferior.add(btnVolver);
 
@@ -512,39 +501,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
             }
         }
         System.exit(0);
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {}
-
-    @Override
-    public void mousePressed(MouseEvent e) {}
-
-    @Override
-    public void mouseReleased(MouseEvent e) {}
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-        Object source = e.getSource();
-        if (source == btnGuardar) {
-            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x1a5bae));
-        } else if (source == btnEliminar) {
-            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xfe9f2e));
-        } else if (source == btnVolver) {
-            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x646464));
-        }
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-        Object source = e.getSource();
-        if (source == btnGuardar) {
-            fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x13427E));
-        } else if (source == btnEliminar) {
-            fader.fadeBackground(btnEliminar, btnEliminar.getBackground(), new Color(0xf46b20));
-        } else if (source == btnVolver) {
-            fader.fadeBackground(btnVolver, btnVolver.getBackground(), new Color(0x404040));
-        }
     }
 
 	@Override

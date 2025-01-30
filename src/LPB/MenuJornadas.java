@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
 import LPBCLASES.ExportarPDF;
@@ -18,6 +17,7 @@ import LPBCLASES.Partido;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.logClase;
+import jnafilechooser.api.JnaFileChooser;
 
 import java.awt.Font;
 import java.awt.Image;
@@ -36,7 +36,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -68,6 +67,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private BotonRedondeado btnGuardar;
 	private BotonRedondeado btnRestablecer;
 	private BotonRedondeado btnVolverMenu;
+	private BotonRedondeado btnExportarPDF;
 	
 	private JLabel lblTemporada;
 	private JLabel lblAniosTemporada;
@@ -97,8 +97,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private DefaultTableModel dtmClasificacion;
 	private Temporada temporada;
 	private String rol;
-	
-	private BackgroundFader fader;
 
 	/**
 	 * Create the frame.
@@ -114,8 +112,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		this.temporada = temporada;
 		this.rol = rol;
-		
-		fader = new BackgroundFader();
 		
 		// Panel principal para los elementos superiores
 		panelIzquierdo = new JPanel();
@@ -196,7 +192,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        	}
 		    }
 		});
-		btnActivarTemporada.addMouseListener(this);
 		
 		if (rol.equals("Administrador") && temporada.getEstado().equals("En proceso")) {
 			panelIzquierdo.add(btnActivarTemporada);
@@ -233,7 +228,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		    	}
 		    }
 		});
-		btnFinalizarTemporada.addMouseListener(this);
 		btnFinalizarTemporada.setVisible(false);
 		
 		if (rol.equals("Administrador") && temporada.getEstado().equals("Activa")) {
@@ -350,8 +344,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		    }
 		});
 		
-		btnRestablecer.addMouseListener(this);
-		
 		if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
     		panelIzquierdo.add(btnRestablecer);
         }
@@ -382,7 +374,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.setBackground(new Color(84, 84, 84));
 		btnVolverMenu.setBounds(300, 485, 150, 40);
-		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 		
 		mostrarClasificacion(temporada);
@@ -712,7 +703,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    scrollPaneClasificacion.setBorder(BorderFactory.createEmptyBorder());
 	    panelDerecho.add(scrollPaneClasificacion);
 	    
-	    BotonRedondeado btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
+	    btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
 	    btnExportarPDF.addActionListener(e -> {
 	        if (tablaClasificacion.getRowCount() == 0) {
 	            JOptionPane.showMessageDialog(null, "No hay datos en la tabla para exportar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -720,12 +711,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        }
 
 	        // Seleccionar la ubicación para guardar el archivo
-	        JFileChooser fileChooser = new JFileChooser();
-	        fileChooser.setDialogTitle("Guardar como...");
-	        fileChooser.setSelectedFile(new File("Clasificacion.pdf"));
+	        JnaFileChooser fileChooser = new JnaFileChooser();
+	        fileChooser.setTitle("Guardar como...");
+	        fileChooser.addFilter("PDF (*.pdf)", "pdf");
+	        fileChooser.addFilter("Todos los Archivos", "*");
+	        fileChooser.setDefaultFileName("Clasificación " + temporada.getPeriodo() + ".pdf");
 
-	        int userSelection = fileChooser.showSaveDialog(null);
-	        if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        if (fileChooser.showSaveDialog(this)) {
 	            File archivo = fileChooser.getSelectedFile();
 	            ExportarPDF exportador = new ExportarPDF();
 	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath());
@@ -870,44 +862,11 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		Object o = e.getSource();
-		
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xa0a0a0));
-		} else if (o == btnRestablecer) {
-			fader.fadeBackground(btnRestablecer, btnRestablecer.getBackground(), new Color(0xa0a0a0));
-		} else if (o == btnActivarTemporada) {
-			fader.fadeBackground(btnActivarTemporada, btnActivarTemporada.getBackground(), new Color(0xff7f50));
-		} else if (o == btnFinalizarTemporada) {
-			fader.fadeBackground(btnFinalizarTemporada, btnFinalizarTemporada.getBackground(), new Color(0xff7f50));
-		} else if (o == btnAdelante) {
-			fader.fadeBackground(btnAdelante, btnAdelante.getBackground(), new Color(0xff7f50));
-		} else if (o == btnAtras) {
-			fader.fadeBackground(btnAtras, btnAtras.getBackground(), new Color(0xff7f50));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0xa0a0a0));
-		}
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		Object o = e.getSource();
-
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x545454));
-		} else if (o == btnRestablecer) {
-			fader.fadeBackground(btnRestablecer, btnRestablecer.getBackground(), new Color(0x545454));
-		} else if (o == btnActivarTemporada) {
-			fader.fadeBackground(btnActivarTemporada, btnActivarTemporada.getBackground(), new Color(0xf46b20));
-		} else if (o == btnFinalizarTemporada) {
-			fader.fadeBackground(btnFinalizarTemporada, btnFinalizarTemporada.getBackground(), new Color(0xf46b20));
-		} else if (o == btnAdelante) {
-			fader.fadeBackground(btnAdelante, btnAdelante.getBackground(), new Color(0xf46b20));
-		} else if (o == btnAtras) {
-			fader.fadeBackground(btnAtras, btnAtras.getBackground(), new Color(0xf46b20));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x545454));
-		} 
+		
 	}
 }

@@ -7,8 +7,6 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,12 +19,11 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Temporada;
 import LPBCLASES.logClase;
 
-public class MenuTemporadas extends JFrame implements MouseListener {
+public class MenuTemporadas extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 	private JPanel panelIzquierdo;
 	private ImageIcon logo;
@@ -41,7 +38,6 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 	private BotonRedondeado btnNuevaTemporada;
 	private BotonRedondeado btnEliminar;
 	private BotonRedondeado btnVolverMenu;
-	private BackgroundFader fader;
 	private String rol;
 	private String usuario;
 
@@ -52,8 +48,6 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		setSize(850, 550);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
-
-		fader = new BackgroundFader();
 		
 	    this.rol = rol;
 	    this.usuario = usuario;
@@ -111,7 +105,6 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 		btnVolverMenu.setForeground(Color.WHITE);
 		btnVolverMenu.setBounds(250, 461, 140, 30);
 		btnVolverMenu.setFocusPainted(false);
-		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 
 		btnVolverMenu.addActionListener(new ActionListener() {
@@ -138,7 +131,6 @@ public class MenuTemporadas extends JFrame implements MouseListener {
         btnNuevaTemporada.setForeground(Color.WHITE);
         btnNuevaTemporada.setBounds(0, yPosition, 220, 40);
 		btnNuevaTemporada.setFocusPainted(false);
-		btnNuevaTemporada.addMouseListener(this);
 		
         btnNuevaTemporada.addActionListener(e -> {
             AgregarTemporada agregarTemporada = new AgregarTemporada();
@@ -173,7 +165,6 @@ public class MenuTemporadas extends JFrame implements MouseListener {
                 btnTemporada.setForeground(Color.WHITE);
                 btnTemporada.setBounds(0, yPosition, 220, 40);
                 btnTemporada.setFocusPainted(false);
-                btnTemporada.addMouseListener(this);
                 
                 btnTemporada.addActionListener(e -> {
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
@@ -219,47 +210,5 @@ public class MenuTemporadas extends JFrame implements MouseListener {
 
         panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
         panelContenido.revalidate();
-    }
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent ae) {
-		Object o = ae.getSource();
-		
-		if (o == btnTemporada) {
-			fader.fadeBackground(btnTemporada, btnTemporada.getBackground(), new Color(0xff7f50));
-		} else if (o == btnNuevaTemporada) {
-			fader.fadeBackground(btnNuevaTemporada, btnNuevaTemporada.getBackground(), new Color(0x6a6a6a));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x646464));
-		}
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent ae) {
-		Object o = ae.getSource();
-
-		if (o == btnTemporada) {
-			fader.fadeBackground(btnTemporada, btnTemporada.getBackground(), new Color(0xf46b20));
-		} else if (o == btnNuevaTemporada) {
-			fader.fadeBackground(btnNuevaTemporada, btnNuevaTemporada.getBackground(), new Color(0x545454));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x404040));
-		}
-		
-	}
-
-	
+    }	
 }

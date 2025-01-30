@@ -4,8 +4,6 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,14 +14,13 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.UIManager;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 import LPBCLASES.logClase;
 
-public class Login extends JFrame implements MouseListener {
+public class Login extends JFrame {
     private static final long serialVersionUID = -410820418148204249L;
     private JPanel panel;
     private ImageIcon logo;
@@ -34,7 +31,6 @@ public class Login extends JFrame implements MouseListener {
     private JPasswordField txtPassword;
     private JButton btnIniciarSesion;
     private JButton btnInvitado;
-    private BackgroundFader fader;
 
 	/**
 	 * Launch the application.
@@ -67,8 +63,6 @@ public class Login extends JFrame implements MouseListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("LPB Basketball - Inicio de Sesión");
-		
-		fader = new BackgroundFader();
 
 		panel = new JPanel();
 		panel.setLayout(null);
@@ -109,7 +103,6 @@ public class Login extends JFrame implements MouseListener {
 		btnIniciarSesion.setBackground(new Color(0x13427E));
 		btnIniciarSesion.setForeground(Color.WHITE);
 		btnIniciarSesion.setFocusPainted(false);
-		btnIniciarSesion.addMouseListener(this);
 		panel.add(btnIniciarSesion);
 
 		MenuUsuarios.cargarUsuarios();
@@ -144,7 +137,6 @@ public class Login extends JFrame implements MouseListener {
         btnInvitado.setBackground(new Color(0xf46b20));
         btnInvitado.setForeground(Color.WHITE);
         btnInvitado.setFocusPainted(false);
-        btnInvitado.addMouseListener(this);
         panel.add(btnInvitado);
 
         btnInvitado.addActionListener(_ -> {
@@ -152,41 +144,5 @@ public class Login extends JFrame implements MouseListener {
             new Menu("Invitado", "Invitado").setVisible(true);
             dispose();
         });
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent ae) {
-        Object o = ae.getSource();
-
-        if (o == btnIniciarSesion) {
-            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
-        } else if (o == btnInvitado) {
-            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
-        }
-    }
-    
-	@Override
-	public void mouseExited(MouseEvent ae) {
-        Object o = ae.getSource();
-
-        if (o == btnIniciarSesion) {
-            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
-        } else if (o == btnInvitado) {
-            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
-        }		
-	}
-    
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    	
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    	
     }
 }
