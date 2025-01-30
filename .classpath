@@ -11,5 +11,14 @@
 	<classpathentry kind="lib" path="lib/imgscalr-lib-4.2.jar"/>
 	<classpathentry kind="lib" path="lib/jna-5.16.0.jar"/>
 	<classpathentry kind="lib" path="lib/jna-platform-5.16.0.jar"/>
+	<classpathentry kind="lib" path="C:/Users/ik_1dw3a/Downloads/jaxb-ri-4.0.2/jaxb-ri/mod/angus-activation.jar"/>
+	<classpathentry kind="lib" path="lib/itextpdf-5.5.13.2.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.activation-api.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.xml.bind-api.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.xml.bind-api-4.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-core.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-jxc.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-xjc.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

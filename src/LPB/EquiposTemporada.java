@@ -37,6 +37,7 @@ import javax.swing.UIManager;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
 import LPBCLASES.Temporada;
+import LPBCLASES.logClase;
 
 public class EquiposTemporada extends JFrame implements WindowListener {
 
@@ -186,6 +187,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
                         equipos = temporadaSeleccionada.getEquipos();
                         equiposPorTemporada.put(periodo, equipos);
 						actualizarPanelEquipos(periodo);
+						
 					} catch (ClassNotFoundException e) {
 						System.out.println("ERROR. No se ha encontrado la clase Temporada.");
 					} catch (IOException e) {
@@ -404,11 +406,17 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	                @Override
 	                public void actionPerformed(ActionEvent e) {
 	                    if (equipos.remove(equipo)) {
+	                    	 // === INICIO: LOGGING PARA ELIMINAR EQUIPO ===
+	                        logClase.logAction("Equipo eliminado: '" + equipo.getNombre() + "' de la temporada " + temporadaSeleccionada.getPeriodo() + ".");
+	                        // === FIN: LOGGING PARA ELIMINAR EQUIPO ===
 	                        actualizarPanelEquipos(temporada);
 	                        datosModificados = true;
 	                        actualizarTitulo();
 	                    } else {
 	                        JOptionPane.showMessageDialog(null, "No se pudo eliminar el equipo. " + equipo.getNombre(), "Error" , JOptionPane.ERROR_MESSAGE);
+	                        // === INICIO: LOGGING PARA ERROR EN ELIMINAR EQUIPO ===
+	                        logClase.logError("Error: No se pudo eliminar el equipo: '" + equipo.getNombre() + "' de la temporada " + temporadaSeleccionada.getPeriodo() + ".", null);
+	                        // === FIN: LOGGING PARA ERROR EN ELIMINAR EQUIPO ===
 	                    }
 	                }
 	            });

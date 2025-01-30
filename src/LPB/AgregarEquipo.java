@@ -21,6 +21,7 @@ import LPBCLASES.Equipo;
 import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.logClase;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.BotonRedondeado;
 import java.awt.event.ActionListener;
@@ -57,6 +58,7 @@ public class AgregarEquipo extends JFrame {
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
 
+	
 	public AgregarEquipo(Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		this.temporada = temporada;
@@ -172,6 +174,7 @@ public class AgregarEquipo extends JFrame {
 		                    nuevoJugador.getPosicion(),
 		                    nuevoJugador.getDorsal()
 		                });
+		                
 		            }
 		        }
 		    });
@@ -281,7 +284,6 @@ public class AgregarEquipo extends JFrame {
 		                tableModel.removeRow(selectedRow);
 		                jugadores.remove(selectedRow);
 		            }
-		            System.out.println(jugadores);
 		        } else {
 		            JOptionPane.showMessageDialog(
 		                null,
@@ -290,6 +292,8 @@ public class AgregarEquipo extends JFrame {
 		                JOptionPane.WARNING_MESSAGE
 		            );
 		        }
+		        // 🔴 Log cuando se elimina un jugador
+                logClase.logAction("Jugador eliminado: " + nombre);
 		    }
 		});
 		btnEliminarJugador.setForeground(Color.WHITE);
@@ -362,6 +366,10 @@ public class AgregarEquipo extends JFrame {
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
 	                "Error", JOptionPane.ERROR_MESSAGE);
+	            
+	            // 🔴 Log del error al mover el logo
+	            logClase.logError("Error al mover la imagen del logo: " + e.getMessage(), e);
+	           
 	            return;
 	        }
 	    }
@@ -385,7 +393,11 @@ public class AgregarEquipo extends JFrame {
             }
 
         } catch (IOException e1) {
-            System.out.println("Error al mover las fotos de los jugadores: " + e1.getMessage());
+        	 JOptionPane.showMessageDialog(this,"Error al mover las fotos de los jugadores: " + e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+         
+            // 🔴 Log del error al mover las fotos de los jugadores
+            logClase.logError("Error al mover las fotos de los jugadores: " + e1.getMessage(), e1);
+        
         }
 
 	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
@@ -413,17 +425,32 @@ public class AgregarEquipo extends JFrame {
 	                    temporadaCargada.setEquipos(listaEquipos);
 	                    temporadaCargada.guardarTemporada(temporadaCargada);
 	                    JOptionPane.showMessageDialog(this, "El equipo ha sido guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	                    // 🔴 Log cuando se guarda el equipo correctamente
+	                    logClase.logAction(String.format(
+	                        "Equipo guardado: '%s', Entrenador: '%s', Estadio: '%s', Año de fundación: %d, Jugadores: %d",
+	                        nombre, entrenador, estadio, fundacion, jugadores.size()
+	                    ));
 	                    dispose();
 	                }
 	            } else {
 	                JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	                
+	                // 🔴 Log del error al cargar la temporada
+	                logClase.logError("No se pudo cargar la temporada: " + this.temporada.getPeriodo(), null);
 	            }
 	        } else {
 	            JOptionPane.showMessageDialog(this, "No se encontró el archivo de la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	            
+	            // 🔴 Log del error al no encontrar el archivo de temporada
+	            logClase.logError("No se encontró el archivo de la temporada: " + temporadaFilePath, null);
 	        }
 	    } catch (IOException | ClassNotFoundException e) {
 	        JOptionPane.showMessageDialog(this, "Error al guardar el equipo en la temporada: " + e.getMessage(),
 	            "Error", JOptionPane.ERROR_MESSAGE);
+	        
+	        // 🔴 Log del error al guardar el equipo
+	        logClase.logError("Error al guardar el equipo en la temporada: " + e.getMessage(), e);
 	    }
+	    
 	}
 }

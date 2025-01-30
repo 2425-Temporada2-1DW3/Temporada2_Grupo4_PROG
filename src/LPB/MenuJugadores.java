@@ -38,6 +38,7 @@ import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
 import LPBCLASES.TextoRedondeado;
+import LPBCLASES.logClase;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
@@ -413,15 +414,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
                 jugadoresTemp.add(jugador);
             }
         }
-
-        jugadoresTemp.sort(Comparator.comparing(Jugador::getNombre));
-
-        for (Jugador jugador : jugadoresTemp) {
-            dlm.addElement(jugador);
-        }
-        
-        contador = dlm.getSize();
-        lblContador.setText(String.valueOf(contador));
     }
 
     private void guardarDatos() {
@@ -430,13 +422,17 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         try {
             fos = new FileOutputStream("jugadores.ser");
             oos = new ObjectOutputStream(fos);
-
+            
+            int cantidadJugadores = dlm.getSize();
             Jugador nuevoJugador;
             for (int posicion = 0; posicion < dlm.getSize(); posicion++) {
                 nuevoJugador = dlm.get(posicion);
                 oos.writeObject(nuevoJugador);
                 contador = dlm.getSize();
             }
+
+            // 🔴 Log cuando se guardan los jugadores
+            logClase.logAction("Datos de jugadores guardados correctamente. Total de jugadores: " + cantidadJugadores);
 
             oos.close();
             fos.close();
@@ -445,6 +441,9 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error de Entrada/Salida al guardar el archivo: jugadores.ser\n" + e.getMessage(), "Error de IO", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
+            
+         // 🔴 Log del error al guardar los datos
+            logClase.logError("Error al guardar los datos de los jugadores", e);
         }
     }
 
@@ -452,6 +451,12 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         int[] Indice = listJugadores.getSelectedIndices();
         if (Indice.length > 0) {
             for (int i = Indice.length - 1; i >= 0; i--) {
+            	
+            	Jugador jugadorEliminado = dlm.get(Indice[i]);
+            	// 🔴 Log cuando se elimina un jugador
+                logClase.logAction("Jugador eliminado: " + jugadorEliminado.getNombre() + " " + jugadorEliminado.getApellidos());
+
+                
                 dlm.removeElementAt(Indice[i]);
                 contador = dlm.getSize();
                 lblContador.setText(String.valueOf(contador));
