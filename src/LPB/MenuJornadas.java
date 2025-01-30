@@ -204,6 +204,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 					} catch (IOException e1) {
 						System.out.println("ERROR. No se han encontrado datos de la temporada.");
 					}
+			        cargarPartidos(temporada, jornadaSeleccionada);
 		    	}
 		    }
 		});
