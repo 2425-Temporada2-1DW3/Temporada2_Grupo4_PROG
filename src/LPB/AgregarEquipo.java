@@ -11,6 +11,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -23,6 +25,7 @@ import LPBCLASES.logClase;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.BotonRedondeado;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 
 public class AgregarEquipo extends JFrame {
@@ -50,7 +53,7 @@ public class AgregarEquipo extends JFrame {
 	private File selectedFile;
 	private String selectedFileExtension;
 	Temporada temporada;
-	private String nombre, entrenador, estadio, equipoPath;
+	private String nombre, entrenador, estadio, rutaFoto;
 	private int fundacion;
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
@@ -143,23 +146,33 @@ public class AgregarEquipo extends JFrame {
 		        @Override
 		        public void windowClosed(java.awt.event.WindowEvent e) {
 		            Jugador nuevoJugador = agregarJugador.getJugador();
+		            
 		            if (nuevoJugador != null) {
 		                jugadores.add(nuevoJugador);
+
+		                String rutaFoto = nuevoJugador.getRutaFoto();
+		                ImageIcon fotoIcon = null;
 		                
+		                if (rutaFoto != null && !rutaFoto.isEmpty()) {
+		                    // Cargar la imagen desde la ruta
+			    			Image originalIcon = new ImageIcon(rutaFoto).getImage();
+			    			
+			    			int height = 40;
+			    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
 
-		    			Image originalIcon = new ImageIcon(nuevoJugador.getPhotoPath()).getImage();
-		    			
-		    			int height = 40;
-		    			int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
+			    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
 
-		    			Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-		    			ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
+			    			fotoIcon = new ImageIcon(scaledPlayerImage);
+		                } else {
+		                    // Si no tiene foto, usar la imagen predeterminada
+		                    fotoIcon = new ImageIcon("src/imagenes/user.png");
+		                }
+		                
 		                tableModel.addRow(new Object[]{
-		                		fotoIcon,
-		                        nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos(),
-		                        nuevoJugador.getPosicion(),
-		                        nuevoJugador.getDorsal()
+		                    fotoIcon,
+		                    nuevoJugador.getNombre() + " " + nuevoJugador.getApellidos(),
+		                    nuevoJugador.getPosicion(),
+		                    nuevoJugador.getDorsal()
 		                });
 		                
 		            }
@@ -270,25 +283,6 @@ public class AgregarEquipo extends JFrame {
 		                
 		                tableModel.removeRow(selectedRow);
 		                jugadores.remove(selectedRow);
-		               
-		            }
-
-		            tableModel.setRowCount(0);
-		            for (Jugador jugador : jugadores) {
-		                Image originalIcon = new ImageIcon(jugador.getPhotoPath()).getImage();
-		                
-		                int height = 40;
-		                int width = (int) (originalIcon.getWidth(null) * ((double) height / originalIcon.getHeight(null)));
-
-		                Image scaledPlayerImage = originalIcon.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-
-		                ImageIcon fotoIcon = new ImageIcon(scaledPlayerImage);
-		                tableModel.addRow(new Object[]{
-		                    fotoIcon,
-		                    jugador.getNombre() + " " + jugador.getApellidos(),
-		                    jugador.getPosicion(),
-		                    jugador.getDorsal()
-		                });
 		            }
 		        } else {
 		            JOptionPane.showMessageDialog(
@@ -322,14 +316,26 @@ public class AgregarEquipo extends JFrame {
 		if (fileChooser.showOpenDialog(this)) {
 	        selectedFile = fileChooser.getSelectedFile();
 	        if (selectedFile.exists()) {
-	            label.setText(selectedFile.getName());
+	            try {
+	                BufferedImage imagen = ImageIO.read(selectedFile);
+	                if (imagen == null) {
+	                    throw new IOException("Formato de imagen no soportado o corrupto");
+	                }
 
-	            String fileName = selectedFile.getName();
-	            int lastIndex = fileName.lastIndexOf('.');
-	            selectedFileExtension = (lastIndex == -1) ? "" : fileName.substring(lastIndex + 1);
+	                label.setText(selectedFile.getName());
 
-	            if (isLogo) {
-	                logoFile = selectedFile;
+	                String fileName = selectedFile.getName();
+	                int lastIndex = fileName.lastIndexOf('.');
+	                selectedFileExtension = (lastIndex == -1) ? "" : fileName.substring(lastIndex + 1);
+
+	                if (isLogo) {
+	                    logoFile = selectedFile;
+	                }
+	            } catch (IOException e) {
+	                JOptionPane.showMessageDialog(null, 
+	                    "La imagen está corrupta, prueba con otra imagen.", 
+	                    "Error", 
+	                    JOptionPane.ERROR_MESSAGE);
 	            }
 	        }
 	    }
@@ -340,6 +346,7 @@ public class AgregarEquipo extends JFrame {
 	    entrenador = nombreEntrenadorField.getText();
 	    estadio = estadioField.getText();
 	    fundacion = Integer.valueOf(anioFundacion.getText());
+	    rutaFoto = selectedFile.getAbsolutePath();
 
 	    if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || anioFundacion.getText().isEmpty()) {
 	        JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -356,9 +363,6 @@ public class AgregarEquipo extends JFrame {
 
 	            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
 	            
-	            equipoPath = logoDestinationFile.getAbsolutePath();
-
-	            JOptionPane.showMessageDialog(this,"El logo se ha guardado correctamente en: " + equipoPath, "Éxito", JOptionPane.INFORMATION_MESSAGE);
 	        } catch (IOException e) {
 	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
 	                "Error", JOptionPane.ERROR_MESSAGE);
@@ -375,15 +379,17 @@ public class AgregarEquipo extends JFrame {
             Files.createDirectories(Paths.get(basePath));
 
             for (Jugador jugador : jugadores) {
-                String fotoPath = jugador.getPhotoPath();
-                String extension = fotoPath.substring(fotoPath.lastIndexOf("."));
-                String nuevoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+            	String rutaAbsoluta = jugador.getRutaFoto();
+                String fotoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos();
+                String extension = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
+                String nuevoPath = fotoPath + extension;
 
-                Path source = Paths.get(fotoPath);
+                Path source = Paths.get(rutaAbsoluta);
                 Path destination = Paths.get(nuevoPath);
 
                 Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                jugador.setPhotoPath(nuevoPath);
+                
+                jugador.setRutaFoto(nuevoPath);
             }
 
         } catch (IOException e1) {
@@ -394,7 +400,7 @@ public class AgregarEquipo extends JFrame {
         
         }
 
-	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, equipoPath);
+	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
 
 	    try {
 	        String temporadaFilePath = String.format("data/temporada_%s.ser", this.temporada.getPeriodo());

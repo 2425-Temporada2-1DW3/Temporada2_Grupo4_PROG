@@ -3,8 +3,11 @@ package LPB;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -161,8 +164,25 @@ public class AgregarJugador extends JDialog {
 
         if (fc.showOpenDialog(this)) {
             selectedFile = fc.getSelectedFile();
-            lblSeleccioneUnaFoto.setText(selectedFile.getName());
-            lblSeleccioneUnaFoto.setForeground(new Color(0x007B00));
+            
+            try {
+                BufferedImage imagen = ImageIO.read(selectedFile);
+                if (imagen == null) {
+                    throw new IOException("Formato de imagen no soportado o corrupto");
+                }
+
+                lblSeleccioneUnaFoto.setText(selectedFile.getName());
+                lblSeleccioneUnaFoto.setForeground(new Color(0x007B00));
+
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, 
+                    "La imagen está corrupta, prueba con otra imagen.", 
+                    "Error", 
+                    JOptionPane.ERROR_MESSAGE);
+
+                lblSeleccioneUnaFoto.setText("Imagen inválida.");
+                lblSeleccioneUnaFoto.setForeground(Color.RED);
+            }
         } else {
             lblSeleccioneUnaFoto.setText("No se seleccionó ninguna foto.");
             lblSeleccioneUnaFoto.setForeground(Color.RED);
@@ -193,9 +213,10 @@ public class AgregarJugador extends JDialog {
         if (selectedFile == null) {
         	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
         } else {
+            String rutaFoto = selectedFile.getAbsolutePath();
         	 // 🔴 Log cuando se agrega un jugador
             logClase.logAction("Jugador agregado: " + nombre + ", Posición: " + posicion + ", Dorsal: " + dorsal);
-            jugador = new Jugador(nombre, apellidos, posicion, dorsal, selectedFile.getAbsolutePath());
+            jugador = new Jugador(nombre, apellidos, posicion, dorsal, rutaFoto);
             dispose();
         }
     }

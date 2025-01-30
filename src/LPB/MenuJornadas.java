@@ -229,6 +229,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		                // === FIN: LOGGING PARA ERROR AL FINALIZAR TEMPORADA ===
 						System.out.println("ERROR. No se han encontrado datos de la temporada.");
 					}
+			        cargarPartidos(temporada, jornadaSeleccionada);
 		    	}
 		    }
 		});
@@ -443,8 +444,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblEquipoLocal.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoLocal);
 
-	    logoLocal = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoLocal().getNombre() + "/" + partido.getEquipoLocal().getNombre() + ".png"));
-	    imgLocal = logoLocal.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    logoLocal = new ImageIcon(partido.getEquipoLocal().getRutaFoto());
+	    Image originalImageLocal = logoLocal.getImage();
+
+	    int nuevoAltoLocal = 40;
+	    int nuevoAnchoLocal = (int) ((double) originalImageLocal.getWidth(null) / originalImageLocal.getHeight(null) * nuevoAltoLocal);
+
+	    imgLocal = originalImageLocal.getScaledInstance(nuevoAnchoLocal, nuevoAltoLocal, Image.SCALE_SMOOTH);
 	    logoLocal = new ImageIcon(imgLocal);
 
 	    lblLogoLocal = new JLabel(logoLocal);
@@ -507,9 +513,14 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    lblEquipoVisitante.setFont(new Font("SansSerif", Font.PLAIN, 16));
 	    lblEquipoVisitante.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoVisitante);
+	    
+	    logoVisitante = new ImageIcon(partido.getEquipoVisitante().getRutaFoto());
+	    Image originalImageVisitante = logoVisitante.getImage();
 
-	    logoVisitante = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoVisitante().getNombre() + "/" + partido.getEquipoVisitante().getNombre() + ".png"));
-	    imgVisitante = logoVisitante.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    int nuevoAltoVisitante = 40;
+	    int nuevoAnchoVisitante = (int) ((double) originalImageVisitante.getWidth(null) / originalImageVisitante.getHeight(null) * nuevoAltoVisitante);
+
+	    imgVisitante = originalImageVisitante.getScaledInstance(nuevoAnchoVisitante, nuevoAltoVisitante, Image.SCALE_SMOOTH);
 	    logoVisitante = new ImageIcon(imgVisitante);
 
 	    lblLogoVisitante = new JLabel(logoVisitante);
