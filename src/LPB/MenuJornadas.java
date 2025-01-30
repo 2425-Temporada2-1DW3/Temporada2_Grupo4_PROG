@@ -841,7 +841,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	                // === FIN: LOGGING PARA GUARDAR RESULTADOS ===
 	            }
 
-	            JOptionPane.showMessageDialog(null, "Resultados guardados correctamente.");
+	           
 	        }
 	     
 	    }
