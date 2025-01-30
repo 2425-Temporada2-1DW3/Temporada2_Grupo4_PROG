@@ -350,7 +350,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 				        String fullPath = logoBasePath + equipo.getNombre() + "." + extension;
 				        ImageIcon escudoIcon = new ImageIcon(fullPath);
 				        
-				        btnEquipo.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(100, 100, java.awt.Image.SCALE_SMOOTH)));
+				        btnEquipo.setIcon(new ImageIcon(escudoIcon.getImage().getScaledInstance(55, 55, java.awt.Image.SCALE_SMOOTH)));
 				        break;
 				    } catch (Exception e) {
 				        System.err.println("No se encontró el logo en: " + logoBasePath + "logo." + extension);
