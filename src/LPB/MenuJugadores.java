@@ -62,7 +62,7 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
     private JTextField textApellido;
     private JComboBox<String> comboBoxPosicion;
     private JComboBox<Equipo> comboBoxEquipos;
-    private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnSeleccionarImagen, btnGuardarSeleccion;
+    private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnSeleccionarImagen;
     private DefaultListModel<Jugador> dlm;
     private JList<Jugador> listJugadores;
     private BackgroundFader fader;
@@ -290,35 +290,41 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         setTitle(title);
 	}
     
-    private void actualizarFoto(Jugador jugador) {
-    	BufferedImage imagen = null;
-        ImageIcon fotoIcono = null;
-        
-        try {
-        	imagen = ImageIO.read(new File("src/imagenes/user.png"));
-        	fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
-        	
-            if (jugador == null) {
-            	lblFoto.setIcon(fotoIcono);
-                return;
-            }
-            
-            String rutaFoto = jugador.getPhotoPath();
-            if (rutaFoto == null || rutaFoto.isEmpty()) {
-            	lblFoto.setIcon(fotoIcono);
-            } else {
-                imagen = ImageIO.read(new File(rutaFoto));
-                fotoIcono = new ImageIcon(Scalr.resize(imagen, 80, 80));
-                lblFoto.setIcon(fotoIcono);
-            }
-        } catch (IOException ex) {
-            System.err.println("Error al cargar la foto del jugador: " + ex.getMessage());
-            if (fotoIcono == null && imagen != null) {
-                fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
-            }
-            lblFoto.setIcon(fotoIcono);
-        }
-    }
+	private void actualizarFoto(Jugador jugador) {
+	    BufferedImage imagen = null;
+	    ImageIcon fotoIcono = null;
+	    
+	    try {
+	        imagen = ImageIO.read(new File("src/imagenes/user.png"));
+	        fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
+
+	        if (jugador == null) {
+	            lblFoto.setIcon(fotoIcono);
+	            return;
+	        }
+
+	        String rutaFoto = jugador.getRutaFoto();
+	        
+	        if (rutaFoto != null && !rutaFoto.isEmpty()) {
+	            File fotoFile = new File(rutaFoto);
+
+	            if (fotoFile.exists() && fotoFile.isFile()) {
+	                imagen = ImageIO.read(fotoFile);
+	                fotoIcono = new ImageIcon(Scalr.resize(imagen, 80, 80));
+	            } else {
+	                fotoIcono = new ImageIcon(Scalr.resize(imagen, 80, 80));
+	            }
+	        } else {
+	            fotoIcono = new ImageIcon(Scalr.resize(imagen, 80, 80));
+	        }
+
+	        lblFoto.setIcon(fotoIcono);
+
+	    } catch (IOException ex) {
+	        System.err.println("Error al cargar la foto del jugador: " + ex.getMessage());
+	        lblFoto.setIcon(fotoIcono);
+	    }
+	}
 
     public void seleccionarImagen() {
     	selectorArchivo = new JnaFileChooser();
@@ -418,18 +424,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
         lblContador.setText(String.valueOf(contador));
     }
 
-    private void editarSeleccion() {
-        int Indice = listJugadores.getSelectedIndex();
-        String nombre = "" + textNombre.getText();
-        String apellidos = "" + textApellido.getText();
-        String posicion = (String) comboBoxPosicion.getSelectedItem();
-        int dorsal = Integer.parseInt(textDorsal.getText());
-        String photoPath = "";
-
-        Jugador nuevoJugador = new Jugador(nombre, apellidos, posicion, dorsal, photoPath);
-        dlm.set(Indice, nuevoJugador);
-    }
-
     private void guardarDatos() {
         FileOutputStream fos;
         ObjectOutputStream oos;
@@ -478,8 +472,6 @@ public class MenuJugadores extends JFrame implements ActionListener, MouseListen
             JOptionPane.showMessageDialog(this, "Datos guardados correctamente", "Aviso", JOptionPane.INFORMATION_MESSAGE);
         } else if (o == btnSeleccionarImagen) {
             seleccionarImagen();
-        } else if (o == btnGuardarSeleccion) {
-        	editarSeleccion();
         } else if (o == btnVolver) {
         	if (datosModificados) {
 	            int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados, ¿Desea guardarlos?", "Info", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null);

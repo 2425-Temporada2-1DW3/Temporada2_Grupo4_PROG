@@ -1,3 +1,121 @@
-[29/ene/2025:10:40:25 +0100] El usuario Admin ha iniciado sesión
-[29/ene/2025:10:40:53 +0100] El usuario 'Admin' ha creado una nueva temporada.
-[29/ene/2025:10:41:19 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[27/ene/2025:11:45:21 +0100] El usuario Admin ha iniciado sesión
+[27/ene/2025:11:45:38 +0100] El usuario 'Joe Mazulla' ha sido modificado (Rol: Árbitro, Equipo: Boston Celtics).
+[27/ene/2025:11:45:42 +0100] El usuario 'Joe Mazulla' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[27/ene/2025:12:24:58 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:07:46 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:08:07:48 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:08:30 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:12:58 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:14:34 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:08:14:35 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:25:09 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:26:54 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:32:26 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:34:15 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:36:02 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:36:55 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:42:41 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:43:10 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:46:22 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:08:59:01 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:10:27 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:12:40 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:14:17 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:19:10 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:21:32 +0100] El usuario Árbitro ha iniciado sesión
+[28/ene/2025:09:21:50 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:22:34 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:23:40 +0100] El usuario 'Árbitro' ha sido modificado (Rol: Árbitro, Equipo: null).
+[28/ene/2025:09:23:42 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:09:23:47 +0100] El usuario Árbitro ha iniciado sesión
+[28/ene/2025:09:24:53 +0100] El usuario Árbitro ha iniciado sesión
+[28/ene/2025:09:25:39 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:26:15 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:26:32 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[28/ene/2025:09:26:55 +0100] El usuario Entrenador ha iniciado sesión
+[28/ene/2025:09:29:54 +0100] El usuario Entrenador ha iniciado sesión
+[28/ene/2025:09:31:03 +0100] El usuario Entrenador ha iniciado sesión
+[28/ene/2025:09:32:12 +0100] El usuario Entrenador ha iniciado sesión
+[28/ene/2025:09:32:22 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:33:48 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:50:52 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:09:51:07 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:09:51:16 +0100] Se ha agregado un nuevo usuario: 'TEST' (Rol: Entrenador, Equipo: TEST (Nuevo)).
+[28/ene/2025:09:51:19 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:09:51:26 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:09:57:50 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:09:57:53 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:09:59:00 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:10:01:21 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[28/ene/2025:10:06:33 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:06:41 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:13:16 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:14:29 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:14:52 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:15:00 +0100] Se ha agregado un nuevo usuario: 'Árbitro' (Rol: Árbitro, Equipo: null).
+[28/ene/2025:10:25:21 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:25:32 +0100] Se ha agregado un nuevo usuario: 'Entrenador' (Rol: Entrenador, Equipo: null).
+[28/ene/2025:10:26:00 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:26:38 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:29:32 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:29:52 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:29:59 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:30:05 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:30:10 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:30:49 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:30:55 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: Atlanta Hawks).
+[28/ene/2025:10:30:56 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:31:25 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:31:43 +0100] Se ha agregado un nuevo usuario: 'Billy Donovan' (Rol: Entrenador, Equipo: null).
+[28/ene/2025:10:31:47 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:32:07 +0100] El usuario 'Billy Donovan' ha sido modificado (Rol: Entrenador, Equipo: Chicago Bulls).
+[28/ene/2025:10:32:43 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:32:49 +0100] El usuario 'Billy Donovan' ha sido modificado (Rol: Entrenador, Equipo: Chicago Bulls).
+[28/ene/2025:10:33:03 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:33:38 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:34:36 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:44:39 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:45:08 +0100] El usuario 'Billy Donovan' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:45:13 +0100] El usuario 'Billy Donovan' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:45:24 +0100] Se ha agregado un nuevo usuario: 'TEST' (Rol: Entrenador, Equipo: null).
+[28/ene/2025:10:45:32 +0100] El usuario 'TEST' ha sido modificado (Rol: Entrenador, Equipo: Boston Celtics).
+[28/ene/2025:10:50:16 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:10:50:22 +0100] El usuario 'TEST' ha sido modificado (Rol: Entrenador, Equipo: TEST).
+[28/ene/2025:10:50:26 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:10:50:37 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:53:57 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:55:30 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:56:52 +0100] Intento de inicio de sesión fallido para el usuario: TEST
+[28/ene/2025:10:56:54 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:57:17 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:58:02 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:10:58:46 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:45:08 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:52:21 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:11:52:37 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:53:40 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:54:36 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:11:54:48 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:55:24 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:58:04 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:11:58:32 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:11:58:36 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:11:59:19 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:12:00:37 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:12:03:14 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:12:06:56 +0100] El usuario TEST ha iniciado sesión
+[28/ene/2025:12:17:55 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:19:39 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:20:32 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:25:55 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:36:17 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:36:53 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:38:05 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:38:25 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:39:37 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:12:40:22 +0100] El administrador ha salido del menú de usuarios.
+[28/ene/2025:12:40:58 +0100] Intento de inicio de sesión fallido para el usuario: Árbitro
+[28/ene/2025:12:40:59 +0100] El usuario Árbitro ha iniciado sesión
+[28/ene/2025:12:41:21 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:13:16:10 +0100] El usuario Admin ha iniciado sesión
+[28/ene/2025:13:23:08 +0100] El usuario Admin ha iniciado sesión
