@@ -11,6 +11,7 @@ import javax.swing.JTable;
 import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
+import LPBCLASES.ExportarPDF;
 import LPBCLASES.Jornada;
 import LPBCLASES.LineaPanel;
 import LPBCLASES.Partido;
@@ -23,6 +24,7 @@ import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +36,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -697,6 +700,35 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    scrollPaneClasificacion.getViewport().setBackground(new Color(218, 168, 129));
 	    scrollPaneClasificacion.setBorder(BorderFactory.createEmptyBorder());
 	    panelDerecho.add(scrollPaneClasificacion);
+	    
+	    BotonRedondeado btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
+	    btnExportarPDF.addActionListener(e -> {
+	        if (tablaClasificacion.getRowCount() == 0) {
+	            JOptionPane.showMessageDialog(null, "No hay datos en la tabla para exportar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        // Seleccionar la ubicación para guardar el archivo
+	        JFileChooser fileChooser = new JFileChooser();
+	        fileChooser.setDialogTitle("Guardar como...");
+	        fileChooser.setSelectedFile(new File("Clasificacion.pdf"));
+
+	        int userSelection = fileChooser.showSaveDialog(null);
+	        if (userSelection == JFileChooser.APPROVE_OPTION) {
+	            File archivo = fileChooser.getSelectedFile();
+	            ExportarPDF exportador = new ExportarPDF();
+	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath());
+	        }
+	    });
+
+	  
+	    btnExportarPDF.setText("Exportar PDF");
+	    btnExportarPDF.setForeground(Color.WHITE);
+	    btnExportarPDF.setFont(new Font("SansSerif", Font.BOLD, 16));
+	    btnExportarPDF.setFocusPainted(false);
+	    btnExportarPDF.setBackground(new Color(84, 84, 84));
+	    btnExportarPDF.setBounds(128, 485, 150, 40);
+	    panelDerecho.add(btnExportarPDF);
 	}
 	
 	// Método para comprobar si todos los puntos están rellenados
