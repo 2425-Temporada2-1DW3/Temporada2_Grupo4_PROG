@@ -397,7 +397,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.setBackground(new Color(84, 84, 84));
-		btnVolverMenu.setBounds(300, 485, 150, 40);
+		btnVolverMenu.setBounds(318, 496, 132, 29);
+		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 		
 		mostrarClasificacion(temporada);
@@ -772,8 +773,41 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    btnExportarPDF.setFont(new Font("SansSerif", Font.BOLD, 16));
 	    btnExportarPDF.setFocusPainted(false);
 	    btnExportarPDF.setBackground(new Color(84, 84, 84));
-	    btnExportarPDF.setBounds(128, 485, 150, 40);
+	    btnExportarPDF.setBounds(163, 496, 145, 29);
 	    panelDerecho.add(btnExportarPDF);
+	    
+	    BotonRedondeado btnExportarXML = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
+	    btnExportarXML.addActionListener(new ActionListener() {
+	    	  @SuppressWarnings("unused")
+			public void actionPerformed(ActionEvent e) {
+	    	        if (temporada == null) {
+	    	            JOptionPane.showMessageDialog(null, "Por favor, seleccione una temporada antes de exportar.", "Error", JOptionPane.ERROR_MESSAGE);
+	    	            return;
+	    	        }
+
+	    	        JFileChooser fileChooser = new JFileChooser();
+	    	        fileChooser.setDialogTitle("Guardar como...");
+	    	        fileChooser.setSelectedFile(new File("Temporada.xml"));
+
+	    	        int userSelection = fileChooser.showSaveDialog(null);
+	    	        if (userSelection == JFileChooser.APPROVE_OPTION) {
+	    	            File archivo = fileChooser.getSelectedFile();
+	    	            try {
+	    	                temporada.exportarXML(archivo.getAbsolutePath());
+	    	                JOptionPane.showMessageDialog(null, "Exportación a XML exitosa.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+	    	            } catch (IOException ex) {
+	    	                JOptionPane.showMessageDialog(null, "Error al exportar a XML: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	    	            }
+	    	        }
+	    	    }
+	    	});
+	    btnExportarXML.setText("Exportar XML");
+	    btnExportarXML.setForeground(Color.WHITE);
+	    btnExportarXML.setFont(new Font("SansSerif", Font.BOLD, 16));
+	    btnExportarXML.setFocusPainted(false);
+	    btnExportarXML.setBackground(new Color(84, 84, 84));
+	    btnExportarXML.setBounds(3, 496, 150, 29);
+	    panelDerecho.add(btnExportarXML);
 	}
 	
 	// Método para comprobar si todos los puntos están rellenados
@@ -965,5 +999,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		
+	}
+
+	public JTable getTablaClasificacion() {
+	    return tablaClasificacion;
 	}
 }

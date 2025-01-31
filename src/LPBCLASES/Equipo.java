@@ -5,16 +5,36 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+
+@XmlRootElement(name = "Equipo")  // Define la raíz del XML
+@XmlAccessorType(XmlAccessType.FIELD)  // JAXB accede a los atributos directamente
 public class Equipo implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
+    @XmlElement(name = "Nombre")
     private String nombre;
+    @XmlElement(name = "Entrenador")
     private String entrenador;
+    @XmlElementWrapper(name = "Jugadores")  // Agrupa los jugadores dentro de <Jugadores>
+    @XmlElement(name = "Jugador")
     private List<Jugador> jugadores;
+    @XmlElement(name = "Estadio")
     private String estadio;
+    @XmlElement(name = "Fundacion")
     private int fundacion;
+<<<<<<< HEAD
+    @XmlElement(name = "EquipoPath")
+    private String equipoPath;
+=======
     private String rutaFoto;
+>>>>>>> main
     
     // Constructor por defecto
     public Equipo() {

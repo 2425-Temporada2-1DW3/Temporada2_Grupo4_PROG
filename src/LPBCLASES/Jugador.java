@@ -5,17 +5,32 @@ import java.util.Objects;
 //import javax.swing.ImageIcon;
 
 import java.io.Serializable;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
 
+@XmlRootElement(name = "Jugador")  // Define la raíz del XML
+@XmlAccessorType(XmlAccessType.FIELD)  // Permite a JAXB acceder a los atributos directamente
 public class Jugador implements Comparable<Jugador>, Serializable {
 
 	private static final long serialVersionUID = -1748708748101586932L;
 	
 	// Atributos de la clase Jugador
+	@XmlElement(name = "Nombre")
 	private String nombre; // Nombre del jugador
+	@XmlElement(name = "Apellidos")
 	private String apellidos; // Apellidos del jugador
+	@XmlElement(name = "Posicion")
 	private String posicion; // Posición en el campo (base, escolta, etc.)
+	 @XmlElement(name = "Dorsal")
 	private int dorsal; // Número de camiseta del jugador
+<<<<<<< HEAD
+	 @XmlElement(name = "PhotoPath")
+	private String photoPath;
+=======
 	private String fotoRuta; // Ruta de la foto del jugador
+>>>>>>> main
 
   	// Constructor por defecto
   	public Jugador() {

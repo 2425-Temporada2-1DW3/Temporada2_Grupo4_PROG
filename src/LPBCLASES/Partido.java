@@ -100,6 +100,28 @@ public class Partido implements Serializable {
 		this.puntosVisitante = puntosVisitante;
 	}
 	
+<<<<<<< HEAD
+
+    public String getFecha() {
+        return getFecha();
+    }
+
+    public String getHora() {
+        return getHora();
+    }
+
+    public String getEquipo1() {
+        return getEquipo1();
+    }
+
+    public String getEquipo2() {
+        return getEquipo2();
+    }
+
+    public String getResultado() {
+        return getResultado();
+    }
+=======
 	// Obtiene la fecha del partido
 	public Fecha getFecha() {
 		return fecha;
@@ -119,6 +141,7 @@ public class Partido implements Serializable {
 	public void setHora(Hora hora) {
 		this.hora = new Hora(hora);
 	}
+>>>>>>> main
 
 	// Representación en formato de cadena (toString)
 	@Override
