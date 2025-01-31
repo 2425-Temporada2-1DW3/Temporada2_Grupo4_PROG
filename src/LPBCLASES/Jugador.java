@@ -2,8 +2,6 @@ package LPBCLASES;
 
 import java.util.Objects;
 
-//import javax.swing.ImageIcon;
-
 import java.io.Serializable;
 
 public class Jugador implements Comparable<Jugador>, Serializable {

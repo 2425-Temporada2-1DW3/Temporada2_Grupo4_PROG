@@ -120,5 +120,8 @@ public class AgregarTemporada extends JFrame {
         btnCancelar.setFocusPainted(false);
         btnCancelar.addActionListener(e -> dispose());
         panel.add(btnCancelar);
+        
+        
+        
     }
 }
