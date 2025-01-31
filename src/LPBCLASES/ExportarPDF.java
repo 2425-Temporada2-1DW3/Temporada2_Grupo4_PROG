@@ -8,6 +8,8 @@ import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -56,6 +58,13 @@ public class ExportarPDF {
             documento.add(pdfTable);
             documento.close();
             
+         // Abrir el archivo PDF automáticamente
+            File archivoPDF = new File(ruta);
+            if (archivoPDF.exists()) {
+                Desktop.getDesktop().open(archivoPDF);
+            } else {
+                JOptionPane.showMessageDialog(null, "No se pudo abrir el archivo PDF", "Advertencia", JOptionPane.WARNING_MESSAGE);
+            }
             JOptionPane.showMessageDialog(null, "Exportación a PDF completada", "Éxito", JOptionPane.INFORMATION_MESSAGE);
         } catch (DocumentException | IOException e) {
             JOptionPane.showMessageDialog(null, "Error al exportar: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);

@@ -2,6 +2,7 @@ package LPBCLASES;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -13,14 +14,29 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+
+@XmlRootElement(name = "Temporada")  // Define la raíz del XML
+@XmlAccessorType(XmlAccessType.FIELD)  // Permite que JAXB acceda a los campos directamente
 public class Temporada implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
     // Atributos de la clase Temporada
-    private String periodo; // Año de la temporada (20XX-20XX)
+	 @XmlElement(name = "Periodo")
+    private String periodo; // Año de la temporada (20XX-20XX)7
+	 @XmlElement(name = "Estado")
     private String estado; // Estado de la temporada (Activa, Finalizada, En proceso)
+	 @XmlElementWrapper(name = "Jornadas")  // Agrupa todas las jornadas dentro de <Jornadas>
+	    @XmlElement(name = "Jornada")
     private List<Jornada> jornadas; // Lista de jornadas de la temporada
+	 @XmlElementWrapper(name = "Equipos")  // Agrupa los equipos dentro de <Equipos>
+	    @XmlElement(name = "Equipo")
     private List<Equipo> equipos; // Lista de equipos de la temporada
 
     // Constructor por defecto
@@ -272,6 +288,38 @@ public class Temporada implements Serializable {
         if (obj == null || getClass() != obj.getClass()) return false;
         Temporada temporada = (Temporada) obj;
         return periodo == temporada.periodo;
+    }
+    public void exportarXML(String filePath) throws IOException {
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write("<temporada>\n");
+            writer.write("\t<nombre>" + this.getPeriodo() + "</nombre>\n");
+            writer.write("\t<estado>" + this.getEstado() + "</estado>\n");
+            writer.write("\t<equipos>\n");
+            for (Equipo equipo : this.getEquipos()) {
+                writer.write("\t\t<equipo>\n");
+                writer.write("\t\t\t<nombre>" + equipo.getNombre() + "</nombre>\n");
+                // Agregar otros atributos del equipo...
+                writer.write("\t\t</equipo>\n");
+            }
+            writer.write("\t</equipos>\n");
+            writer.write("\t<jornadas>\n");
+            for (Jornada jornada : this.getJornadas()) {
+                writer.write("\t\t<jornada>\n");
+                writer.write("\t\t\t<numero>" + jornada.getNumero() + "</numero>\n");
+                writer.write("\t\t\t<partidos>\n");
+                for (Partido partido : jornada.getPartidos()) {
+                    writer.write("\t\t\t\t<partido>\n");
+                    writer.write("\t\t\t\t\t<equipo1>" + partido.getEquipoLocal().getNombre() + "</equipo1>\n");
+                    writer.write("\t\t\t\t\t<equipo2>" + partido.getEquipoVisitante().getNombre() + "</equipo2>\n");
+                    writer.write("\t\t\t\t\t<resultado>" + partido.getPuntosLocal() + "-" + partido.getPuntosVisitante() + "</resultado>\n");
+                    writer.write("\t\t\t\t</partido>\n");
+                }
+                writer.write("\t\t\t</partidos>\n");
+                writer.write("\t\t</jornada>\n");
+            }
+            writer.write("\t</jornadas>\n");
+            writer.write("</temporada>\n");
+        }
     }
 }
 
