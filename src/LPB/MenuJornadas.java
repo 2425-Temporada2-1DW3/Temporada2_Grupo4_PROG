@@ -397,12 +397,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.setBackground(new Color(84, 84, 84));
-<<<<<<< HEAD
 		btnVolverMenu.setBounds(318, 496, 132, 29);
 		btnVolverMenu.addMouseListener(this);
-=======
-		btnVolverMenu.setBounds(300, 485, 150, 40);
->>>>>>> main
 		panelDerecho.add(btnVolverMenu);
 		
 		mostrarClasificacion(temporada);
@@ -977,13 +973,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	                // === FIN: LOGGING PARA GUARDAR RESULTADOS ===
 	            }
 
-<<<<<<< HEAD
-	           
-=======
 	            JOptionPane.showMessageDialog(null, "Resultados guardados correctamente.");
 	            datosModificados = false;
 	            actualizarTitulo();
->>>>>>> main
 	        }
 	     
 	    }
