@@ -2,16 +2,29 @@ package LPBCLASES;
 
 
 import java.io.Serializable;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlElementWrapper;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement(name = "Jornada")  // Define la raíz del XML
+@XmlAccessorType(XmlAccessType.FIELD)  // JAXB accede a los atributos directamente
 public class Jornada implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	// Atributos de la clase Jornada
+	@XmlElement(name = "Numero")
     private int numero; // Número de la jornada
+	  @XmlElementWrapper(name = "Partidos")  // Agrupa los partidos dentro de <Partidos>
+	    @XmlElement(name = "Partido")
     private List<Partido> partidos; // Lista de partidos en la jornada
 
     // Constructor por defecto

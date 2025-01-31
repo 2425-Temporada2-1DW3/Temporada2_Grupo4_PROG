@@ -89,6 +89,27 @@ public class Partido implements Serializable {
 	public void setPuntosVisitante(int puntosVisitante) {
 		this.puntosVisitante = puntosVisitante;
 	}
+	
+
+    public String getFecha() {
+        return getFecha();
+    }
+
+    public String getHora() {
+        return getHora();
+    }
+
+    public String getEquipo1() {
+        return getEquipo1();
+    }
+
+    public String getEquipo2() {
+        return getEquipo2();
+    }
+
+    public String getResultado() {
+        return getResultado();
+    }
 
 	// Representación en formato de cadena (toString)
 	@Override
