@@ -69,7 +69,37 @@ public class AgregarTemporada extends JFrame {
 		    	    nuevaTemporada.setEstado((String) estadoComboBox.getSelectedItem());
 		    	    nuevaTemporada.setEquipos(new ArrayList<>());
 		    	    nuevaTemporada.setJornadas(new ArrayList<>());
+		    	    
+		            int opcion = JOptionPane.showConfirmDialog(getContentPane(), "¿Desea importar equipos de una temporada anterior?", "Importar Equipos", JOptionPane.YES_NO_OPTION);
 
+		            if (opcion == JOptionPane.YES_OPTION) {
+		                File folder = new File("data");
+		                File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
+
+		                if (files != null && files.length > 0) {
+		                    String[] opciones = new String[files.length];
+		                    for (int i = 0; i < files.length; i++) {
+		                        opciones[i] = "Temporada " + files[i].getName().replace("temporada_", "").replace(".ser", "");
+		                    }
+
+		                    String seleccion = (String) JOptionPane.showInputDialog(getContentPane(), "Seleccione la temporada de origen:", "Seleccionar Temporada", JOptionPane.QUESTION_MESSAGE, null, opciones, opciones[0]);
+
+		                    if (seleccion != null) {
+		                    	String periodoSeleccionado = seleccion.replace("Temporada ", "");
+		                        // Cargar la temporada seleccionada desde su archivo
+		                        File archivoSeleccionado = new File("data/temporada_" + periodoSeleccionado + ".ser");
+		                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivoSeleccionado))) {
+		                            Temporada temporadaOrigen = (Temporada) ois.readObject();
+		                            nuevaTemporada.setEquipos(new ArrayList<>(temporadaOrigen.getEquipos()));
+		                        } catch (IOException | ClassNotFoundException e) {
+		                            System.out.println("Error al cargar la temporada seleccionada: " + e.getMessage());
+		                        }
+		                    }
+		                } else {
+		                    JOptionPane.showMessageDialog(getContentPane(), "No hay temporadas disponibles para importar.");
+		                }
+		            }
+		            
 		    	    nuevaTemporada.guardarTemporada(nuevaTemporada);
 		            
 		    	    JOptionPane.showMessageDialog(getContentPane(), "Temporada agregada correctamente.");
