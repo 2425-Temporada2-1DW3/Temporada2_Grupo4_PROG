@@ -140,33 +140,36 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
                     passwordField.setText(usuarioSeleccionado.getContrasena());
                     comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
 
-                    Equipo equipoSeleccionado = usuarioSeleccionado.getEquipo();
-                    String nombreEquipo = equipoSeleccionado.getNombre();
-                    
-                    boolean esNuevo = false;
-                    for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
-                        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
-                            Temporada temporada = (Temporada) ois.readObject();
-                            if (temporada.getEstado().equals("En proceso")) {
-                                List<Equipo> equipos = temporada.getEquipos();
-                                for (Equipo eq : equipos) {
-                                    if (eq.getNombre().equals(nombreEquipo)) {
-                                        esNuevo = true;
-                                        break;
+                    // Solo cargar los datos del equipo si el usuario es entrenador
+                    if (usuarioSeleccionado.getRol().equals("Entrenador")) {
+                        Equipo equipoSeleccionado = usuarioSeleccionado.getEquipo();
+                        String nombreEquipo = equipoSeleccionado.getNombre();
+                        
+                        boolean esNuevo = false;
+                        for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
+                            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                                Temporada temporada = (Temporada) ois.readObject();
+                                if (temporada.getEstado().equals("En proceso")) {
+                                    List<Equipo> equipos = temporada.getEquipos();
+                                    for (Equipo eq : equipos) {
+                                        if (eq.getNombre().equals(nombreEquipo)) {
+                                            esNuevo = true;
+                                            break;
+                                        }
                                     }
                                 }
+                            } catch (IOException | ClassNotFoundException ex) {
+                                System.err.println("Error al cargar el archivo: " + ex.getMessage());
                             }
-                        } catch (IOException | ClassNotFoundException ex) {
-                            System.err.println("Error al cargar el archivo: " + ex.getMessage());
+                            if (esNuevo) break;
                         }
-                        if (esNuevo) break;
-                    }
 
-                    if (esNuevo) {
-                        nombreEquipo += " (Nuevo)";
-                    }
+                        if (esNuevo) {
+                            nombreEquipo += " (Nuevo)";
+                        }
 
-                    comboBoxEquipo.setSelectedItem(nombreEquipo);
+                        comboBoxEquipo.setSelectedItem(nombreEquipo);
+                    }
                 }
             }
         });
@@ -379,42 +382,45 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	        usuario = textUsuario.getText().trim();
     	        contrasena = new String(passwordField.getPassword());
     	        rol = (String) comboBoxRol.getSelectedItem();
-    	        String nombreEquipoSeleccionado = (String) comboBoxEquipo.getSelectedItem();
     	        
-    	        if (nombreEquipoSeleccionado.endsWith(" (Nuevo)")) {
-    	            nombreEquipoSeleccionado = nombreEquipoSeleccionado.substring(0, nombreEquipoSeleccionado.length() - 8);
+    	        if ((String) comboBoxEquipo.getSelectedItem() != null) {
+        	        String nombreEquipoSeleccionado = (String) comboBoxEquipo.getSelectedItem();
+        	        
+        	        if (nombreEquipoSeleccionado.endsWith(" (Nuevo)")) {
+        	            nombreEquipoSeleccionado = nombreEquipoSeleccionado.substring(0, nombreEquipoSeleccionado.length() - 8);
+        	        }
+        	        
+        	        if ("Entrenador".equals(rol)) {
+        	            for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
+        	                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+        	                    Temporada temporada = (Temporada) ois.readObject();
+        	                    List<Equipo> equipos = temporada.getEquipos();
+
+        	                    // Buscar el equipo que coincida con el nombre seleccionado
+        	                    for (Equipo eq : equipos) {
+        	                        if (eq.getNombre().equals(nombreEquipoSeleccionado)) {
+        	                            equipoSeleccionado = eq;
+        	                            break;
+        	                        }
+        	                    }
+        	                } catch (IOException | ClassNotFoundException e1) {
+        	                    System.err.println("Error al cargar el archivo: " + archivo.getName());
+        	                }
+
+        	                if (equipoSeleccionado != null) break;
+        	            }
+
+        	            // Si no se encontró el equipo, mostrar un mensaje de error
+        	            if (equipoSeleccionado == null) {
+        	                JOptionPane.showMessageDialog(this, "No se pudo encontrar el equipo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
+        	                return;
+        	            }
+        	        }
     	        }
 
     	        if (usuario.isEmpty() || contrasena.isEmpty()) {
     	            JOptionPane.showMessageDialog(this, "Por favor, rellena todos los campos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
     	            return;
-    	        }
-
-    	        if ("Entrenador".equals(rol)) {
-    	            for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
-    	                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
-    	                    Temporada temporada = (Temporada) ois.readObject();
-    	                    List<Equipo> equipos = temporada.getEquipos();
-
-    	                    // Buscar el equipo que coincida con el nombre seleccionado
-    	                    for (Equipo eq : equipos) {
-    	                        if (eq.getNombre().equals(nombreEquipoSeleccionado)) {
-    	                            equipoSeleccionado = eq;
-    	                            break;
-    	                        }
-    	                    }
-    	                } catch (IOException | ClassNotFoundException e1) {
-    	                    System.err.println("Error al cargar el archivo: " + archivo.getName());
-    	                }
-
-    	                if (equipoSeleccionado != null) break;
-    	            }
-
-    	            // Si no se encontró el equipo, mostrar un mensaje de error
-    	            if (equipoSeleccionado == null) {
-    	                JOptionPane.showMessageDialog(this, "No se pudo encontrar el equipo seleccionado.", "Error", JOptionPane.ERROR_MESSAGE);
-    	                return;
-    	            }
     	        }
 
     	        // Si hay un usuario seleccionado, actualizamos sus datos
