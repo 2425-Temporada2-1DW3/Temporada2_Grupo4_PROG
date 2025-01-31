@@ -17,6 +17,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -403,35 +404,83 @@ public class MenuJugadores extends JFrame implements ActionListener, WindowListe
                 jugadoresTemp.add(jugador);
             }
         }
+
+        jugadoresTemp.sort(Comparator.comparing(Jugador::getNombre));
+
+        for (Jugador jugador : jugadoresTemp) {
+            dlm.addElement(jugador);
+        }
+        
+        contador = dlm.getSize();
+        lblContador.setText(String.valueOf(contador));
     }
 
     private void guardarDatos() {
-        FileOutputStream fos;
-        ObjectOutputStream oos;
-        try {
-            fos = new FileOutputStream("jugadores.ser");
-            oos = new ObjectOutputStream(fos);
-            
-            int cantidadJugadores = dlm.getSize();
-            Jugador nuevoJugador;
-            for (int posicion = 0; posicion < dlm.getSize(); posicion++) {
-                nuevoJugador = dlm.get(posicion);
-                oos.writeObject(nuevoJugador);
-                contador = dlm.getSize();
+        if (temporadaActiva == null) {
+            JOptionPane.showMessageDialog(this, "No hay una temporada activa. No se pueden guardar los jugadores.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener el jugador seleccionado de la lista
+        Jugador jugadorSeleccionado = listJugadores.getSelectedValue();
+        
+        // Si no hay un jugador seleccionado, mostrar mensaje de error
+        if (jugadorSeleccionado == null) {
+            JOptionPane.showMessageDialog(this, "No hay ningún jugador seleccionado para guardar.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        // Obtener los valores de los campos de texto para actualizar el jugador
+        String nombre = textNombre.getText();
+        String apellidos = textApellido.getText();
+        int dorsal = Integer.parseInt(textDorsal.getText());
+        String posicion = (String) comboBoxPosicion.getSelectedItem();
+        String rutaFoto = null;
+
+        // Si el jugador no existe en el modelo (dlm), crearlo y añadirlo
+        boolean jugadorExiste = false;
+        for (int i = 0; i < dlm.getSize(); i++) {
+            Jugador jugador = dlm.get(i);
+            if (jugador.equals(jugadorSeleccionado)) {
+                // Actualizar los campos del jugador existente
+                jugador.setNombre(nombre);
+                jugador.setApellidos(apellidos);
+                jugador.setDorsal(dorsal);
+                jugador.setPosicion(posicion);
+                jugadorExiste = true;
+                break;
+            }
+        }
+
+        if (!jugadorExiste) {
+            // Crear un nuevo jugador si no existe
+            Jugador nuevoJugador = new Jugador(nombre, apellidos, posicion, dorsal, rutaFoto);
+            dlm.addElement(nuevoJugador);
+            jugadorSeleccionado = nuevoJugador;
+        }
+
+        // Guardar los jugadores actualizados en el archivo de la temporada activa
+        File archivoTemporadaActiva = new File("data/temporada_" + temporadaActiva.getPeriodo() + ".ser");
+
+        // Comprobar si el archivo existe
+        if (!archivoTemporadaActiva.exists()) {
+            JOptionPane.showMessageDialog(this, "El archivo de la temporada activa no existe.", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(archivoTemporadaActiva))) {
+            // Guardar todos los jugadores en el archivo
+            for (int i = 0; i < dlm.getSize(); i++) {
+                oos.writeObject(dlm.get(i));
             }
 
             // 🔴 Log cuando se guardan los jugadores
-            logClase.logAction("Datos de jugadores guardados correctamente. Total de jugadores: " + cantidadJugadores);
-
-            oos.close();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            JOptionPane.showMessageDialog(this, "Fichero no encontrado", "Error", JOptionPane.INFORMATION_MESSAGE);
+            logClase.logAction("Datos de jugadores guardados correctamente. Total de jugadores: " + dlm.getSize());
         } catch (IOException e) {
-            JOptionPane.showMessageDialog(this, "Error de Entrada/Salida al guardar el archivo: jugadores.ser\n" + e.getMessage(), "Error de IO", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error de Entrada/Salida al guardar el archivo: temporada_" + temporadaActiva.getPeriodo() + ".ser\n" + e.getMessage(), "Error de IO", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
             
-         // 🔴 Log del error al guardar los datos
+            // 🔴 Log del error al guardar los datos
             logClase.logError("Error al guardar los datos de los jugadores", e);
         }
     }
