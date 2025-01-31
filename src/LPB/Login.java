@@ -4,14 +4,19 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
 import LPBCLASES.BotonRedondeado;
@@ -31,6 +36,8 @@ public class Login extends JFrame {
     private JPasswordField txtPassword;
     private JButton btnIniciarSesion;
     private JButton btnInvitado;
+    private JDialog loadingDialog;
+    private JLabel loadingLabel;
 
 	/**
 	 * Launch the application.
@@ -115,17 +122,56 @@ public class Login extends JFrame {
             try {
                 Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
                 if (user != null) {
-                	logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
-                    JOptionPane.showMessageDialog(null, "Bienvenido/a, " + user.getUsuario() + ".");
+                    logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
+
+                    loadingDialog = new JDialog();
+                    loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
+                    loadingDialog.setSize(250, 100);
+                    loadingDialog.setLocationRelativeTo(null);
+                    loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                    loadingDialog.setModal(true);
+
+                    loadingLabel = new JLabel("Iniciando sesión   ", SwingConstants.CENTER);
+                    loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                    loadingDialog.add(loadingLabel);
+
+                    SwingWorker<Void, String> worker = new SwingWorker<>() {
+                        @Override
+                        protected Void doInBackground() throws InterruptedException {
+                            int count = 0;
+                            while (count < 6) {
+                                String dots = ".".repeat(count % 4);
+                                String spaces = " ".repeat(3 - dots.length());
+                                publish("Iniciando sesión" + dots + spaces);
+                                Thread.sleep(500);
+                                count++;
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void process(List<String> chunks) {
+                            loadingLabel.setText(chunks.get(chunks.size() - 1));
+                        }
+
+                        @Override
+                        protected void done() {
+                            loadingDialog.dispose();
+                        }
+                    };
+
+                    worker.execute();
+                    loadingDialog.setVisible(true);
+
                     new Menu(user.getRol(), user.getUsuario()).setVisible(true);
                     dispose();
                 } else {
-                	logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
-                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+                    logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-            	logClase.logError("Error durante la validación de usuario", ex);
-                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.");
+                logClase.logError("Error durante la validación de usuario", ex);
+                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 

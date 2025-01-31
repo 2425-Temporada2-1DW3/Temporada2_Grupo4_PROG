@@ -6,9 +6,12 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class Temporada implements Serializable {
 	
@@ -175,7 +178,25 @@ public class Temporada implements Serializable {
 
         int partidosPorJornada = numeroEquipos / 2;
         int numeroJornadas = (numeroEquipos - 1) * 2;
+        
+        String[] partes = periodo.split("-");
+        int inicioYear = Integer.parseInt(partes[0]);
+        int finYear = Integer.parseInt(partes[1]);
+        
+        LocalDate fechaInicio = LocalDate.of(inicioYear, 9, 1);
+        LocalDate fechaFin = LocalDate.of(finYear, 6, 30);
+        
+        Random rand = new Random();
 
+        LocalDate fechaPartido = fechaInicio;
+
+        // Ajuste según el número de equipos
+        int diasEntreJornadas = 14;
+        if (numeroEquipos > 12) {
+            diasEntreJornadas = 7;
+        } else if (numeroEquipos > 8) {
+            diasEntreJornadas = 10;
+        }
 
         for (int ronda = 0; ronda < numeroJornadas; ronda++) {
             List<Partido> partidosJornada = new ArrayList<>();
@@ -193,11 +214,24 @@ public class Temporada implements Serializable {
 
                 if (!local.equals(visitante)) {
                     Partido partidoGenerado;
+                    
+                    fechaPartido = fechaPartido.plusDays(diasEntreJornadas + rand.nextInt(7));
+
+                    while (fechaPartido.getDayOfWeek() == DayOfWeek.SATURDAY || fechaPartido.getDayOfWeek() == DayOfWeek.SUNDAY) {
+                        fechaPartido = fechaPartido.plusDays(1); // Avanzamos al siguiente día
+                    }
+
+                    if (fechaPartido.isAfter(fechaFin)) {
+                        fechaPartido = fechaFin;
+                    }
+
+                    int hora = rand.nextInt(4) + 17;
+                    int minuto = (rand.nextInt(2) == 0) ? 0 : 30;
 
                     if (ronda >= numeroJornadas / 2) {
-                        partidoGenerado = new Partido(visitante, local);
+                        partidoGenerado = new Partido(visitante, local, new Fecha(fechaPartido.getDayOfMonth(), fechaPartido.getMonthValue(), fechaPartido.getYear()), new Hora(hora, minuto));
                     } else {
-                        partidoGenerado = new Partido(local, visitante);
+                        partidoGenerado = new Partido(local, visitante, new Fecha(fechaPartido.getDayOfMonth(), fechaPartido.getMonthValue(), fechaPartido.getYear()), new Hora(hora, minuto));
                     }
 
                     partidosJornada.add(partidoGenerado);

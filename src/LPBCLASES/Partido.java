@@ -11,6 +11,8 @@ public class Partido implements Serializable {
 	private Equipo equipoVisitante; // Equipo visitante del partido
 	private int puntosLocal; // Puntos anotados por el equipo local
 	private int puntosVisitante; // Puntos anotados por el equipo visitante
+	private Fecha fecha;
+	private Hora hora;
 
 	// Constructor por defecto
 	public Partido() {
@@ -19,24 +21,30 @@ public class Partido implements Serializable {
 		this.equipoVisitante = null;
 		this.puntosLocal = 0;
 		this.puntosVisitante = 0;
+		this.fecha = new Fecha();
+		this.hora = new Hora();
 	}
   
 	// Constructor personalizado
-	public Partido(Equipo equipoLocal, Equipo equipoVisitante) {
+	public Partido(Equipo equipoLocal, Equipo equipoVisitante, Fecha f, Hora h) {
 		// Inicializa los atributos con valores proporcionados
 		this.equipoLocal = equipoLocal;
 		this.equipoVisitante = equipoVisitante;
 		this.puntosLocal = 0;
 		this.puntosVisitante = 0;
+		this.fecha = new Fecha(f);
+		this.hora = new Hora(h);
 	}
 
 	// Constructor personalizado con resultado
-	public Partido(Equipo equipoLocal, Equipo equipoVisitante, int puntosLocal, int puntosVisitante) {
+	public Partido(Equipo equipoLocal, Equipo equipoVisitante, int puntosLocal, int puntosVisitante, Fecha f, Hora h) {
 		// Inicializa los atributos con valores proporcionados
 		this.equipoLocal = equipoLocal;
 		this.equipoVisitante = equipoVisitante;
 		this.puntosLocal = puntosLocal;
 		this.puntosVisitante = puntosVisitante;
+		this.fecha = new Fecha(f);
+		this.hora = new Hora(h);
 	}
 
 	// Constructor copia
@@ -46,6 +54,8 @@ public class Partido implements Serializable {
 		this.equipoVisitante = p.equipoVisitante;
 		this.puntosLocal = p.puntosLocal;
 		this.puntosVisitante = p.puntosVisitante;
+		this.fecha = p.fecha;
+		this.hora = p.hora;
 	}
 
 	// Getters y Setters
@@ -89,6 +99,26 @@ public class Partido implements Serializable {
 	public void setPuntosVisitante(int puntosVisitante) {
 		this.puntosVisitante = puntosVisitante;
 	}
+	
+	// Obtiene la fecha del partido
+	public Fecha getFecha() {
+		return fecha;
+	}
+	
+	// Establece la fecha del partido
+	public void setFecha(Fecha fecha) {
+		this.fecha = new Fecha(fecha);
+	}
+	
+	// Obtiene la hora del partido
+	public Hora getHora() {
+		return hora;
+	}
+	
+	// Establece la hora del partido
+	public void setHora(Hora hora) {
+		this.hora = new Hora(hora);
+	}
 
 	// Representación en formato de cadena (toString)
 	@Override
@@ -98,14 +128,17 @@ public class Partido implements Serializable {
 			"Equipo Local = " + equipoLocal +
 			"Equipo Visitante = " + equipoVisitante +
 			"Puntos Local = " + puntosLocal +
-			"Puntos Visitante = " + puntosVisitante;
+			"Puntos Visitante = " + puntosVisitante +
+			"Fecha = " + fecha +
+			"Hora = " + hora;
+			
 	}
 
 	// Método hashCode
 	@Override
 	public int hashCode() {
 		// Calcula un código hash basado en los atributos del partido
-		return Objects.hash(equipoLocal, equipoVisitante, puntosLocal, puntosVisitante);
+		return Objects.hash(equipoLocal, equipoVisitante, puntosLocal, puntosVisitante, fecha, hora);
 	}
 
 	// Método equals

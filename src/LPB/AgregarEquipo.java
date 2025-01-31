@@ -346,7 +346,14 @@ public class AgregarEquipo extends JFrame {
 	    entrenador = nombreEntrenadorField.getText();
 	    estadio = estadioField.getText();
 	    fundacion = Integer.valueOf(anioFundacion.getText());
-	    rutaFoto = selectedFile.getAbsolutePath();
+	    String rutaOriginal = selectedFile.getAbsolutePath();
+	    String extension = "";
+	    int index = rutaOriginal.lastIndexOf('.');
+	    if (index != -1) {
+	        extension = rutaOriginal.substring(index);
+	    }
+	    
+	    rutaFoto = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/" + nombre + extension;
 
 	    if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || anioFundacion.getText().isEmpty()) {
 	        JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
@@ -381,8 +388,8 @@ public class AgregarEquipo extends JFrame {
             for (Jugador jugador : jugadores) {
             	String rutaAbsoluta = jugador.getRutaFoto();
                 String fotoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos();
-                String extension = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
-                String nuevoPath = fotoPath + extension;
+                String extensionJugador = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
+                String nuevoPath = fotoPath + extensionJugador;
 
                 Path source = Paths.get(rutaAbsoluta);
                 Path destination = Paths.get(nuevoPath);
