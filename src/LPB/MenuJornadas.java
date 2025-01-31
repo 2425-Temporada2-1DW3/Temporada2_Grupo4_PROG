@@ -8,7 +8,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
 import LPBCLASES.ExportarPDF;
@@ -18,12 +17,14 @@ import LPBCLASES.Partido;
 import LPBCLASES.Temporada;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.logClase;
+import jnafilechooser.api.JnaFileChooser;
 
 import java.awt.Font;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +37,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JComboBox;
-import javax.swing.JFileChooser;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
@@ -48,6 +48,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.WindowAdapter;
 
 
 
@@ -68,6 +69,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private BotonRedondeado btnGuardar;
 	private BotonRedondeado btnRestablecer;
 	private BotonRedondeado btnVolverMenu;
+	private BotonRedondeado btnExportarPDF;
 	
 	private JLabel lblTemporada;
 	private JLabel lblAniosTemporada;
@@ -87,6 +89,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private Image imgVisitante;
 	private JLabel lblLogoVisitante;
 	private ImageIcon logoVisitante;
+	private JLabel lblFecha;
+	private JLabel lblHora;
 	private JLabel lblClasificacion;
 	private Jornada jornadaSeleccionada;
 	private JTable tablaClasificacion;
@@ -97,25 +101,40 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private DefaultTableModel dtmClasificacion;
 	private Temporada temporada;
 	private String rol;
-	
-	private BackgroundFader fader;
+	private boolean datosModificados = false;
 
 	/**
 	 * Create the frame.
 	 * @param temporada 
 	 */
 	public MenuJornadas(String rol, String usuario, Temporada temporada) {
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+			    if (datosModificados) {
+			        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+			        if (opcion == JOptionPane.YES_OPTION) {
+			        	guardarResultados();
+			        } else if (opcion == JOptionPane.CANCEL_OPTION) {
+			        	return;
+			        }
+			        
+			        System.exit(0);
+			    } else {
+			        System.exit(0);
+			    }
+			}
+		});
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú Jornadas");
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setSize(990, 600);
 		setLocationRelativeTo(null);
 		getContentPane().setLayout(null);
 		
 		this.temporada = temporada;
 		this.rol = rol;
-		
-		fader = new BackgroundFader();
 		
 		// Panel principal para los elementos superiores
 		panelIzquierdo = new JPanel();
@@ -196,7 +215,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        	}
 		    }
 		});
-		btnActivarTemporada.addMouseListener(this);
 		
 		if (rol.equals("Administrador") && temporada.getEstado().equals("En proceso")) {
 			panelIzquierdo.add(btnActivarTemporada);
@@ -229,10 +247,10 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		                // === FIN: LOGGING PARA ERROR AL FINALIZAR TEMPORADA ===
 						System.out.println("ERROR. No se han encontrado datos de la temporada.");
 					}
+			        cargarPartidos(temporada, jornadaSeleccionada);
 		    	}
 		    }
 		});
-		btnFinalizarTemporada.addMouseListener(this);
 		btnFinalizarTemporada.setVisible(false);
 		
 		if (rol.equals("Administrador") && temporada.getEstado().equals("Activa")) {
@@ -327,16 +345,17 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 		        	                    if (textField.getName().equals("local_" + partido.getEquipoLocal().getNombre())) {
 		        	                        textField.setText("0");
-		        	                        partido.setPuntosLocal(0);
 		        	                    } else if (textField.getName().equals("visitante_" + partido.getEquipoVisitante().getNombre())) {
 		        	                        textField.setText("0");
-		        	                        partido.setPuntosVisitante(0);
 		        	                    }
 		        	                }
 		        	            }
 		        	        }
 		        	    }
 		        	}
+		        	
+		        	datosModificados = true;
+		        	actualizarTitulo();
 
 		            // === INICIO: LOGGING PARA PUNTOS RESTABLECIDOS ===
 		            logClase.logAction("Los puntos de los partidos para la jornada " + jornadaSeleccionada.getNumero() + " han sido restablecidos a 0.");
@@ -348,8 +367,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		        }
 		    }
 		});
-		
-		btnRestablecer.addMouseListener(this);
 		
 		if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
     		panelIzquierdo.add(btnRestablecer);
@@ -380,8 +397,12 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.setBackground(new Color(84, 84, 84));
+<<<<<<< HEAD
 		btnVolverMenu.setBounds(318, 496, 132, 29);
 		btnVolverMenu.addMouseListener(this);
+=======
+		btnVolverMenu.setBounds(300, 485, 150, 40);
+>>>>>>> main
 		panelDerecho.add(btnVolverMenu);
 		
 		mostrarClasificacion(temporada);
@@ -392,7 +413,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private void cargarPartidos(Temporada temporada, Jornada jornada) {		
 	    if (scrollPane == null) {
 	        scrollPane = new JScrollPane();
-	        scrollPane.setBounds(50, 164, 400, 311);
+	        scrollPane.setBounds(30, 164, 430, 311);
 	        scrollPane.getVerticalScrollBar().setUnitIncrement(16);
 	        scrollPane.setBorder(BorderFactory.createEmptyBorder());
 	        scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -438,24 +459,29 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	    // Equipo local
 	    lblEquipoLocal = new JLabel(partido.getEquipoLocal().getNombre());
-	    lblEquipoLocal.setBounds(104, 15, 190, 30);
+	    lblEquipoLocal.setBounds(79, 15, 190, 30);
 	    lblEquipoLocal.setFont(new Font("SansSerif", Font.PLAIN, 16));
 	    lblEquipoLocal.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoLocal);
 
-	    logoLocal = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoLocal().getNombre() + "/" + partido.getEquipoLocal().getNombre() + ".png"));
-	    imgLocal = logoLocal.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    logoLocal = new ImageIcon(partido.getEquipoLocal().getRutaFoto());
+	    Image originalImageLocal = logoLocal.getImage();
+
+	    int nuevoAltoLocal = 40;
+	    int nuevoAnchoLocal = (int) ((double) originalImageLocal.getWidth(null) / originalImageLocal.getHeight(null) * nuevoAltoLocal);
+
+	    imgLocal = originalImageLocal.getScaledInstance(nuevoAnchoLocal, nuevoAltoLocal, Image.SCALE_SMOOTH);
 	    logoLocal = new ImageIcon(imgLocal);
 
 	    lblLogoLocal = new JLabel(logoLocal);
-	    lblLogoLocal.setBounds(45, 11, 40, 40);
+	    lblLogoLocal.setBounds(20, 11, 40, 40);
 	    panelPartido.add(lblLogoLocal);
 
 	    if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
 	        textPtsLocal = new TextoRedondeado(20);
 	        textPtsLocal.setFont(new Font("SansSerif", Font.PLAIN, 14));
 	        textPtsLocal.setHorizontalAlignment(SwingConstants.CENTER);
-	        textPtsLocal.setBounds(304, 15, 50, 30);
+	        textPtsLocal.setBounds(279, 15, 50, 30);
 	        textPtsLocal.setText(String.valueOf(partido.getPuntosLocal()));
 	        textPtsLocal.setName("local_" + partido.getEquipoLocal().getNombre());
 	        textPtsLocal.addFocusListener(new FocusListener() {
@@ -469,6 +495,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	            public void focusLost(FocusEvent e) {
 	                TextoRedondeado source = (TextoRedondeado) e.getSource();
 	                source.select(0, 0);
+	                datosModificados = true;
+	                actualizarTitulo();
 	            }
 	        });
 	        panelPartido.add(textPtsLocal);
@@ -476,21 +504,21 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        JLabel lblPtsLocal = new JLabel(String.valueOf(partido.getPuntosLocal()));
 	        lblPtsLocal.setFont(new Font("SansSerif", Font.BOLD, 16));
 	        lblPtsLocal.setHorizontalAlignment(SwingConstants.CENTER);
-	        lblPtsLocal.setBounds(304, 15, 50, 30);
+	        lblPtsLocal.setBounds(279, 15, 50, 30);
 	        lblPtsLocal.setForeground(new Color(84, 84, 84));
 	        panelPartido.add(lblPtsLocal);
 	    }
 
 	    linea = new LineaPanel();
 	    linea.setForeground(new Color(166, 166, 166));
-	    linea.setBounds(45, 53, 130, 4);
+	    linea.setBounds(20, 53, 130, 4);
 	    linea.setBackground(new Color(255, 243, 205));
 	    panelPartido.add(linea);
 
 	    lblVS = new JLabel("vs");
 	    lblVS.setVerticalAlignment(SwingConstants.TOP);
 	    lblVS.setHorizontalAlignment(SwingConstants.CENTER);
-	    lblVS.setBounds(189, 43, 18, 21);
+	    lblVS.setBounds(164, 43, 18, 21);
 	    lblVS.setFont(new Font("SansSerif", Font.BOLD, 16));
 	    lblVS.setForeground(new Color(166, 166, 166));
 	    panelPartido.add(lblVS);
@@ -498,29 +526,34 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    linea_2 = new LineaPanel();
 	    linea_2.setForeground(new Color(166, 166, 166));
 	    linea_2.setBackground(new Color(255, 243, 205));
-	    linea_2.setBounds(223, 53, 130, 4);
+	    linea_2.setBounds(198, 53, 130, 4);
 	    panelPartido.add(linea_2);
 
 	    // Equipo visitante
 	    lblEquipoVisitante = new JLabel(partido.getEquipoVisitante().getNombre());
-	    lblEquipoVisitante.setBounds(104, 64, 190, 30);
+	    lblEquipoVisitante.setBounds(79, 64, 190, 30);
 	    lblEquipoVisitante.setFont(new Font("SansSerif", Font.PLAIN, 16));
 	    lblEquipoVisitante.setForeground(new Color(84, 84, 84));
 	    panelPartido.add(lblEquipoVisitante);
+	    
+	    logoVisitante = new ImageIcon(partido.getEquipoVisitante().getRutaFoto());
+	    Image originalImageVisitante = logoVisitante.getImage();
 
-	    logoVisitante = new ImageIcon(getClass().getResource("/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + partido.getEquipoVisitante().getNombre() + "/" + partido.getEquipoVisitante().getNombre() + ".png"));
-	    imgVisitante = logoVisitante.getImage().getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+	    int nuevoAltoVisitante = 40;
+	    int nuevoAnchoVisitante = (int) ((double) originalImageVisitante.getWidth(null) / originalImageVisitante.getHeight(null) * nuevoAltoVisitante);
+
+	    imgVisitante = originalImageVisitante.getScaledInstance(nuevoAnchoVisitante, nuevoAltoVisitante, Image.SCALE_SMOOTH);
 	    logoVisitante = new ImageIcon(imgVisitante);
 
 	    lblLogoVisitante = new JLabel(logoVisitante);
-	    lblLogoVisitante.setBounds(45, 60, 40, 40);
+	    lblLogoVisitante.setBounds(20, 60, 40, 40);
 	    panelPartido.add(lblLogoVisitante);
 
 	    if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
 	        textPtsVisitante = new TextoRedondeado(20);
 	        textPtsVisitante.setFont(new Font("SansSerif", Font.PLAIN, 14));
 	        textPtsVisitante.setHorizontalAlignment(SwingConstants.CENTER);
-	        textPtsVisitante.setBounds(304, 65, 50, 30);
+	        textPtsVisitante.setBounds(279, 65, 50, 30);
 	        textPtsVisitante.setText(String.valueOf(partido.getPuntosVisitante()));
 	        textPtsVisitante.setName("visitante_" + partido.getEquipoVisitante().getNombre());
 	        textPtsVisitante.addFocusListener(new FocusListener() {
@@ -534,6 +567,8 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	            public void focusLost(FocusEvent e) {
 	                TextoRedondeado source = (TextoRedondeado) e.getSource();
 	                source.select(0, 0);
+	                datosModificados = true;
+	                actualizarTitulo();
 	            }
 	        });
 	        panelPartido.add(textPtsVisitante);
@@ -541,10 +576,24 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        JLabel lblPtsVisitante = new JLabel(String.valueOf(partido.getPuntosVisitante()));
 	        lblPtsVisitante.setFont(new Font("SansSerif", Font.BOLD, 16));
 	        lblPtsVisitante.setHorizontalAlignment(SwingConstants.CENTER);
-	        lblPtsVisitante.setBounds(304, 65, 50, 30);
+	        lblPtsVisitante.setBounds(279, 65, 50, 30);
 	        lblPtsVisitante.setForeground(new Color(84, 84, 84));
 	        panelPartido.add(lblPtsVisitante);
 	    }
+	    
+	    lblFecha = new JLabel(partido.getFecha().toString());
+	    lblFecha.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblFecha.setBounds(340, 30, 80, 30);
+	    lblFecha.setFont(new Font("SansSerif", Font.BOLD, 16));
+	    lblFecha.setForeground(new Color(84, 84, 84));
+	    panelPartido.add(lblFecha);
+
+	    lblHora = new JLabel(partido.getHora().toString());
+	    lblHora.setHorizontalAlignment(SwingConstants.CENTER);
+	    lblHora.setBounds(355, 60, 50, 30);
+	    lblHora.setFont(new Font("SansSerif", Font.BOLD, 16));
+	    lblHora.setForeground(new Color(84, 84, 84));
+	    panelPartido.add(lblHora);
 
 	    return panelPartido;
 	}
@@ -701,7 +750,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    scrollPaneClasificacion.setBorder(BorderFactory.createEmptyBorder());
 	    panelDerecho.add(scrollPaneClasificacion);
 	    
-	    BotonRedondeado btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
+	    btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
 	    btnExportarPDF.addActionListener(e -> {
 	        if (tablaClasificacion.getRowCount() == 0) {
 	            JOptionPane.showMessageDialog(null, "No hay datos en la tabla para exportar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -709,12 +758,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        }
 
 	        // Seleccionar la ubicación para guardar el archivo
-	        JFileChooser fileChooser = new JFileChooser();
-	        fileChooser.setDialogTitle("Guardar como...");
-	        fileChooser.setSelectedFile(new File("Clasificacion.pdf"));
+	        JnaFileChooser fileChooser = new JnaFileChooser();
+	        fileChooser.setTitle("Guardar como...");
+	        fileChooser.addFilter("PDF (*.pdf)", "pdf");
+	        fileChooser.addFilter("Todos los Archivos", "*");
+	        fileChooser.setDefaultFileName("Clasificación " + temporada.getPeriodo() + ".pdf");
 
-	        int userSelection = fileChooser.showSaveDialog(null);
-	        if (userSelection == JFileChooser.APPROVE_OPTION) {
+	        if (fileChooser.showSaveDialog(this)) {
 	            File archivo = fileChooser.getSelectedFile();
 	            ExportarPDF exportador = new ExportarPDF();
 	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath());
@@ -848,19 +898,72 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        ex.printStackTrace();
 	    }
 	}
+	
+	private void actualizarTitulo() {
+	    String titulo = "LPB Basketball - Menú Jornadas";
+	    if (datosModificados) {
+	        setTitle("*" + titulo);
+	    } else {
+	    	setTitle(titulo);
+	    }
+	}
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 	    if (e.getSource() == btnAtras) {
-	        int selectedIndex = comboBoxJornadas.getSelectedIndex();
-	        if (selectedIndex > 0) {
-	            comboBoxJornadas.setSelectedIndex(selectedIndex - 1);
-	        }
+	    	if (datosModificados) {
+	    	    int opcion = JOptionPane.showConfirmDialog(this, "Tienes cambios sin guardar, ¿deseas guardarlos ahora?", "Confirmar", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+    	            
+    	        if (opcion == JOptionPane.YES_OPTION) {
+    	        	guardarResultados();
+    	        } else if (opcion == JOptionPane.CANCEL_OPTION) {
+    	        	return;
+    	        }
+    	        
+	        	datosModificados = false;
+	        	actualizarTitulo();
+    	        
+		        int selectedIndex = comboBoxJornadas.getSelectedIndex();
+		        if (selectedIndex > 0) {
+		            comboBoxJornadas.setSelectedIndex(selectedIndex - 1);
+			        jornadaSeleccionada = temporada.getJornadas().get(selectedIndex - 1);
+			        cargarPartidos(temporada, jornadaSeleccionada);
+		        }
+	    	} else {
+		        int selectedIndex = comboBoxJornadas.getSelectedIndex();
+		        if (selectedIndex > 0) {
+		            comboBoxJornadas.setSelectedIndex(selectedIndex - 1);
+			        jornadaSeleccionada = temporada.getJornadas().get(selectedIndex - 1);
+			        cargarPartidos(temporada, jornadaSeleccionada);
+		        }
+	    	}
 	    } else if (e.getSource() == btnAdelante) {
-	        int selectedIndex = comboBoxJornadas.getSelectedIndex();
-	        if (selectedIndex < comboBoxJornadas.getItemCount() - 1) {
-	            comboBoxJornadas.setSelectedIndex(selectedIndex + 1);
-	        }
+	    	if (datosModificados) {
+	    	    int opcion = JOptionPane.showConfirmDialog(this, "Tienes cambios sin guardar, ¿deseas guardarlos ahora?", "Confirmar", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE);
+	            
+    	        if (opcion == JOptionPane.YES_OPTION) {
+    	        	guardarResultados();
+    	        } else if (opcion == JOptionPane.CANCEL_OPTION) {
+    	        	return;
+    	        }
+    	        
+	        	datosModificados = false;
+	        	actualizarTitulo();
+    	        
+		        int selectedIndex = comboBoxJornadas.getSelectedIndex();
+		        if (selectedIndex < comboBoxJornadas.getItemCount() - 1) {
+		            comboBoxJornadas.setSelectedIndex(selectedIndex + 1);
+			        jornadaSeleccionada = temporada.getJornadas().get(selectedIndex + 1);
+			        cargarPartidos(temporada, jornadaSeleccionada);
+		        }
+	    	} else {
+		        int selectedIndex = comboBoxJornadas.getSelectedIndex();
+		        if (selectedIndex < comboBoxJornadas.getItemCount() - 1) {
+		            comboBoxJornadas.setSelectedIndex(selectedIndex + 1);
+			        jornadaSeleccionada = temporada.getJornadas().get(selectedIndex + 1);
+			        cargarPartidos(temporada, jornadaSeleccionada);
+		        }
+	    	}
 	    } else if (e.getSource() == btnGuardar) {
 	        guardarResultados();
 	        // Aquí se asume que se guardan resultados de partidos
@@ -874,7 +977,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	                // === FIN: LOGGING PARA GUARDAR RESULTADOS ===
 	            }
 
+<<<<<<< HEAD
 	           
+=======
+	            JOptionPane.showMessageDialog(null, "Resultados guardados correctamente.");
+	            datosModificados = false;
+	            actualizarTitulo();
+>>>>>>> main
 	        }
 	     
 	    }
@@ -892,45 +1001,12 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		Object o = e.getSource();
-		
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0xa0a0a0));
-		} else if (o == btnRestablecer) {
-			fader.fadeBackground(btnRestablecer, btnRestablecer.getBackground(), new Color(0xa0a0a0));
-		} else if (o == btnActivarTemporada) {
-			fader.fadeBackground(btnActivarTemporada, btnActivarTemporada.getBackground(), new Color(0xff7f50));
-		} else if (o == btnFinalizarTemporada) {
-			fader.fadeBackground(btnFinalizarTemporada, btnFinalizarTemporada.getBackground(), new Color(0xff7f50));
-		} else if (o == btnAdelante) {
-			fader.fadeBackground(btnAdelante, btnAdelante.getBackground(), new Color(0xff7f50));
-		} else if (o == btnAtras) {
-			fader.fadeBackground(btnAtras, btnAtras.getBackground(), new Color(0xff7f50));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0xa0a0a0));
-		}
 		
 	}
 
 	@Override
 	public void mouseExited(MouseEvent e) {
-		Object o = e.getSource();
-
-		if (o == btnGuardar) {
-			fader.fadeBackground(btnGuardar, btnGuardar.getBackground(), new Color(0x545454));
-		} else if (o == btnRestablecer) {
-			fader.fadeBackground(btnRestablecer, btnRestablecer.getBackground(), new Color(0x545454));
-		} else if (o == btnActivarTemporada) {
-			fader.fadeBackground(btnActivarTemporada, btnActivarTemporada.getBackground(), new Color(0xf46b20));
-		} else if (o == btnFinalizarTemporada) {
-			fader.fadeBackground(btnFinalizarTemporada, btnFinalizarTemporada.getBackground(), new Color(0xf46b20));
-		} else if (o == btnAdelante) {
-			fader.fadeBackground(btnAdelante, btnAdelante.getBackground(), new Color(0xf46b20));
-		} else if (o == btnAtras) {
-			fader.fadeBackground(btnAtras, btnAtras.getBackground(), new Color(0xf46b20));
-		} else if (o == btnVolverMenu) {
-			fader.fadeBackground(btnVolverMenu, btnVolverMenu.getBackground(), new Color(0x545454));
-		} 
+		
 	}
 
 	public JTable getTablaClasificacion() {

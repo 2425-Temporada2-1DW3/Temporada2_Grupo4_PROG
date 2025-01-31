@@ -25,8 +25,12 @@ public class Jugador implements Comparable<Jugador>, Serializable {
 	private String posicion; // Posición en el campo (base, escolta, etc.)
 	 @XmlElement(name = "Dorsal")
 	private int dorsal; // Número de camiseta del jugador
+<<<<<<< HEAD
 	 @XmlElement(name = "PhotoPath")
 	private String photoPath;
+=======
+	private String fotoRuta; // Ruta de la foto del jugador
+>>>>>>> main
 
   	// Constructor por defecto
   	public Jugador() {
@@ -35,7 +39,7 @@ public class Jugador implements Comparable<Jugador>, Serializable {
       	this.apellidos = "";
       	this.posicion = "";
       	this.dorsal = 0;
-      	this.photoPath = "";
+      	this.fotoRuta = "";
   	}
 
 
@@ -46,18 +50,18 @@ public class Jugador implements Comparable<Jugador>, Serializable {
       	this.apellidos = j.apellidos;
       	this.posicion = j.posicion;
       	this.dorsal = j.dorsal;
-      	this.photoPath = j.photoPath;
+      	this.fotoRuta = j.fotoRuta;
   	}
 
   
 	// Constructor personalizado
-  	public Jugador(String nombre, String apellidos, String posicion, int dorsal, String photoPath) {
+  	public Jugador(String nombre, String apellidos, String posicion, int dorsal, String fotoRuta) {
      	// Inicializa los atributos con valores proporcionados
      	this.nombre = nombre;
      	this.apellidos = apellidos;
      	this.posicion = posicion;
      	this.dorsal = dorsal;
-     	this.photoPath = photoPath;
+     	this.fotoRuta = fotoRuta;
  	}
  
   	// Getters y Setters
@@ -103,14 +107,14 @@ public class Jugador implements Comparable<Jugador>, Serializable {
   	}
   	
   	// Obtiene la ruta de la foto del jugador
-  	public String getPhotoPath() {
-      	return photoPath;
-  	}
+    public String getRutaFoto() {
+        return fotoRuta;
+    }
 
-  	// Establece la ruta de la foto del jugador
-  	public void setPhotoPath(String photoPath) {
-      	this.photoPath = photoPath;
-  	}
+    // Establece la ruta de la foto del jugador
+    public void setRutaFoto(String fotoRuta) {
+        this.fotoRuta = fotoRuta;
+    }
 
   	// Representación en formato de cadena (toString)
   	@Override
@@ -123,7 +127,7 @@ public class Jugador implements Comparable<Jugador>, Serializable {
   	@Override
   	public int hashCode() {
       	// Calcula un código hash basado en los atributos del jugador
-      	return Objects.hash(nombre, apellidos, posicion, dorsal, photoPath);
+      	return Objects.hash(nombre, apellidos, posicion, dorsal, fotoRuta);
   	}
 
   	// Método equals
@@ -141,7 +145,7 @@ public class Jugador implements Comparable<Jugador>, Serializable {
 	@Override
 	public int compareTo(Jugador otroJugador) {
 		// Compara jugadores en función de sus puntos totales
-		return Integer.compare(this.dorsal, otroJugador.dorsal);
+		return this.nombre.compareToIgnoreCase(otroJugador.getNombre());
 	}
 
 	// toXML

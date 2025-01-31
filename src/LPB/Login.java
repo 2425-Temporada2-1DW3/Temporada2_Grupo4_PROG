@@ -4,26 +4,28 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.List;
+
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
 
-import LPBCLASES.BackgroundFader;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
 import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 import LPBCLASES.logClase;
 
-public class Login extends JFrame implements MouseListener {
+public class Login extends JFrame {
     private static final long serialVersionUID = -410820418148204249L;
     private JPanel panel;
     private ImageIcon logo;
@@ -34,7 +36,8 @@ public class Login extends JFrame implements MouseListener {
     private JPasswordField txtPassword;
     private JButton btnIniciarSesion;
     private JButton btnInvitado;
-    private BackgroundFader fader;
+    private JDialog loadingDialog;
+    private JLabel loadingLabel;
 
 	/**
 	 * Launch the application.
@@ -67,8 +70,6 @@ public class Login extends JFrame implements MouseListener {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setLocationRelativeTo(null);
 		setTitle("LPB Basketball - Inicio de Sesión");
-		
-		fader = new BackgroundFader();
 
 		panel = new JPanel();
 		panel.setLayout(null);
@@ -109,7 +110,6 @@ public class Login extends JFrame implements MouseListener {
 		btnIniciarSesion.setBackground(new Color(0x13427E));
 		btnIniciarSesion.setForeground(Color.WHITE);
 		btnIniciarSesion.setFocusPainted(false);
-		btnIniciarSesion.addMouseListener(this);
 		panel.add(btnIniciarSesion);
 
 		MenuUsuarios.cargarUsuarios();
@@ -122,17 +122,56 @@ public class Login extends JFrame implements MouseListener {
             try {
                 Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
                 if (user != null) {
-                	logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
-                    JOptionPane.showMessageDialog(null, "Bienvenido/a, " + user.getUsuario() + ".");
+                    logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
+
+                    loadingDialog = new JDialog();
+                    loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
+                    loadingDialog.setSize(250, 100);
+                    loadingDialog.setLocationRelativeTo(null);
+                    loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+                    loadingDialog.setModal(true);
+
+                    loadingLabel = new JLabel("Iniciando sesión   ", SwingConstants.CENTER);
+                    loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+                    loadingDialog.add(loadingLabel);
+
+                    SwingWorker<Void, String> worker = new SwingWorker<>() {
+                        @Override
+                        protected Void doInBackground() throws InterruptedException {
+                            int count = 0;
+                            while (count < 6) {
+                                String dots = ".".repeat(count % 4);
+                                String spaces = " ".repeat(3 - dots.length());
+                                publish("Iniciando sesión" + dots + spaces);
+                                Thread.sleep(500);
+                                count++;
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void process(List<String> chunks) {
+                            loadingLabel.setText(chunks.get(chunks.size() - 1));
+                        }
+
+                        @Override
+                        protected void done() {
+                            loadingDialog.dispose();
+                        }
+                    };
+
+                    worker.execute();
+                    loadingDialog.setVisible(true);
+
                     new Menu(user.getRol(), user.getUsuario()).setVisible(true);
                     dispose();
                 } else {
-                	logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
-                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.");
+                    logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
+                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception ex) {
-            	logClase.logError("Error durante la validación de usuario", ex);
-                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.");
+                logClase.logError("Error durante la validación de usuario", ex);
+                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.", "Error", JOptionPane.ERROR_MESSAGE);
             }
         });
 
@@ -144,7 +183,6 @@ public class Login extends JFrame implements MouseListener {
         btnInvitado.setBackground(new Color(0xf46b20));
         btnInvitado.setForeground(Color.WHITE);
         btnInvitado.setFocusPainted(false);
-        btnInvitado.addMouseListener(this);
         panel.add(btnInvitado);
 
         btnInvitado.addActionListener(_ -> {
@@ -152,41 +190,5 @@ public class Login extends JFrame implements MouseListener {
             new Menu("Invitado", "Invitado").setVisible(true);
             dispose();
         });
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent ae) {
-        Object o = ae.getSource();
-
-        if (o == btnIniciarSesion) {
-            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x1a5bae));
-        } else if (o == btnInvitado) {
-            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xfe9f2e));
-        }
-    }
-    
-	@Override
-	public void mouseExited(MouseEvent ae) {
-        Object o = ae.getSource();
-
-        if (o == btnIniciarSesion) {
-            fader.fadeBackground(btnIniciarSesion, btnIniciarSesion.getBackground(), new Color(0x13427E));
-        } else if (o == btnInvitado) {
-            fader.fadeBackground(btnInvitado, btnInvitado.getBackground(), new Color(0xf46b20));
-        }		
-	}
-    
-    @Override
-    public void mouseClicked(MouseEvent e) {
-    }
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    	
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    	
     }
 }

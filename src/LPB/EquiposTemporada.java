@@ -3,17 +3,16 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -23,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,9 +31,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.UIManager;
-
-import org.imgscalr.Scalr;
 
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
@@ -56,14 +51,11 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private JButton btnVolverMenu;
 	private GridBagConstraints gbc;
 	private JButton btnEquipo;
-	private BufferedImage originalImage;
 	private JPanel equipoPanel;
 	private GridBagConstraints gbcBtnEliminar;
 	private JButton btnEliminar;
-	private String logoBasePath;
 	private VerEquipo VerEquipoFrame;
 	private GridBagConstraints gbcBtnEquipo;
-	private BufferedImage scaledImage;
 	private JComboBox<String> SelectTemporadas;
 	private JPanel panelEquipos;
 	private Boolean datosModificados = false;
@@ -72,28 +64,6 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private String usuario;
 	private Temporada temporadaSeleccionada;
 	private List<Equipo> equipos;
-	
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-	    try {
-	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    } catch (Exception e) {
-	    	e.printStackTrace();
-	    }
-	    
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					EquiposTemporada frame = new EquiposTemporada("Administrador", "Administrador");
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -189,9 +159,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
                     try {
                     	String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
                     	String periodo = selectedTemporada.replace("Temporada ", "");
+                    	temporadaSeleccionada = Temporada.cargarTemporada(periodo);
                         equipos = temporadaSeleccionada.getEquipos();
                         equiposPorTemporada.put(periodo, equipos);
-						temporadaSeleccionada = Temporada.cargarTemporada(periodo);
 						actualizarPanelEquipos(periodo);
 						
 					} catch (ClassNotFoundException e) {
@@ -351,37 +321,14 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	        btnEquipo = new BotonRedondeado(equipo.getNombre(), null);
 	        try {
-	            String logoBasePath = String.format("/imagenes/temporadas/%s/%s/", (String) SelectTemporadas.getSelectedItem(), equipo.getNombre());
-	            String[] possibleExtensions = {"png", "jpg", "jpeg", "gif"};
-	            java.net.URL logoURL = null;
+	            ImageIcon escudoIcon = new ImageIcon(equipo.getRutaFoto());
+	            Image originalImage = escudoIcon.getImage();
 
-	            for (String ext : possibleExtensions) {
-	                logoURL = getClass().getResource(logoBasePath + equipo.getNombre() + "." + ext);
-	                if (logoURL != null) {
-	                    break;
-	                }
-	            }
+	            int nuevoAlto = 50;
+	            int nuevoAncho = (int) ((double) originalImage.getWidth(null) / originalImage.getHeight(null) * nuevoAlto);
 
-	            if (logoURL != null) {
-	                originalImage = ImageIO.read(logoURL);
-	                if (originalImage != null) {
-	                    // Escalar la imagen
-	                    scaledImage = Scalr.resize(originalImage, Scalr.Method.QUALITY, 50, 50);
-	                    btnEquipo.setIcon(new ImageIcon(scaledImage));
-	                } else {
-	                    // Error al procesar la imagen
-	                    JOptionPane.showMessageDialog(null, "Error: No se pudo procesar la imagen del equipo: " + equipo.getNombre(), "Error de Imagen", JOptionPane.ERROR_MESSAGE);
-	                    btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-	                }
-	            } else {
-	                // Archivo no encontrado
-	                JOptionPane.showMessageDialog(null, "Advertencia: Archivo de imagen no encontrado para el equipo: " + equipo.getNombre(), "Archivo No Encontrado", JOptionPane.WARNING_MESSAGE);
-	                btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
-	            }
-	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(null, "Error al cargar la imagen del equipo: " + equipo.getNombre() + " en la ruta: " + logoBasePath, "Error de Lectura", JOptionPane.ERROR_MESSAGE);
-	            e.printStackTrace();
-	            btnEquipo.setIcon(new ImageIcon(getClass().getResource("/imagenes/imagen_por_defecto.png")));
+	            ImageIcon iconoEscalado = new ImageIcon(originalImage.getScaledInstance(nuevoAncho, nuevoAlto, Image.SCALE_SMOOTH));
+	            btnEquipo.setIcon(iconoEscalado);
 	        } catch (NullPointerException e) {
 	            JOptionPane.showMessageDialog(null, "Error: Ruta de imagen nula para el equipo: " + equipo.getNombre(), "Error de Ruta", JOptionPane.ERROR_MESSAGE);
 	            e.printStackTrace();
