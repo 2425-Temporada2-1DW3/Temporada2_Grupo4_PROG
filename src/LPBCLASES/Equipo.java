@@ -118,4 +118,22 @@ public class Equipo implements Serializable {
 		Equipo other = (Equipo) obj;
 		return nombre.equals(other.nombre);
 	}
+    
+    // toXML
+	public String toXML() {
+		String xml = "			<equipo>\r\n"
+				+ "				<nombre>" + nombre + "</nombre>\r\n"
+				+ "				<entrenador>" + entrenador + "</entrenador>\r\n"
+				+ "				<estadio>" + estadio + "</estadio>\r\n"
+				+ "				<jugadores>\r\n";
+				
+				for (Jugador jugador : this.getJugadores()) {
+					xml += jugador.toXML();
+				}
+				
+				xml += "				</jugadores>\r\n"
+				+ "			</equipo>\r\n";
+		
+		return xml;
+	}
 }

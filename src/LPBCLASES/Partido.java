@@ -150,4 +150,17 @@ public class Partido implements Serializable {
 		Partido partido = (Partido) obj;
 		return puntosLocal == partido.puntosLocal && puntosVisitante == partido.puntosVisitante && Objects.equals(equipoLocal, partido.equipoLocal) && Objects.equals(equipoVisitante, partido.equipoVisitante);
 	}
+	
+    // toXML
+	public String toXML() {
+		String xml = "					<partido>\r\n"
+				+ "						<fecha>" + fecha + "</fecha>\r\n"
+				+ "						<hora>" + hora + "</hora>\r\n"
+				+ "						<equipo1>" + equipoLocal.getNombre() + "</equipo1>\r\n"
+				+ "						<equipo2>" + equipoVisitante.getNombre() + "</equipo2>\r\n"
+				+ "						<resultado>" + puntosLocal + "-" + puntosVisitante + "</resultado>\r\n"
+				+ "					</partido>\r\n";
+		
+		return xml;
+	}
 }

@@ -1,7 +1,6 @@
 package LPB;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -16,18 +15,18 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.DefaultListModel;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
@@ -38,6 +37,7 @@ import LPBCLASES.Usuario;
 import LPBCLASES.logClase;
 
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableModel;
 
 public class MenuUsuarios extends JFrame implements ActionListener,Serializable {
 
@@ -52,15 +52,14 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private JLabel lblEquipo;
     private JComboBox<String> comboBoxRol;
     private JComboBox<String> comboBoxEquipo;
-    private JButton btnGuardar, btnEliminar, btnVolver;
-    private DefaultListModel<Usuario> dlm;
-    private JList<Usuario> listUsuarios;
+    private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnLimpiar;
+    private JTable tableUsuarios;
+    private DefaultTableModel dtm;
     private ArrayList<Usuario> listaUsuarios;
     private JScrollPane scrollPane;
     private JLabel lblUsuario;
     private JLabel lblContrasena;
     private JLabel lblRol;
-    private Object source;
     private String usuario, contrasena, rol;
     private Equipo equipo;
     private Equipo equipoSeleccionado;
@@ -70,22 +69,6 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private static boolean actualizacion = false;
 
     private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
-    
-    public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MenuUsuarios frame = new MenuUsuarios();
-					frame.setVisible(true);
-					
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                  
-                }
-			}
-		});
-	}
 
     public MenuUsuarios() {
     	
@@ -119,60 +102,63 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         panelInferior.setBounds(0, 110, 836, 403);
         panelInferior.setLayout(null);
 
-        scrollPane = new JScrollPane();
-        scrollPane.setBounds(10, 20, 350, 300);
-        dlm = new DefaultListModel<Usuario>();
-        listaUsuarios = cargarUsuarios();
-	    actualizarLista();
+        dtm = new DefaultTableModel() {
+			private static final long serialVersionUID = 1L;
 
-        listUsuarios = new JList<>();
-        listUsuarios.setModel(dlm);
-        listUsuarios.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        scrollPane.setViewportView(listUsuarios);
-        panelInferior.add(scrollPane);
+			@Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
-        listUsuarios.addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) { // Asegurarse de que no se actúe en eventos duplicados
-                Usuario usuarioSeleccionado = listUsuarios.getSelectedValue();
-                usuarioSeleccionadoIndex = listUsuarios.getSelectedIndex(); // Guardar el índice del usuario seleccionado
-                if (usuarioSeleccionado != null) {
-                    textUsuario.setText(usuarioSeleccionado.getUsuario());
-                    passwordField.setText(usuarioSeleccionado.getContrasena());
-                    comboBoxRol.setSelectedItem(usuarioSeleccionado.getRol());
+        dtm.addColumn("Usuario");
+        dtm.addColumn("Rol");
+        dtm.addColumn("Equipo");
 
-                    // Solo cargar los datos del equipo si el usuario es entrenador
-                    if (usuarioSeleccionado.getRol().equals("Entrenador")) {
-                        Equipo equipoSeleccionado = usuarioSeleccionado.getEquipo();
-                        String nombreEquipo = equipoSeleccionado.getNombre();
-                        
-                        boolean esNuevo = false;
-                        for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
-                            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
-                                Temporada temporada = (Temporada) ois.readObject();
-                                if (temporada.getEstado().equals("En proceso")) {
-                                    List<Equipo> equipos = temporada.getEquipos();
-                                    for (Equipo eq : equipos) {
-                                        if (eq.getNombre().equals(nombreEquipo)) {
-                                            esNuevo = true;
-                                            break;
-                                        }
-                                    }
-                                }
-                            } catch (IOException | ClassNotFoundException ex) {
-                                System.err.println("Error al cargar el archivo: " + ex.getMessage());
+        tableUsuarios = new JTable(dtm);
+        tableUsuarios.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        tableUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        tableUsuarios.getTableHeader().setBackground(Color.GRAY);
+        tableUsuarios.getTableHeader().setForeground(Color.WHITE);
+
+        tableUsuarios.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+        tableUsuarios.setOpaque(false);
+
+        tableUsuarios.setRowHeight(30);
+        tableUsuarios.setShowGrid(true);
+
+        tableUsuarios.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
+        tableUsuarios.getTableHeader().setBackground(new Color(169, 169, 169)); // Gris oscuro
+        tableUsuarios.getTableHeader().setForeground(Color.WHITE);
+
+        tableUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                int selectedRow = tableUsuarios.getSelectedRow();
+                if (selectedRow != -1) {
+                    String usuarioSeleccionado = (String) dtm.getValueAt(selectedRow, 0);
+                    
+                    for (Usuario u : listaUsuarios) {
+                        if (u.getUsuario().equals(usuarioSeleccionado)) {
+                            textUsuario.setText(u.getUsuario());
+                            passwordField.setText(u.getContrasena());
+                            comboBoxRol.setSelectedItem(u.getRol());
+
+                            if ("Entrenador".equals(u.getRol()) && u.getEquipo() != null) {
+                                comboBoxEquipo.setSelectedItem(u.getEquipo().getNombre());
                             }
-                            if (esNuevo) break;
+                            
+                            usuarioSeleccionadoIndex = listaUsuarios.indexOf(u);
+                            break;
                         }
-
-                        if (esNuevo) {
-                            nombreEquipo += " (Nuevo)";
-                        }
-
-                        comboBoxEquipo.setSelectedItem(nombreEquipo);
                     }
                 }
             }
         });
+
+        scrollPane = new JScrollPane(tableUsuarios);
+        scrollPane.setBounds(10, 20, 350, 300);
+        panelInferior.add(scrollPane);
 
         lblUsuario = new JLabel("Usuario:");
         lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -273,7 +259,17 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
 		btnVolver.addActionListener(this);
 		panelInferior.add(btnVolver);
 		
-		actualizarLista();
+        btnLimpiar = new BotonRedondeado("Limpiar", null);
+        btnLimpiar.setFont(new Font("SansSerif", Font.BOLD, 16));
+        btnLimpiar.setBackground(new Color(0x404040));
+        btnLimpiar.setForeground(Color.WHITE);
+        btnLimpiar.setBounds(669, 325, 100, 40);
+        btnLimpiar.setFocusPainted(false);
+        btnLimpiar.addActionListener(this);
+        panelInferior.add(btnLimpiar);
+		
+        listaUsuarios = cargarUsuarios();
+		actualizarTabla();
 		cargarEquipos();
 
         getContentPane().add(panelInferior);
@@ -282,10 +278,11 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     
     
     
-    private void actualizarLista() {
-        dlm.clear();
+    private void actualizarTabla() {
+        dtm.setRowCount(0);
+        
         for (Usuario usuario : listaUsuarios) {
-            dlm.addElement(usuario);
+        	dtm.addRow(new Object[]{usuario.getUsuario(), usuario.getRol(), usuario.getEquipo() != null ? usuario.getEquipo().getNombre() : "N/A"});
         }
     }
 
@@ -375,7 +372,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
 
     @Override
     public void actionPerformed(ActionEvent e) {
-    	 source = e.getSource();
+    	 Object source = e.getSource();
 
     	// === INICIO: LOGGING PARA GUARDAR USUARIO ===
     	    if (source == btnGuardar) {
@@ -432,7 +429,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	            usuarioExistente.setEquipo(equipoSeleccionado);
 
     	            // Actualizar la lista visual
-    	            actualizarLista();
+    	            actualizarTabla();
     	            actualizacion = true;
 
     	            JOptionPane.showMessageDialog(this, "Usuario actualizado correctamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
@@ -444,7 +441,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	            // Si no hay un usuario seleccionado, se crea uno nuevo
     	            nuevoUsuario = new Usuario(usuario, contrasena, rol, equipoSeleccionado);
     	            listaUsuarios.add(nuevoUsuario);
-    	            actualizarLista();
+    	            actualizarTabla();
 
     	            // Registrar el evento en el log
     	            logClase.logAction("Se ha agregado un nuevo usuario: '" + usuario + "' (Rol: " + rol + ", Equipo: " + equipo + ").");
@@ -459,19 +456,22 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	        comboBoxRol.setSelectedIndex(0);
     	        comboBoxEquipo.setSelectedIndex(0);
     	        usuarioSeleccionadoIndex = -1;
-    	    }
-    	    // === FIN: LOGGING PARA GUARDAR USUARIO ===
-
+        	// === FIN: LOGGING PARA GUARDAR USUARIO ===
+    	    } else if (source == btnEliminar) {
     	    // === INICIO: LOGGING PARA ELIMINAR USUARIO ===
-    	    if (source == btnEliminar) {
-    	        int index = listUsuarios.getSelectedIndex();
+    	        int index = tableUsuarios.getSelectedRow();
     	        if (index >= 0) {
     	            Usuario usuarioEliminado = listaUsuarios.get(index);
+    	            
+    	            if (usuarioEliminado.getUsuario().equals("Admin")) {
+    	                JOptionPane.showMessageDialog(this, "No se puede eliminar el usuario 'Admin'.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+    	                return;
+    	            }
 
     	            listaUsuarios.remove(index);
 
     	            // Actualizar la lista y guardar cambios
-    	            actualizarLista();
+    	            actualizarTabla();
     	            guardarUsuarios(listaUsuarios);
 
     	            // Registrar el evento en el log
@@ -486,15 +486,19 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	        comboBoxRol.setSelectedIndex(0);
     	        comboBoxEquipo.setSelectedIndex(0);
     	        usuarioSeleccionadoIndex = -1;
-    	    }
-    	    // === FIN: LOGGING PARA ELIMINAR USUARIO ===
-
-    	    // === INICIO: LOGGING PARA VOLVER ===
-    	    if (source == btnVolver) {
+        	// === FIN: LOGGING PARA ELIMINAR USUARIO ===
+    	    } else if (source == btnVolver) {
+        	// === INICIO: LOGGING PARA VOLVER ===
     	    	logClase.logAction("El administrador ha salido del menú de usuarios.");
     	        new Menu("Administrador", "Admin").setVisible(true);
     	        this.dispose();
-    	    }
     	    // === FIN: LOGGING PARA VOLVER ===
+		    } else if (source == btnLimpiar) {
+		    	tableUsuarios.clearSelection();
+    	        textUsuario.setText("");
+    	        passwordField.setText("");
+    	        comboBoxRol.setSelectedIndex(0);
+    	        comboBoxEquipo.setSelectedIndex(0);
+		    }
     }
 }
