@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import LPB.MenuJornadas;
+
 public class Equipo implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -120,12 +122,13 @@ public class Equipo implements Serializable {
 	}
     
     // toXML
-	public String toXML() {
+	public String toXML(Temporada temporada, Equipo equipo) {
 		String xml = "			<equipo>\r\n"
 				+ "				<nombre>" + nombre + "</nombre>\r\n"
 				+ "				<entrenador>" + entrenador + "</entrenador>\r\n"
-				+ "				<estadio>" + estadio + "</estadio>\r\n"
-				+ "				<jugadores>\r\n";
+				+ "				<estadio>" + estadio + "</estadio>\r\n";
+				xml += MenuJornadas.clasificacionXML(temporada, equipo);
+				xml += "				<jugadores>\r\n";
 				
 				for (Jugador jugador : this.getJugadores()) {
 					xml += jugador.toXML();

@@ -1,6 +1,8 @@
 package LPB;
 
 import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -37,7 +39,9 @@ import LPBCLASES.Usuario;
 import LPBCLASES.logClase;
 
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
 
 public class MenuUsuarios extends JFrame implements ActionListener,Serializable {
 
@@ -53,8 +57,9 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private JComboBox<String> comboBoxRol;
     private JComboBox<String> comboBoxEquipo;
     private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnLimpiar;
-    private JTable tableUsuarios;
+    private JTable tablaUsuarios;
     private DefaultTableModel dtm;
+    private JTableHeader header;
     private ArrayList<Usuario> listaUsuarios;
     private JScrollPane scrollPane;
     private JLabel lblUsuario;
@@ -115,26 +120,35 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         dtm.addColumn("Rol");
         dtm.addColumn("Equipo");
 
-        tableUsuarios = new JTable(dtm);
-        tableUsuarios.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        tableUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablaUsuarios = new JTable(dtm);
+        tablaUsuarios.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        tablaUsuarios.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tablaUsuarios.setForeground(Color.BLACK);
+        tablaUsuarios.setBackground(new Color(217, 217, 217));
+        tablaUsuarios.setRowHeight(30);
+        tablaUsuarios.setBorder(null);
+        tablaUsuarios.setShowGrid(false);
+        
+	    header = tablaUsuarios.getTableHeader();
+	    header.setPreferredSize(new Dimension(header.getWidth(), 30));
+	    header.setDefaultRenderer(new DefaultTableCellRenderer() {
+	        private static final long serialVersionUID = 1L;
 
-        tableUsuarios.getTableHeader().setBackground(Color.GRAY);
-        tableUsuarios.getTableHeader().setForeground(Color.WHITE);
+	        @Override
+	        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+	            JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+	            label.setBackground(new Color(112, 117, 126));
+	            label.setForeground(Color.WHITE);
+	            label.setBorder(BorderFactory.createEmptyBorder());
+	            return label;
+	        }
+	    });
+	    
+	    tablaUsuarios.getTableHeader().setReorderingAllowed(false);
 
-        tableUsuarios.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
-        tableUsuarios.setOpaque(false);
-
-        tableUsuarios.setRowHeight(30);
-        tableUsuarios.setShowGrid(true);
-
-        tableUsuarios.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
-        tableUsuarios.getTableHeader().setBackground(new Color(169, 169, 169)); // Gris oscuro
-        tableUsuarios.getTableHeader().setForeground(Color.WHITE);
-
-        tableUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
+        tablaUsuarios.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                int selectedRow = tableUsuarios.getSelectedRow();
+                int selectedRow = tablaUsuarios.getSelectedRow();
                 if (selectedRow != -1) {
                     String usuarioSeleccionado = (String) dtm.getValueAt(selectedRow, 0);
                     
@@ -145,7 +159,33 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
                             comboBoxRol.setSelectedItem(u.getRol());
 
                             if ("Entrenador".equals(u.getRol()) && u.getEquipo() != null) {
-                                comboBoxEquipo.setSelectedItem(u.getEquipo().getNombre());
+                                Equipo equipoSeleccionado = u.getEquipo();
+                                String nombreEquipo = equipoSeleccionado.getNombre();
+                                
+                                boolean esNuevo = false;
+                                for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
+                                    try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                                        Temporada temporada = (Temporada) ois.readObject();
+                                        if (temporada.getEstado().equals("En proceso")) {
+                                            List<Equipo> equipos = temporada.getEquipos();
+                                            for (Equipo eq : equipos) {
+                                                if (eq.getNombre().equals(nombreEquipo)) {
+                                                    esNuevo = true;
+                                                    break;
+                                                }
+                                            }
+                                        }
+                                    } catch (IOException | ClassNotFoundException ex) {
+                                        System.err.println("Error al cargar el archivo: " + ex.getMessage());
+                                    }
+                                    if (esNuevo) break;
+                                }
+
+                                if (esNuevo) {
+                                    nombreEquipo += " (Nuevo)";
+                                }
+
+                                comboBoxEquipo.setSelectedItem(nombreEquipo);
                             }
                             
                             usuarioSeleccionadoIndex = listaUsuarios.indexOf(u);
@@ -156,41 +196,43 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
             }
         });
 
-        scrollPane = new JScrollPane(tableUsuarios);
-        scrollPane.setBounds(10, 20, 350, 300);
+        scrollPane = new JScrollPane(tablaUsuarios);
+        scrollPane.setBounds(30, 30, 400, 300);
+        scrollPane.getViewport().setBackground(new Color(204, 153, 102));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
         panelInferior.add(scrollPane);
 
         lblUsuario = new JLabel("Usuario:");
         lblUsuario.setHorizontalAlignment(SwingConstants.RIGHT);
         lblUsuario.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblUsuario.setForeground(new Color(0x545454));
-        lblUsuario.setBounds(437, 71, 100, 30);
+        lblUsuario.setBounds(460, 71, 100, 30);
         panelInferior.add(lblUsuario);
 
         textUsuario = new TextoRedondeado(20);
         textUsuario.setColumns(10);
         textUsuario.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        textUsuario.setBounds(547, 71, 200, 30);
+        textUsuario.setBounds(570, 71, 200, 30);
         panelInferior.add(textUsuario);
 
         lblContrasena = new JLabel("Contraseña:");
         lblContrasena.setHorizontalAlignment(SwingConstants.RIGHT);
         lblContrasena.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblContrasena.setForeground(new Color(0x545454));
-        lblContrasena.setBounds(437, 121, 100, 30);
+        lblContrasena.setBounds(460, 121, 100, 30);
         panelInferior.add(lblContrasena);
 
         passwordField = new PasswordRedondeado(20);
         passwordField.setColumns(10);
         passwordField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        passwordField.setBounds(547, 121, 200, 30);
+        passwordField.setBounds(570, 121, 200, 30);
         panelInferior.add(passwordField);
 
         lblRol = new JLabel("Rol:");
         lblRol.setHorizontalAlignment(SwingConstants.RIGHT);
         lblRol.setFont(new Font("Tahoma", Font.PLAIN, 18));
         lblRol.setForeground(new Color(0x545454));
-        lblRol.setBounds(437, 171, 100, 30);
+        lblRol.setBounds(460, 171, 100, 30);
         panelInferior.add(lblRol);
 
         comboBoxRol = new JComboBox<>();
@@ -199,7 +241,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
             comboBoxRol.addItem(rol);
         }
         comboBoxRol.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        comboBoxRol.setBounds(547, 171, 200, 30);
+        comboBoxRol.setBounds(570, 171, 200, 30);
         
         comboBoxRol.addActionListener(new ActionListener() {
             @Override
@@ -222,13 +264,13 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         lblEquipo.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEquipo.setForeground(new Color(84, 84, 84));
         lblEquipo.setFont(new Font("Tahoma", Font.PLAIN, 18));
-        lblEquipo.setBounds(437, 223, 100, 30);
+        lblEquipo.setBounds(460, 223, 100, 30);
         panelInferior.add(lblEquipo);
         lblEquipo.setVisible(false);
         
         comboBoxEquipo = new JComboBox<String>();
         comboBoxEquipo.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        comboBoxEquipo.setBounds(547, 223, 200, 30);
+        comboBoxEquipo.setBounds(570, 223, 200, 30);
         panelInferior.add(comboBoxEquipo);
         comboBoxEquipo.setVisible(false);
 
@@ -236,7 +278,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnGuardar.setBackground(new Color(0x13427E));
         btnGuardar.setForeground(Color.WHITE);
-        btnGuardar.setBounds(429, 275, 100, 40);
+        btnGuardar.setBounds(549, 275, 100, 40);
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(this);
         panelInferior.add(btnGuardar);
@@ -245,7 +287,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnEliminar.setBackground(new Color(0xf46b20));
         btnEliminar.setForeground(Color.WHITE);
-        btnEliminar.setBounds(549, 275, 100, 40);
+        btnEliminar.setBounds(669, 275, 100, 40);
         btnEliminar.setFocusPainted(false);
         btnEliminar.addActionListener(this);
         panelInferior.add(btnEliminar);
@@ -254,7 +296,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnVolver.setBackground(new Color(0x404040));
         btnVolver.setForeground(Color.WHITE);
-        btnVolver.setBounds(669, 275, 100, 40);
+        btnVolver.setBounds(669, 325, 100, 40);
         btnVolver.setFocusPainted(false);
 		btnVolver.addActionListener(this);
 		panelInferior.add(btnVolver);
@@ -263,7 +305,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         btnLimpiar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnLimpiar.setBackground(new Color(0x404040));
         btnLimpiar.setForeground(Color.WHITE);
-        btnLimpiar.setBounds(669, 325, 100, 40);
+        btnLimpiar.setBounds(549, 325, 100, 40);
         btnLimpiar.setFocusPainted(false);
         btnLimpiar.addActionListener(this);
         panelInferior.add(btnLimpiar);
@@ -459,7 +501,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         	// === FIN: LOGGING PARA GUARDAR USUARIO ===
     	    } else if (source == btnEliminar) {
     	    // === INICIO: LOGGING PARA ELIMINAR USUARIO ===
-    	        int index = tableUsuarios.getSelectedRow();
+    	        int index = tablaUsuarios.getSelectedRow();
     	        if (index >= 0) {
     	            Usuario usuarioEliminado = listaUsuarios.get(index);
     	            
@@ -494,11 +536,12 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	        this.dispose();
     	    // === FIN: LOGGING PARA VOLVER ===
 		    } else if (source == btnLimpiar) {
-		    	tableUsuarios.clearSelection();
+		    	tablaUsuarios.clearSelection();
     	        textUsuario.setText("");
     	        passwordField.setText("");
     	        comboBoxRol.setSelectedIndex(0);
     	        comboBoxEquipo.setSelectedIndex(0);
+    	        usuarioSeleccionadoIndex = -1;
 		    }
     }
 }

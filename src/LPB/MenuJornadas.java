@@ -881,6 +881,68 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    	setTitle(titulo);
 	    }
 	}
+	
+    public static String clasificacionXML(Temporada temporada, Equipo equipo) {
+    	String xml = "";
+        
+    	int puntos = 0;
+        int partidosJugados = 0;
+        int partidosGanados = 0;
+        int partidosPerdidos = 0;
+        int puntosFavor = 0;
+        int puntosContra = 0;
+        
+        for (Jornada jornada : temporada.getJornadas()) {
+            for (Partido partido : jornada.getPartidos()) {
+                if (partido.getEquipoLocal().equals(equipo) || partido.getEquipoVisitante().equals(equipo)) {
+                    if (partido.getPuntosLocal() > 0 || partido.getPuntosVisitante() > 0) {
+                        partidosJugados++;
+
+                        if (partido.getEquipoLocal().equals(equipo)) {
+                            puntosFavor += partido.getPuntosLocal();
+                            puntosContra += partido.getPuntosVisitante();
+                            if (partido.getPuntosLocal() > partido.getPuntosVisitante()) {
+                                puntos += 2;
+                                partidosGanados++;
+                            } else if (partido.getPuntosLocal() < partido.getPuntosVisitante()) {
+                                puntos += 1;
+                                partidosPerdidos++;
+                            } else {
+                                puntos += 1;
+                            }
+                        }
+
+                        if (partido.getEquipoVisitante().equals(equipo)) {
+                            puntosFavor += partido.getPuntosVisitante();
+                            puntosContra += partido.getPuntosLocal();
+                            if (partido.getPuntosVisitante() > partido.getPuntosLocal()) {
+                                puntos += 2;
+                                partidosGanados++;
+                            } else if (partido.getPuntosVisitante() < partido.getPuntosLocal()) {
+                                puntos += 1;
+                                partidosPerdidos++;
+                            } else {
+                                puntos += 1;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        int diferenciaPuntos = puntosFavor - puntosContra;
+
+        // Agregamos la información del equipo en formato XML
+        xml = "				<puntos>" + puntos + "</puntos>\r\n"
+        		+ "				<partidosJugados>" + partidosJugados + "</partidosJugados>\r\n"
+				+ "				<partidosGanados>" + partidosGanados + "</partidosGanados>\r\n"
+				+ "				<partidosPerdidos>" + partidosPerdidos + "</partidosPerdidos>\r\n"
+				+ "				<puntosFavor>" + puntosFavor + "</puntosFavor>\r\n"
+				+ "				<puntosContra>" + puntosContra + "</puntosContra>\r\n"
+				+ "				<diferenciaPuntos>" + diferenciaPuntos + "</diferenciaPuntos>\r\n";
+
+        return xml;
+    }
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
@@ -977,9 +1039,5 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	@Override
 	public void mouseExited(MouseEvent e) {
 		
-	}
-
-	public JTable getTablaClasificacion() {
-	    return tablaClasificacion;
 	}
 }

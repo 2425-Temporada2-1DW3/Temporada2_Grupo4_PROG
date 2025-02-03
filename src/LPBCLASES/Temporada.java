@@ -283,7 +283,13 @@ public class Temporada implements Serializable {
                    + "		<equipos>\r\n";
 
 			        for (Equipo equipo : this.getEquipos()) {
-			            xml += equipo.toXML();
+			            try {
+							xml += equipo.toXML(cargarTemporada(periodo), equipo);
+						} catch (ClassNotFoundException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 			        }
 			
 			        xml += "		</equipos>\r\n"
