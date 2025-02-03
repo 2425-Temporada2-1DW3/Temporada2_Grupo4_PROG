@@ -133,6 +133,11 @@ public class Jugador implements Comparable<Jugador>, Serializable {
 
 	// toXML
 	public String toXML() {
-		return null;
+		return ("					<jugador>\r\n"
+				+ "						<nombre>" + nombre + "</nombre>\r\n"
+				+ "						<apellidos>" + apellidos + "</apellidos>\r\n"
+				+ "						<dorsal>" + dorsal + "</dorsal>\r\n"
+				+ "						<posicion>" + posicion + "</posicion>\r\n"
+				+ "					</jugador>\r\n");
 	}
 }

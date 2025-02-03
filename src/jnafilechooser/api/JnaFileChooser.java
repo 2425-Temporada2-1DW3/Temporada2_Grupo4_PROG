@@ -195,6 +195,7 @@ public class JnaFileChooser
 		if (result == JFileChooser.APPROVE_OPTION) {
 			selectedFiles = multiSelectionEnabled ?
 				fc.getSelectedFiles() : new File[] { fc.getSelectedFile() };
+            
 			currentDirectory = fc.getCurrentDirectory();
 			return true;
 		}

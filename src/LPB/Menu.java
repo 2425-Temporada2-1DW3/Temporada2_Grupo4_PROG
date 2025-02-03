@@ -5,22 +5,32 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.PrintWriter;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import LPBCLASES.BotonRedondeado;
+import LPBCLASES.Temporada;
+import jnafilechooser.api.JnaFileChooser;
 
 public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
-	private JButton btnTemporadas;
-	private JButton btnEquipos;
-	private JButton btnUsuarios;
-	private JButton btnJugadores;
-	private JButton btnCerrarSesion;
+	private BotonRedondeado btnTemporadas;
+	private BotonRedondeado btnEquipos;
+	private BotonRedondeado btnUsuarios;
+	private BotonRedondeado btnJugadores;
+	private BotonRedondeado btnCerrarSesion;
+	private BotonRedondeado btnExportarXML;
 	private JPanel panelIzquierdo;
 	private JLabel labelLogo;
 	private JLabel labelUsuario;
@@ -163,5 +173,82 @@ public class Menu extends JFrame {
 		});
 
 		getContentPane().add(panelDerecho);
+		
+		btnExportarXML = new BotonRedondeado("Exportar datos", (ImageIcon) null);
+		btnExportarXML.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				exportarXML();
+			}
+		});
+		btnExportarXML.setForeground(Color.WHITE);
+		btnExportarXML.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnExportarXML.setFocusPainted(false);
+		btnExportarXML.setBackground(new Color(84, 84, 84));
+		btnExportarXML.setBounds(48, 461, 150, 30);
+		panelDerecho.add(btnExportarXML);
+	}
+	
+	public void exportarXML() {
+        JnaFileChooser fileChooser = new JnaFileChooser();
+        fileChooser.setTitle("Guardar como...");
+        fileChooser.addFilter("XML (*.xml)", "xml");
+        fileChooser.setDefaultFileName("temporadas.xml");
+        //fileChooser.setOverwritePrompt(true);
+
+        if (!fileChooser.showSaveDialog(this)) {
+        	return;
+        }
+
+        File archivoSeleccionado = fileChooser.getSelectedFile();
+        String ruta = archivoSeleccionado.getAbsolutePath();
+
+        if (!ruta.toLowerCase().endsWith(".xml")) {
+            archivoSeleccionado = new File(ruta + ".xml");
+        }
+	    
+	    FileWriter fichero = null;
+	    PrintWriter pw = null;
+	    BufferedWriter bw = null;
+	    
+	    try {
+	        File carpeta = new File("data/");
+	        File[] archivos = carpeta.listFiles((dir, name) -> name.matches("temporada_\\d{4}-\\d{4}\\.ser"));
+
+	        if (archivos == null || archivos.length == 0) {
+	            JOptionPane.showMessageDialog(this, "No se encontraron archivos de temporada.", "Info", JOptionPane.WARNING_MESSAGE);
+	            return;
+	        }
+
+	        // Crear el fichero XML
+	        fichero = new FileWriter(archivoSeleccionado);
+	        pw = new PrintWriter(fichero);
+	        bw = new BufferedWriter(pw);
+	        
+	        bw.write("<?xml version='1.0' encoding='UTF-8'?>\r\n");
+	        bw.write("<?xml-model href='temporadas.xsd'?>\r\n");
+	        bw.write("<temporadas>\r\n");
+
+	        for (File archivo : archivos) {
+	            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+	                Temporada temporada = (Temporada) ois.readObject();
+	                bw.write(temporada.toXML());
+	                bw.newLine();
+	            } catch (Exception e) {
+	                System.err.println("Error al leer el archivo: " + archivo.getName());
+	                e.printStackTrace();
+	            }
+	        }
+
+	        bw.write("</temporadas>\r\n");
+
+	        // Libero recursos
+	        bw.close();
+	        pw.close();
+	        fichero.close();
+
+	        JOptionPane.showMessageDialog(this, "Los datos se han exportado correctamente.", "Info", JOptionPane.INFORMATION_MESSAGE);
+	    } catch (IOException e) {
+	    	JOptionPane.showMessageDialog(this, "Hubo un error al exportar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+	    }
 	}
 }
