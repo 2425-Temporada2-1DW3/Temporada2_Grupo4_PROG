@@ -316,7 +316,7 @@ public class VerEquipo extends JFrame {
 
 		panelIzquierdo.add(btnEditar);
 	    
-	    if ("Administrador".equals(rol)) {
+	    if ("Administrador".equals(rol) && "En proceso".equals(temporada.getEstado())) {
 	        btnEditar.setVisible(true);
 	    } else if ("Entrenador".equals(rol) && "En proceso".equals(temporada.getEstado())) {
 	        try {
