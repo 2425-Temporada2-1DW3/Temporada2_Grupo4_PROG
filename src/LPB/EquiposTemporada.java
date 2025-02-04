@@ -141,13 +141,19 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	    });
 	    
 	    panelInferior.add(SelectTemporadas);
+	    
+		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/plus.png"));
+		Image originalImage = originalImageIcon.getImage();
+		Image scaledImage = originalImage.getScaledInstance(30, 30, Image.SCALE_SMOOTH);
+		ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
 
-		btnNuevo = new BotonRedondeado("+", null);
+		btnNuevo = new BotonRedondeado("", null);
 		btnNuevo.setForeground(Color.WHITE);
 		btnNuevo.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnNuevo.setBackground(new Color(0x545454));
 		btnNuevo.setBounds(755, 22, 50, 50);
 		btnNuevo.setFocusPainted(false);
+		btnNuevo.setIcon(scaledImageIcon);
 		
 		btnNuevo.addActionListener(e -> {
         	AgregarEquipo agregarEquipo = new AgregarEquipo(temporadaSeleccionada);
@@ -365,11 +371,17 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 			});
 
 	        if ("Administrador".equals(rol)) {
-	            btnEliminar = new BotonRedondeado("-", null);
+        		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/papelera.png"));
+        		Image originalImage = originalImageIcon.getImage();
+        		Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        		ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
+        		
+	            btnEliminar = new BotonRedondeado("", null);
 	            btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 20));
 	            btnEliminar.setBackground(new Color(0x545454));
 	            btnEliminar.setForeground(Color.WHITE);
 	            btnEliminar.setFocusPainted(false);
+	            btnEliminar.setIcon(scaledImageIcon);
 	            
 	            gbcBtnEliminar = new GridBagConstraints();
 	            gbcBtnEliminar.gridx = 1;

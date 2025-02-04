@@ -79,11 +79,11 @@ public class AgregarEquipo extends JFrame {
 
 		logoLabel = new JLabel("Logo del equipo:");
 		logoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		logoLabel.setBounds(20, 20, 200, 30);
+		logoLabel.setBounds(61, 30, 200, 30);
 		panelIzquierdo.add(logoLabel);
 
 		btnLogo = new BotonRedondeado("Cargar", null);
-		btnLogo.setBounds(250, 20, 100, 30);
+		btnLogo.setBounds(291, 30, 100, 30);
 		btnLogo.setBackground(new Color(64, 64, 64));
 		btnLogo.setForeground(Color.WHITE);
 		btnLogo.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -93,46 +93,46 @@ public class AgregarEquipo extends JFrame {
 
 		nombreEquipoLabel = new JLabel("Nombre del equipo:");
 		nombreEquipoLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		nombreEquipoLabel.setBounds(20, 70, 200, 30);
+		nombreEquipoLabel.setBounds(61, 80, 200, 30);
 		panelIzquierdo.add(nombreEquipoLabel);
 
 		nombreEquipoField = new TextoRedondeado(20);
 		nombreEquipoField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		nombreEquipoField.setBounds(20, 100, 330, 30);
+		nombreEquipoField.setBounds(61, 110, 330, 30);
 		panelIzquierdo.add(nombreEquipoField);
 
 		nombreEntrenadorLabel = new JLabel("Nombre y apellidos del entrenador:");
 		nombreEntrenadorLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		nombreEntrenadorLabel.setBounds(20, 152, 255, 30);
+		nombreEntrenadorLabel.setBounds(61, 162, 255, 30);
 		panelIzquierdo.add(nombreEntrenadorLabel);
 
 		nombreEntrenadorField = new TextoRedondeado(20);
 		nombreEntrenadorField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		nombreEntrenadorField.setBounds(20, 182, 330, 30);
+		nombreEntrenadorField.setBounds(61, 192, 330, 30);
 		panelIzquierdo.add(nombreEntrenadorField);
 
 		estadioLabel = new JLabel("Estadio:");
 		estadioLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		estadioLabel.setBounds(20, 232, 200, 30);
+		estadioLabel.setBounds(61, 242, 200, 30);
 		panelIzquierdo.add(estadioLabel);
 
 		estadioField = new TextoRedondeado(20);
 		estadioField.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		estadioField.setBounds(20, 262, 330, 30);
+		estadioField.setBounds(61, 272, 330, 30);
 		panelIzquierdo.add(estadioField);
 
 		fundacionLabel = new JLabel("Año de fundación:");
 		fundacionLabel.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		fundacionLabel.setBounds(20, 312, 200, 30);
+		fundacionLabel.setBounds(61, 322, 200, 30);
 		panelIzquierdo.add(fundacionLabel);
 
 		anioFundacion = new TextoRedondeado(20);
 		anioFundacion.setFont(new Font("SansSerif", Font.PLAIN, 16));
-		anioFundacion.setBounds(20, 342, 108, 30);
+		anioFundacion.setBounds(61, 352, 108, 30);
 		panelIzquierdo.add(anioFundacion);
 
 		btnAgregarJugador = new BotonRedondeado("Agregar Jugador", null);
-		btnAgregarJugador.setBounds(20, 450, 155, 40);
+		btnAgregarJugador.setBounds(56, 450, 155, 40);
 		btnAgregarJugador.setBackground(new Color(0xf46b20));
 		btnAgregarJugador.setForeground(Color.WHITE);
 		btnAgregarJugador.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -183,7 +183,7 @@ public class AgregarEquipo extends JFrame {
 		panelIzquierdo.add(btnAgregarJugador);
 
 		btnGuardar = new BotonRedondeado("Guardar", null);
-		btnGuardar.setBounds(200, 450, 155, 40);
+		btnGuardar.setBounds(236, 450, 155, 40);
 		btnGuardar.setBackground(new Color(0x13427e));
 		btnGuardar.setForeground(Color.WHITE);
 		btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));

@@ -4,6 +4,7 @@ package LPB;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +35,9 @@ public class MenuTemporadas extends JFrame {
     private JScrollPane scrollPane;
 	private JLabel titulo;
 	private JLabel subtitulo;
+	private JLabel leyendaFinalizada;
+	private JLabel leyendaActiva;
+	private JLabel leyendaEnProceso;
 	private BotonRedondeado btnTemporada;
 	private BotonRedondeado btnNuevaTemporada;
 	private BotonRedondeado btnEliminar;
@@ -98,6 +102,24 @@ public class MenuTemporadas extends JFrame {
         panelDerecho.add(scrollPane);
         
         listarTemporadas();
+        
+        leyendaFinalizada = new JLabel("●");
+        leyendaFinalizada.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        leyendaFinalizada.setForeground(new Color(255, 140, 0));
+        leyendaFinalizada.setBounds(37, 430, 15, 20);
+        panelDerecho.add(leyendaFinalizada);
+        
+        leyendaActiva = new JLabel("●");
+        leyendaActiva.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        leyendaActiva.setForeground(new Color(0, 200, 0));
+        leyendaActiva.setBounds(37, 450, 15, 20);
+        panelDerecho.add(leyendaActiva);
+
+        leyendaEnProceso = new JLabel("●");
+        leyendaEnProceso.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        leyendaEnProceso.setForeground(new Color(128, 128, 128));
+        leyendaEnProceso.setBounds(37, 470, 15, 20);
+        panelDerecho.add(leyendaEnProceso);
 		
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -116,6 +138,24 @@ public class MenuTemporadas extends JFrame {
 		});
 
 		getContentPane().add(panelDerecho);
+		
+		JLabel lblTemporadaFinalizada = new JLabel("Temporada Finalizada");
+		lblTemporadaFinalizada.setForeground(new Color(31, 31, 31));
+		lblTemporadaFinalizada.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		lblTemporadaFinalizada.setBounds(52, 430, 150, 20);
+		panelDerecho.add(lblTemporadaFinalizada);
+		
+		JLabel lblTemporadaActiva = new JLabel("Temporada Activa");
+		lblTemporadaActiva.setForeground(new Color(31, 31, 31));
+		lblTemporadaActiva.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		lblTemporadaActiva.setBounds(52, 450, 125, 20);
+		panelDerecho.add(lblTemporadaActiva);
+		
+		JLabel lblTemporadaEnProceso = new JLabel("Temporada En Proceso");
+		lblTemporadaEnProceso.setForeground(new Color(31, 31, 31));
+		lblTemporadaEnProceso.setFont(new Font("SansSerif", Font.PLAIN, 14));
+		lblTemporadaEnProceso.setBounds(52, 470, 160, 20);
+		panelDerecho.add(lblTemporadaEnProceso);
 	}
 	
     private void listarTemporadas() {
@@ -157,14 +197,27 @@ public class MenuTemporadas extends JFrame {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
 
         if (files != null) {
-            for (File file : files) {
+            for (File file : files) {                
                 String nombreTemporada = file.getName().replace("temporada_", "").replace(".ser", "");
                 btnTemporada = new BotonRedondeado("Temporada " + nombreTemporada, null);
                 btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
-                btnTemporada.setBackground(new Color(0xf46b20));
                 btnTemporada.setForeground(Color.WHITE);
                 btnTemporada.setBounds(0, yPosition, 220, 40);
                 btnTemporada.setFocusPainted(false);
+                
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                    Temporada temporada = (Temporada) ois.readObject();
+                    if ("Activa".equals(temporada.getEstado())) {
+                    	btnTemporada.setBackground(new Color(0, 200, 0));
+                    } else if ("Finalizada".equals(temporada.getEstado())) {
+                    	btnTemporada.setBackground(new Color(255, 140, 0));
+                    } else {
+                    	btnTemporada.setBackground(new Color(128, 128, 128));
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                    btnTemporada.setBackground(new Color(128, 128, 128));
+                }
                 
                 btnTemporada.addActionListener(e -> {
                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
@@ -177,12 +230,18 @@ public class MenuTemporadas extends JFrame {
                     }
                 });
                 
-                btnEliminar = new BotonRedondeado("-", null);
+        		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/papelera.png"));
+        		Image originalImage = originalImageIcon.getImage();
+        		Image scaledImage = originalImage.getScaledInstance(25, 25, Image.SCALE_SMOOTH);
+        		ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
+                
+                btnEliminar = new BotonRedondeado("", null);
                 btnEliminar.setFont(new Font("SansSerif", Font.BOLD, 16));
                 btnEliminar.setBackground(Color.RED);
                 btnEliminar.setForeground(Color.WHITE);
                 btnEliminar.setBounds(230, yPosition, 45, 40);
                 btnEliminar.setFocusPainted(false);
+	            btnEliminar.setIcon(scaledImageIcon);
 
                 btnEliminar.addActionListener(e -> {
                     int confirm = JOptionPane.showConfirmDialog(this, 

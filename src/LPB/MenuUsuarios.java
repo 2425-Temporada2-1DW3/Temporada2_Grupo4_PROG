@@ -129,6 +129,27 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         tablaUsuarios.setBorder(null);
         tablaUsuarios.setShowGrid(false);
         
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer();
+        cellRenderer.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
+        tablaUsuarios.setDefaultRenderer(Object.class, cellRenderer);
+        
+        tablaUsuarios.getColumnModel().getColumn(2).setCellRenderer(new DefaultTableCellRenderer() {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+                JLabel label = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                
+                if (value != null && !"N/A".equals(value.toString())) {
+                    label.setToolTipText(value.toString());
+                } else {
+                    label.setToolTipText(null);
+                }
+                
+                return label;
+            }
+        });
+        
 	    header = tablaUsuarios.getTableHeader();
 	    header.setPreferredSize(new Dimension(header.getWidth(), 30));
 	    header.setDefaultRenderer(new DefaultTableCellRenderer() {
@@ -469,6 +490,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	            usuarioExistente.setContrasena(contrasena);
     	            usuarioExistente.setRol(rol);
     	            usuarioExistente.setEquipo(equipoSeleccionado);
+    	            equipoSeleccionado = null;
 
     	            // Actualizar la lista visual
     	            actualizarTabla();
@@ -483,6 +505,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	            // Si no hay un usuario seleccionado, se crea uno nuevo
     	            nuevoUsuario = new Usuario(usuario, contrasena, rol, equipoSeleccionado);
     	            listaUsuarios.add(nuevoUsuario);
+    	            equipoSeleccionado = null;
     	            actualizarTabla();
 
     	            // Registrar el evento en el log

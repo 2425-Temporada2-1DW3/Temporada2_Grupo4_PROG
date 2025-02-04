@@ -747,6 +747,23 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	            label.setForeground(Color.WHITE);
 	            label.setHorizontalAlignment(column == 1 ? JLabel.LEFT : JLabel.CENTER);
 	            label.setBorder(BorderFactory.createEmptyBorder());
+	            
+	            if (value != null) {
+	                String tooltipText = switch (column) {
+	                    case 2 -> "Puntos";
+	                    case 3 -> "Partidos jugados";
+	                    case 4 -> "Partidos ganados";
+	                    case 5 -> "Partidos perdidos";
+	                    case 6 -> "Puntos a favor";
+	                    case 7 -> "Puntos en contra";
+	                    case 8 -> "Diferencia de puntos";
+	                    default -> null;
+	                };
+	                label.setToolTipText(tooltipText);
+	            } else {
+	                label.setToolTipText(null);
+	            }
+	            
 	            return label;
 	        }
 	    });
