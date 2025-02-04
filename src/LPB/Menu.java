@@ -12,6 +12,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -177,7 +179,7 @@ public class Menu extends JFrame {
 		btnExportarXML = new BotonRedondeado("Exportar datos", (ImageIcon) null);
 		btnExportarXML.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				exportarXML();
+				exportarDatos();
 			}
 		});
 		btnExportarXML.setForeground(Color.WHITE);
@@ -188,12 +190,11 @@ public class Menu extends JFrame {
 		panelDerecho.add(btnExportarXML);
 	}
 	
-	public void exportarXML() {
+	public void exportarDatos() {
         JnaFileChooser fileChooser = new JnaFileChooser();
         fileChooser.setTitle("Guardar como...");
         fileChooser.addFilter("XML (*.xml)", "xml");
         fileChooser.setDefaultFileName("temporadas.xml");
-        //fileChooser.setOverwritePrompt(true);
 
         if (!fileChooser.showSaveDialog(this)) {
         	return;
@@ -245,10 +246,51 @@ public class Menu extends JFrame {
 	        bw.close();
 	        pw.close();
 	        fichero.close();
+	        
+	        // Preguntar si se quieren exportar imágenes
+	        int respuesta = JOptionPane.showConfirmDialog(this, "¿Deseas exportar las imágenes de las temporadas?", "Exportar imágenes", JOptionPane.YES_NO_OPTION);
+
+	        if (respuesta == JOptionPane.YES_OPTION) {
+	            JnaFileChooser imgChooser = new JnaFileChooser();
+	            imgChooser.setTitle("Seleccionar carpeta de destino");
+	            imgChooser.setMode(JnaFileChooser.Mode.Directories);
+
+	            if (imgChooser.showOpenDialog(this)) {
+	                File carpetaDestino = imgChooser.getSelectedFile();
+	                File carpetaOrigen = new File("src/imagenes/temporadas");
+
+	                if (!carpetaOrigen.exists() || !carpetaOrigen.isDirectory()) {
+	                    JOptionPane.showMessageDialog(this, "No se encontró la carpeta de imágenes de temporadas.", "Error", JOptionPane.ERROR_MESSAGE);
+	                    return;
+	                }
+
+	                try {
+	                    copiarCarpeta(carpetaOrigen, new File(carpetaDestino, "temporadas"));
+	                } catch (IOException e) {
+	                    JOptionPane.showMessageDialog(this, "Error al copiar las imágenes: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+	                }
+	            }
+	        }
 
 	        JOptionPane.showMessageDialog(this, "Los datos se han exportado correctamente.", "Info", JOptionPane.INFORMATION_MESSAGE);
 	    } catch (IOException e) {
 	    	JOptionPane.showMessageDialog(this, "Hubo un error al exportar los datos.", "Error", JOptionPane.ERROR_MESSAGE);
+	    }
+	}
+	
+	private void copiarCarpeta(File origen, File destino) throws IOException {
+	    if (!destino.exists()) {
+	        destino.mkdirs();
+	    }
+
+	    for (File archivo : origen.listFiles()) {
+	        File destinoArchivo = new File(destino, archivo.getName());
+
+	        if (archivo.isDirectory()) {
+	            copiarCarpeta(archivo, destinoArchivo);
+	        } else {
+	            Files.copy(archivo.toPath(), destinoArchivo.toPath(), StandardCopyOption.REPLACE_EXISTING);
+	        }
 	    }
 	}
 }

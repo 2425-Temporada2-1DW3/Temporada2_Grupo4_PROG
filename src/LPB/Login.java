@@ -2,9 +2,11 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Toolkit;
-import java.util.List;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -16,8 +18,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
-import javax.swing.SwingWorker;
 import javax.swing.UIManager;
+import javax.swing.Timer;
 
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
@@ -114,66 +116,57 @@ public class Login extends JFrame {
 
 		MenuUsuarios.cargarUsuarios();
 		
-        btnIniciarSesion.addActionListener(e -> {
-            String usuario = txtUsuario.getText().trim();
-            String contrasena = new String(txtPassword.getPassword()).trim();
+		btnIniciarSesion.addActionListener(e -> {
+		    String usuario = txtUsuario.getText().trim();
+		    String contrasena = new String(txtPassword.getPassword()).trim();
 
+		    try {
+		        Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
+		        if (user != null) {
+		            logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
 
-            try {
-                Usuario user = MenuUsuarios.validarUsuario(usuario, contrasena);
-                if (user != null) {
-                    logClase.logAction("El usuario " + usuario + " ha iniciado sesión");
-
-                    loadingDialog = new JDialog();
-                    loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
-                    loadingDialog.setSize(250, 100);
-                    loadingDialog.setLocationRelativeTo(null);
-                    loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-                    loadingDialog.setModal(true);
-
-                    loadingLabel = new JLabel("Iniciando sesión   ", SwingConstants.CENTER);
+		            loadingDialog = new JDialog();
+		            loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
+		            loadingDialog.setSize(350, 100);
+		            loadingDialog.setLocationRelativeTo(null);
+		            loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+		            loadingDialog.setModal(true);
+		            
+                    loadingLabel = new JLabel("Iniciando sesión", SwingConstants.CENTER);
                     loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
                     loadingDialog.add(loadingLabel);
 
-                    SwingWorker<Void, String> worker = new SwingWorker<>() {
-                        @Override
-                        protected Void doInBackground() throws InterruptedException {
-                            int count = 0;
-                            while (count < 6) {
-                                String dots = ".".repeat(count % 4);
-                                String spaces = " ".repeat(3 - dots.length());
-                                publish("Iniciando sesión" + dots + spaces);
-                                Thread.sleep(500);
-                                count++;
-                            }
-                            return null;
-                        }
+		            ImageIcon loadingGif = new ImageIcon(getClass().getResource("/imagenes/basketball.gif"));
+		            ImageIcon scaledGif = new ImageIcon(loadingGif.getImage().getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH));
 
-                        @Override
-                        protected void process(List<String> chunks) {
-                            loadingLabel.setText(chunks.get(chunks.size() - 1));
-                        }
+		            JLabel gifLabel = new JLabel(scaledGif, SwingConstants.LEFT);
+		            loadingDialog.add(gifLabel);
+		            
+		            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+		            panel.setBackground(new Color(255, 243, 204));
+		            panel.add(loadingLabel);
+		            panel.add(gifLabel);
 
-                        @Override
-                        protected void done() {
-                            loadingDialog.dispose();
-                        }
-                    };
-
-                    worker.execute();
-                    loadingDialog.setVisible(true);
-
-                    new Menu(user.getRol(), user.getUsuario()).setVisible(true);
-                    dispose();
-                } else {
-                    logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
-                    JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception ex) {
-                logClase.logError("Error durante la validación de usuario", ex);
-                JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.", "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
+		            loadingDialog.setVisible(true);
+		            
+		            int delay = 3000;
+		            ActionListener taskPerformer = new ActionListener() {
+		                public void actionPerformed(ActionEvent evt) {
+			                loadingDialog.dispose();
+			                new Menu(user.getRol(), user.getUsuario()).setVisible(true);
+			                dispose();
+		                }
+		            };
+		            new Timer(delay, taskPerformer).start();
+		        } else {
+		            logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
+		            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+		    } catch (Exception ex) {
+		        logClase.logError("Error durante la validación de usuario", ex);
+		        JOptionPane.showMessageDialog(null, "Ocurrió un error inesperado.", "Error", JOptionPane.ERROR_MESSAGE);
+		    }
+		});
 
         txtPassword.addActionListener(_ -> btnIniciarSesion.doClick());
 
