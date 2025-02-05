@@ -400,8 +400,21 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				new MenuTemporadas(rol, usuario).setVisible(true);
-				dispose();
+			    if (datosModificados) {
+			        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+
+			        if (opcion == JOptionPane.YES_OPTION) {
+			        	guardarResultados();
+			        } else if (opcion == JOptionPane.CANCEL_OPTION) {
+			        	return;
+			        }
+			        
+					new MenuTemporadas(rol, usuario).setVisible(true);
+					dispose();
+			    } else {
+					new MenuTemporadas(rol, usuario).setVisible(true);
+					dispose();
+			    }
 			}
 		});
 		btnVolverMenu.setForeground(Color.WHITE);

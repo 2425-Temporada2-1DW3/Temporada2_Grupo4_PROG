@@ -16,7 +16,7 @@ public class ExportarPDF {
     public void exportar(JTable tabla, String ruta, Temporada temporada) {
         // 🔹 Configurar el documento en horizontal (landscape) y color de fondo #FFF6C6
         BaseColor colorFondo = new BaseColor(255, 246, 198); // Color #FFF6C6
-        Document documento = new Document(PageSize.A4.rotate(), 30, 30, 50, 50);
+        Document documento = new Document(PageSize.A4.rotate(), 30, 30, 10, 50);
 
         try {
             PdfWriter writer = PdfWriter.getInstance(documento, new FileOutputStream(new File(ruta)));
@@ -78,7 +78,6 @@ public class ExportarPDF {
             Paragraph fecha = new Paragraph("Generado el: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date()), fontFecha);
             fecha.setAlignment(Element.ALIGN_RIGHT);
             documento.add(fecha);
-
             documento.add(new Paragraph("\n")); 
 
             // 🔹 Crear tabla PDF
@@ -99,6 +98,7 @@ public class ExportarPDF {
             for (int i = 0; i < modelo.getColumnCount(); i++) {
                 PdfPCell cell = new PdfPCell(new Phrase(modelo.getColumnName(i), fontEncabezado));
                 cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+                cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
                 cell.setBackgroundColor(colorEncabezado);
                 cell.setPadding(8);
                 pdfTable.addCell(cell);
@@ -106,22 +106,49 @@ public class ExportarPDF {
 
             // 🔹 Agregar datos con filas alternas en gris claro y gris medio claro
             Font fontDatos = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL, BaseColor.BLACK);
-            BaseColor colorFilaPar = new BaseColor(234, 234, 234); // Gris claro #EAEAEA
-            BaseColor colorFilaImpar = new BaseColor(214, 214, 214); // Gris medio claro #D6D6D6
+            BaseColor colorFilaPar = new BaseColor(234, 234, 234);
+            BaseColor colorFilaImpar = new BaseColor(214, 214, 214);
 
             for (int i = 0; i < modelo.getRowCount(); i++) {
                 for (int j = 0; j < modelo.getColumnCount(); j++) {
-                    PdfPCell cell = new PdfPCell(new Phrase(modelo.getValueAt(i, j).toString(), fontDatos));
-                    cell.setHorizontalAlignment(Element.ALIGN_CENTER);
-                    cell.setPadding(6);
+                    PdfPCell cell;
 
-                    // Alternar colores de fondo en las filas
-                    if (i % 2 == 0) {
-                        cell.setBackgroundColor(colorFilaPar);
+                    if (j == 1) { // Columna "Equipo" (índice 1)
+                        String equipoNombre = modelo.getValueAt(i, j).toString();
+                        String rutaImagen = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + equipoNombre + "/" + equipoNombre + ".png";
+
+                        PdfPTable equipoTable = new PdfPTable(2);
+                        equipoTable.setWidths(new float[]{30f, 70f});
+
+                        try {
+                            Image equipoLogo = Image.getInstance(rutaImagen);
+                            equipoLogo.scaleToFit(30, 30);
+                            PdfPCell cellImagen = new PdfPCell(equipoLogo);
+                            cellImagen.setBorder(Rectangle.NO_BORDER);
+                            cellImagen.setHorizontalAlignment(Element.ALIGN_RIGHT);
+                            cellImagen.setPaddingRight(10f);
+                            equipoTable.addCell(cellImagen);
+                        } catch (Exception e) {
+                            PdfPCell cellImagen = new PdfPCell(new Phrase("No Img"));
+                            cellImagen.setBorder(Rectangle.NO_BORDER);
+                            cellImagen.setHorizontalAlignment(Element.ALIGN_CENTER);
+                            equipoTable.addCell(cellImagen);
+                        }
+
+                        PdfPCell cellTextoEquipo = new PdfPCell(new Phrase(equipoNombre, fontDatos));
+                        cellTextoEquipo.setBorder(Rectangle.NO_BORDER);
+                        cellTextoEquipo.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                        equipoTable.addCell(cellTextoEquipo);
+
+                        cell = new PdfPCell(equipoTable);
                     } else {
-                        cell.setBackgroundColor(colorFilaImpar);
+                        cell = new PdfPCell(new Phrase(modelo.getValueAt(i, j).toString(), fontDatos));
+                        cell.setHorizontalAlignment(Element.ALIGN_CENTER);
                     }
 
+                    cell.setPadding(6);
+                    cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+                    cell.setBackgroundColor((i % 2 == 0) ? colorFilaPar : colorFilaImpar);
                     pdfTable.addCell(cell);
                 }
             }
