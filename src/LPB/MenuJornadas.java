@@ -791,7 +791,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	        if (fileChooser.showSaveDialog(this)) {
 	            File archivo = fileChooser.getSelectedFile();
 	            ExportarPDF exportador = new ExportarPDF();
-	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath());
+	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath(), temporada);
 	        }
 	    });
 
