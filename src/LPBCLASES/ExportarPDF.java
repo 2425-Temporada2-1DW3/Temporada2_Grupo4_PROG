@@ -78,7 +78,6 @@ public class ExportarPDF {
             Paragraph fecha = new Paragraph("Generado el: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date()), fontFecha);
             fecha.setAlignment(Element.ALIGN_RIGHT);
             documento.add(fecha);
-
             documento.add(new Paragraph("\n")); 
 
             // 🔹 Crear tabla PDF
