@@ -2,11 +2,12 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
 import java.awt.Toolkit;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -18,8 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.SwingWorker;
 import javax.swing.UIManager;
-import javax.swing.Timer;
 
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.PasswordRedondeado;
@@ -127,37 +128,48 @@ public class Login extends JFrame {
 
 		            loadingDialog = new JDialog();
 		            loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
-		            loadingDialog.setSize(350, 100);
+		            loadingDialog.setSize(250, 100);
 		            loadingDialog.setLocationRelativeTo(null);
 		            loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-		            loadingDialog.setModal(true);
-		            
-                    loadingLabel = new JLabel("Iniciando sesión", SwingConstants.CENTER);
-                    loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
-                    loadingDialog.add(loadingLabel);
+		            loadingDialog.setModal(false);
+
+		            loadingLabel = new JLabel("Iniciando sesión...", SwingConstants.CENTER);
+		            loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
 		            ImageIcon loadingGif = new ImageIcon(getClass().getResource("/imagenes/basketball.gif"));
-		            ImageIcon scaledGif = new ImageIcon(loadingGif.getImage().getScaledInstance(80, 80, java.awt.Image.SCALE_SMOOTH));
-
+		            ImageIcon scaledGif = new ImageIcon(loadingGif.getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
 		            JLabel gifLabel = new JLabel(scaledGif, SwingConstants.LEFT);
-		            loadingDialog.add(gifLabel);
-		            
-		            JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-		            panel.setBackground(new Color(255, 243, 204));
-		            panel.add(loadingLabel);
-		            panel.add(gifLabel);
 
-		            loadingDialog.setVisible(true);
+		            JPanel panel = new JPanel(new GridBagLayout());
+		            panel.setBackground(new Color(255, 243, 204));
+		            GridBagConstraints gbc = new GridBagConstraints();
+		            gbc.gridx = 0;
+		            gbc.gridy = 0;
+		            gbc.insets = new Insets(5, 5, 5, 5);
+		            panel.add(loadingLabel, gbc);
 		            
-		            int delay = 3000;
-		            ActionListener taskPerformer = new ActionListener() {
-		                public void actionPerformed(ActionEvent evt) {
-			                loadingDialog.dispose();
-			                new Menu(user.getRol(), user.getUsuario()).setVisible(true);
-			                dispose();
+		            gbc.gridx = 1;
+		            gbc.insets = new Insets(5, 5, 5, 10);
+		            panel.add(gifLabel, gbc);
+
+		            loadingDialog.add(panel);
+		            loadingDialog.setVisible(true);
+
+		            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+		                @Override
+		                protected Void doInBackground() throws Exception {
+		                    Thread.sleep(3000);
+		                    return null;
+		                }
+
+		                @Override
+		                protected void done() {
+		                    loadingDialog.dispose();
+		                    new Menu(user.getRol(), user.getUsuario()).setVisible(true);
+		                    dispose();
 		                }
 		            };
-		            new Timer(delay, taskPerformer).start();
+		            worker.execute();
 		        } else {
 		            logClase.logAction("Intento de inicio de sesión fallido para el usuario: " + usuario);
 		            JOptionPane.showMessageDialog(null, "Usuario o contraseña incorrectos.", "Error", JOptionPane.ERROR_MESSAGE);
