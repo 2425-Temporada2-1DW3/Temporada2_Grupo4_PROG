@@ -553,11 +553,8 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     	        usuarioSeleccionadoIndex = -1;
         	// === FIN: LOGGING PARA ELIMINAR USUARIO ===
     	    } else if (source == btnVolver) {
-        	// === INICIO: LOGGING PARA VOLVER ===
-    	    	logClase.logAction("El administrador ha salido del menú de usuarios.");
     	        new Menu("Administrador", "Admin").setVisible(true);
     	        this.dispose();
-    	    // === FIN: LOGGING PARA VOLVER ===
 		    } else if (source == btnLimpiar) {
 		    	tablaUsuarios.clearSelection();
     	        textUsuario.setText("");
