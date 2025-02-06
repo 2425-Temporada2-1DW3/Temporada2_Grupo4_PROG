@@ -293,7 +293,7 @@ public class AgregarEquipo extends JFrame {
 		            );
 		        }
 		        // 🔴 Log cuando se elimina un jugador
-                logClase.logAction("Jugador eliminado: " + nombre);
+                logClase.logAction("Jugador " + nombre + " eliminado.");
 		    }
 		});
 		btnEliminarJugador.setForeground(Color.WHITE);

@@ -177,11 +177,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnActivarTemporada.setBackground(new Color(244, 107, 32));
 		btnActivarTemporada.setBounds(285, 85, 165, 30);
 		btnActivarTemporada.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {
-		    	 // === INICIO: LOGGING PARA ACTIVAR TEMPORADA ===
-		        logClase.logAction("Intentando activar la temporada: " + temporada.getPeriodo());
-		        // === FIN: LOGGING PARA ACTIVAR TEMPORADA ===
-		        
+		    public void actionPerformed(ActionEvent e) {		        
 		        int contador = 0;
 		        for (int i = 0; i < temporada.getEquipos().size(); i++) {
 		        	contador++;
@@ -250,7 +246,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 						temporada.guardarTemporada(temporada);
 
 		                // === INICIO: LOGGING PARA TEMPORADA FINALIZADA ===
-		                logClase.logAction("La temporada ha sido finalizada: " + temporada.getPeriodo());
+		                logClase.logAction("La temporada " + temporada.getPeriodo() + " ha sido finalizada.");
 		                // === FIN: LOGGING PARA TEMPORADA FINALIZADA ===
 					} catch (IOException e1) {
 						 // === INICIO: LOGGING PARA ERROR AL FINALIZAR TEMPORADA ===
@@ -336,9 +332,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		btnRestablecer.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
-		    	  // === INICIO: LOGGING PARA RESTABLECER PUNTOS ===
-		        logClase.logAction("Intentando restablecer los puntos de los partidos para la jornada: " + jornadaSeleccionada.getNumero());
-		        // === FIN: LOGGING PARA RESTABLECER PUNTOS ===
 		        if (jornadaSeleccionada != null) {
 		        	Component view = scrollPane.getViewport().getView();
 		        	

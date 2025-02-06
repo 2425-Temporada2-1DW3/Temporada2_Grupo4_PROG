@@ -595,9 +595,6 @@ public class MenuJugadores extends JFrame implements ActionListener, WindowListe
         try {
             temporadaActiva.guardarTemporada(temporadaActiva);
             cargarJugadores();
-
-            // 🔴 Log cuando se guardan los jugadores
-            logClase.logAction("Datos de jugadores y fotos guardados correctamente en la temporada.");
         } catch (IOException e) {
             JOptionPane.showMessageDialog(this, "Error al guardar la temporada: " + e.getMessage(), "Error al guardar", JOptionPane.ERROR_MESSAGE);
             logClase.logError("Error al guardar la temporada", e);
