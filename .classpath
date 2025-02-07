@@ -20,5 +20,6 @@
 	<classpathentry kind="lib" path="lib/jaxb-jxc.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-xjc.jar"/>
 	<classpathentry kind="lib" path="lib/angus-activation.jar"/>
+	<classpathentry kind="lib" path="lib/junit-jupiter-5.11.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
