@@ -70,6 +70,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private BotonRedondeado btnRestablecer;
 	private BotonRedondeado btnVolverMenu;
 	private BotonRedondeado btnExportarPDF;
+	private BotonRedondeado btnEquipos;
 	
 	private JLabel lblTemporada;
 	private JLabel lblAniosTemporada;
@@ -175,7 +176,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnActivarTemporada.setFont(new Font("SansSerif", Font.BOLD, 14));
 		btnActivarTemporada.setFocusPainted(false);
 		btnActivarTemporada.setBackground(new Color(244, 107, 32));
-		btnActivarTemporada.setBounds(285, 85, 165, 30);
+		btnActivarTemporada.setBounds(285, 82, 165, 30);
 		btnActivarTemporada.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {		        
 		        int contador = 0;
@@ -196,7 +197,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		        	logClase.logError("No se puede activar la temporada: No hay equipos registrados.", null);
 		            // === FIN: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
 		        	JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque no hay equipos registrados.", "Error", JOptionPane.ERROR_MESSAGE);
-		        } else {
+		        } else {		            
 			        comboBoxJornadas.removeAllItems();
 			        
 			        for (Jornada jornada : temporada.getJornadas()) {
@@ -232,7 +233,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnFinalizarTemporada.setFont(new Font("SansSerif", Font.BOLD, 14));
 		btnFinalizarTemporada.setFocusPainted(false);
 		btnFinalizarTemporada.setBackground(new Color(244, 107, 32));
-		btnFinalizarTemporada.setBounds(285, 85, 180, 30);
+		btnFinalizarTemporada.setBounds(285, 82, 180, 30);
 		btnFinalizarTemporada.addActionListener(new ActionListener() {
 		    public void actionPerformed(ActionEvent e) {
 		    	int dialogResult = JOptionPane.showConfirmDialog(null, "Vas a finalizar la temporada. No podrás modificar los resultados.", "Aviso", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
@@ -418,8 +419,35 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 		
-		mostrarClasificacion(temporada);
+		btnEquipos = new BotonRedondeado("Ir a equipos", null);
+		btnEquipos.setForeground(Color.WHITE);
+		btnEquipos.setFont(new Font("SansSerif", Font.BOLD, 16));
+		btnEquipos.setFocusPainted(false);
+		btnEquipos.setBackground(new Color(244, 107, 32));
+		btnEquipos.setBounds(170, 150, 130, 30);
+		btnEquipos.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				new EquiposTemporada(rol, usuario, temporada).setVisible(true);
+				dispose();
+			}
+		});
+		panelIzquierdo.add(btnEquipos);
+		
 		verificarPuntosCompletados();
+		
+		if (temporada.getEstado().equals("En proceso")) {
+            btnAdelante.setVisible(false);
+            btnAtras.setVisible(false);
+            comboBoxJornadas.setVisible(false);
+            btnEquipos.setVisible(true);
+		} else {
+            btnAdelante.setVisible(true);
+            btnAtras.setVisible(true);
+            comboBoxJornadas.setVisible(true);
+            btnEquipos.setVisible(false);
+    		mostrarClasificacion(temporada);
+		}
 	}
 	
 	// Método cargarPartidos()

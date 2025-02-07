@@ -62,13 +62,14 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	private Map<String, List<Equipo>> equiposPorTemporada;
 	private String rol;
 	private String usuario;
-	private Temporada temporadaSeleccionada;
+	private Temporada temporadaSeleccionada = null;
+	private String temporadaActiva = null;
 	private List<Equipo> equipos;
 
 	/**
 	 * Create the frame.
 	 */
-	public EquiposTemporada(String rol, String usuario) {
+	public EquiposTemporada(String rol, String usuario, Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
@@ -79,6 +80,9 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		
 		this.rol = rol;
 		this.usuario = usuario;
+		if (temporada != null) {
+			this.temporadaSeleccionada = temporada;
+		}
 
 		panelSuperior = new JPanel();
 		panelSuperior.setBackground(new Color(255, 243, 205));
@@ -113,33 +117,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	    SelectTemporadas.setBackground(new Color(0, 64, 128));
 	    SelectTemporadas.setForeground(new Color(40, 40, 40));
 	    SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
-	    SelectTemporadas.setBounds(545, 27, 200, 40);
-	    
-	    SelectTemporadas.addActionListener(e -> {
-	        String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
-	        if (selectedTemporada != null) {
-	            String periodo = selectedTemporada.replace("Temporada ", "");
-	            try {
-	                temporadaSeleccionada = Temporada.cargarTemporada(periodo);
-	                
-	                if (temporadaSeleccionada != null) {
-	                    equipos = temporadaSeleccionada.getEquipos();
-	                    if (equipos != null) {
-	                        equiposPorTemporada.put(periodo, equipos);
-	                        actualizarPanelEquipos(periodo);
-	                    } else {
-	                        JOptionPane.showMessageDialog(null, "No se encontraron equipos para la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
-	                    }
-	                } else {
-	                    JOptionPane.showMessageDialog(null, "No se pudo cargar la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
-	                }
-	            } catch (ClassNotFoundException | IOException e1) {
-	                e1.printStackTrace();
-	                JOptionPane.showMessageDialog(null, "Error al cargar los datos de la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
-	            }
-	        }
-	    });
-	    
+	    SelectTemporadas.setBounds(545, 27, 200, 40);	    
 	    panelInferior.add(SelectTemporadas);
 	    
 		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/plus.png"));
@@ -236,11 +214,14 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		getContentPane().add(panelInferior);
 
 	    equiposPorTemporada = new HashMap<>();
-	    listarTemporadas();
 	    
-	    if (SelectTemporadas.getItemCount() > 0) {
-	        String temporadaActiva = (String) SelectTemporadas.getSelectedItem();
-	        actualizarPanelEquipos(temporadaActiva.replace("Temporada ", ""));
+	    SelectTemporadas.removeActionListener(selectListener);
+	    listarTemporadas();
+	    SelectTemporadas.addActionListener(selectListener);
+
+	    if (temporadaActiva != null) {
+	        SelectTemporadas.setSelectedItem("Temporada " + temporadaActiva);
+	        actualizarPanelEquipos(temporadaActiva);
 	    }
 	}
 	
@@ -267,18 +248,21 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        System.out.println("La carpeta 'data' no existe o está vacía.");
 	    }
 
-	    String temporadaActiva = null;
-	    for (String temporada : temporadas) {
-	        try {
-	            Temporada temp = Temporada.cargarTemporada(temporada);
-	            if (temp != null && temp.getEstado().equals("Activa")) {
-	                temporadaActiva = temporada;
-	                break;
-	            }
-	        } catch (ClassNotFoundException | IOException e) {
-	            System.out.println("Error al cargar los datos de la temporada: " + temporada);
-	            e.printStackTrace();
-	        }
+	    if (temporadaSeleccionada == null) {
+		    for (String temporada : temporadas) {
+		        try {
+		            Temporada temp = Temporada.cargarTemporada(temporada);
+		            if (temp != null && temp.getEstado().equals("Activa")) {
+		                temporadaActiva = temporada;
+		                break;
+		            }
+		        } catch (ClassNotFoundException | IOException e) {
+		            System.out.println("Error al cargar los datos de la temporada: " + temporada);
+		            e.printStackTrace();
+		        }
+		    }
+	    } else {
+	    	temporadaActiva = temporadaSeleccionada.getPeriodo();
 	    }
 
 	    SelectTemporadas.removeAllItems();
@@ -292,6 +276,31 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	    return temporadas;
 	}
+	
+	private ActionListener selectListener = e -> {
+	    String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
+	    if (selectedTemporada != null) {
+	        String periodo = selectedTemporada.replace("Temporada ", "");
+	        try {
+	            temporadaSeleccionada = Temporada.cargarTemporada(periodo);
+	            
+	            if (temporadaSeleccionada != null) {
+	                equipos = temporadaSeleccionada.getEquipos();
+	                if (equipos != null) {
+	                    equiposPorTemporada.put(periodo, equipos);
+	                    actualizarPanelEquipos(periodo);
+	                } else {
+	                    JOptionPane.showMessageDialog(null, "No se encontraron equipos para la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+	                }
+	            } else {
+	                JOptionPane.showMessageDialog(null, "No se pudo cargar la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+	            }
+	        } catch (ClassNotFoundException | IOException e1) {
+	            e1.printStackTrace();
+	            JOptionPane.showMessageDialog(null, "Error al cargar los datos de la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+	        }
+	    }
+	};
 	
 	private void actualizarTitulo() {
         String title = "LPB Basketball - Equipos";
@@ -373,7 +382,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        if ("Administrador".equals(rol)) {
         		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/papelera.png"));
         		Image originalImage = originalImageIcon.getImage();
-        		Image scaledImage = originalImage.getScaledInstance(40, 40, Image.SCALE_SMOOTH);
+        		Image scaledImage = originalImage.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
         		ImageIcon scaledImageIcon = new ImageIcon(scaledImage);
         		
 	            btnEliminar = new BotonRedondeado("", null);
