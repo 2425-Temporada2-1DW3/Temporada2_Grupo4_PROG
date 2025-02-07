@@ -117,7 +117,7 @@ public class Menu extends JFrame {
 		btnEquipos.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				new EquiposTemporada(rol, usuario).setVisible(true);
+				new EquiposTemporada(rol, usuario, null).setVisible(true);
 				dispose();
 			}
 		});
