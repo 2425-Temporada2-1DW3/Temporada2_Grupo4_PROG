@@ -42,7 +42,10 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
-
+/**
+ * Clase MenuUsuarios que representa la interfaz gráfica para la gestión de usuarios en la aplicación LPB Basketball.
+ * Permite visualizar, agregar, modificar y eliminar usuarios, asignar roles y asociarlos a equipos.
+ */
 public class MenuUsuarios extends JFrame implements ActionListener,Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -74,7 +77,10 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private static boolean actualizacion = false;
 
     private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
-
+    /**
+     * Constructor de la clase MenuUsuarios.
+     * Inicializa la ventana y carga los componentes gráficos.
+     */
     public MenuUsuarios() {
     	
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
@@ -340,7 +346,9 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
 
     
     
-    
+    /**
+     * Actualiza la tabla con la lista de usuarios cargados.
+     */
     private void actualizarTabla() {
         dtm.setRowCount(0);
         
@@ -348,7 +356,11 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         	dtm.addRow(new Object[]{usuario.getUsuario(), usuario.getRol(), usuario.getEquipo() != null ? usuario.getEquipo().getNombre() : "N/A"});
         }
     }
-
+    /**
+     * Carga la lista de usuarios desde un archivo serializado.
+     * 
+     * @return Lista de usuarios cargados.
+     */
     @SuppressWarnings("unchecked")
     public static ArrayList<Usuario> cargarUsuarios() {
         File archivo = new File(ARCHIVO_USUARIOS);
@@ -392,7 +404,11 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         }
         return null; // Usuario no encontrado
     }
-
+    /**
+     * Guarda la lista de usuarios en un archivo serializado.
+     * 
+     * @param usuarios Lista de usuarios a guardar.
+     */
     public static void guardarUsuarios(ArrayList<Usuario> usuarios) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(ARCHIVO_USUARIOS))) {
             oos.writeObject(usuarios);
@@ -405,7 +421,9 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         
         }
     }
-    
+    /**
+     * Carga los equipos disponibles y los agrega al ComboBox de selección.
+     */
     private void cargarEquipos() {
         File dir = new File("data");
         
@@ -432,7 +450,11 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
             }
         }
     }
-
+    /**
+     * Maneja las acciones de los botones de la interfaz.
+     * 
+     * @param e Evento de acción.
+     */
     @Override
     public void actionPerformed(ActionEvent e) {
     	 Object source = e.getSource();

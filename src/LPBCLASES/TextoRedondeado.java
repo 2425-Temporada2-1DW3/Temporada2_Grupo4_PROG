@@ -8,10 +8,16 @@ import javax.swing.BorderFactory;
 import javax.swing.JTextField;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
-
+/**
+ * Clase TextoRedondeado que extiende JTextField y dibuja un cuadro de texto
+ * con bordes redondeados. Cambia el color del borde cuando tiene el foco.
+ */
 public class TextoRedondeado extends JTextField {
     private static final long serialVersionUID = 1L;
-
+    /**
+     * Constructor que crea un campo de texto con un número específico de columnas.
+     * @param columns Número de columnas del JTextField.
+     */
     public TextoRedondeado(int columns) {
         super(columns);
         setOpaque(false);
@@ -29,7 +35,10 @@ public class TextoRedondeado extends JTextField {
             }
         });
     }
-
+    /**
+     * Sobrescribe el método paintComponent para dibujar un cuadro de texto con bordes redondeados.
+     * @param g Objeto Graphics utilizado para dibujar el componente.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         int width = getWidth();
