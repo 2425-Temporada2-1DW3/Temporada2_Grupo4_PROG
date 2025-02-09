@@ -55,7 +55,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private JPasswordField passwordField;
     private JLabel lblEquipo;
     private JComboBox<String> comboBoxRol;
-    private JComboBox<String> comboBoxEquipo;
+    public JComboBox<String> comboBoxEquipo;
     private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnLimpiar;
     private JTable tablaUsuarios;
     private DefaultTableModel dtm;
@@ -73,7 +73,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private int usuarioSeleccionadoIndex = -1;
     private static boolean actualizacion = false;
 
-    private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
+    public static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
 
     public MenuUsuarios() {
     	
@@ -406,7 +406,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         }
     }
     
-    private void cargarEquipos() {
+    public void cargarEquipos() {
         File dir = new File("data");
         
         File[] archivos = dir.listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
