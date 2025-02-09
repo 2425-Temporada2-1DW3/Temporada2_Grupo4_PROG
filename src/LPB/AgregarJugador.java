@@ -190,35 +190,35 @@ public class AgregarJugador extends JDialog {
     }
 
     private void guardarJugador() {
-        String nombre = nombreField.getText();
-        String apellidos = apellidosField.getText();
-        String posicion = (String) posicionComboBox.getSelectedItem();
-        
-        if (nombre.isEmpty() || apellidos.isEmpty() || posicion.isEmpty()) {
+    	if (nombreField.getText().isEmpty() || apellidosField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
-        }
-
-        try {
-            dorsal = Integer.parseInt(dorsalField.getText());
-            if (dorsal < 0 || dorsal > 99) {
-                JOptionPane.showMessageDialog(this, "El dorsal debe estar entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "El dorsal debe ser un número válido entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        
-        if (selectedFile == null) {
-        	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            String rutaFoto = selectedFile.getAbsolutePath();
-        	 // 🔴 Log cuando se agrega un jugador
-            logClase.logAction("Jugador agregado: " + nombre + ", Posición: " + posicion + ", Dorsal: " + dorsal);
-            jugador = new Jugador(nombre, apellidos, posicion, dorsal, rutaFoto);
-            dispose();
-        }
+    	} else {
+	        String nombre = nombreField.getText();
+	        String apellidos = apellidosField.getText();
+	        String posicion = (String) posicionComboBox.getSelectedItem();
+	
+	        try {
+	            dorsal = Integer.parseInt(dorsalField.getText());
+	            if (dorsal < 0 || dorsal > 99) {
+	                JOptionPane.showMessageDialog(this, "El dorsal debe estar entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
+	                return;
+	            }
+	        } catch (NumberFormatException e) {
+	            JOptionPane.showMessageDialog(this, "El dorsal debe ser un número válido entre 0 y 99.", "Error", JOptionPane.ERROR_MESSAGE);
+	            return;
+	        }
+	        
+	        if (selectedFile == null) {
+	        	JOptionPane.showMessageDialog(this, "Tienes que seleccionar una imagen.", "Error", JOptionPane.ERROR_MESSAGE);
+	        } else {
+	            String rutaFoto = selectedFile.getAbsolutePath();
+	        	 // 🔴 Log cuando se agrega un jugador
+	            logClase.logAction("Jugador agregado: " + nombre + ", Posición: " + posicion + ", Dorsal: " + dorsal);
+	            jugador = new Jugador(nombre, apellidos, posicion, dorsal, rutaFoto);
+	            dispose();
+	        }
+    	}
     }
     
     public Jugador getJugador() {

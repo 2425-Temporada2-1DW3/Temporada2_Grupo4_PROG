@@ -342,122 +342,128 @@ public class AgregarEquipo extends JFrame {
 	}
 
 	private void guardarEquipo() {
-	    nombre = nombreEquipoField.getText();
-	    entrenador = nombreEntrenadorField.getText();
-	    estadio = estadioField.getText();
-	    fundacion = Integer.valueOf(anioFundacion.getText());
-	    String rutaOriginal = selectedFile.getAbsolutePath();
-	    String extension = "";
-	    int index = rutaOriginal.lastIndexOf('.');
-	    if (index != -1) {
-	        extension = rutaOriginal.substring(index);
-	    }
-	    
-	    rutaFoto = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/" + nombre + extension;
-
-	    if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || anioFundacion.getText().isEmpty()) {
-	        JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
-	        return;
-	    }
-
-	    if (logoFile != null) {
+		if (nombreEquipoField.getText().isEmpty() || nombreEntrenadorField.getText().isEmpty() || estadioField.getText().isEmpty() || anioFundacion.getText().isEmpty()) {
+			JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
+			return;
+		} else {
+		    nombre = nombreEquipoField.getText();
+		    entrenador = nombreEntrenadorField.getText();
+		    estadio = estadioField.getText();
+		    fundacion = Integer.valueOf(anioFundacion.getText());
+		    if (selectedFile != null) {
+			    String rutaOriginal = selectedFile.getAbsolutePath();
+			    String extension = "";
+			    int index = rutaOriginal.lastIndexOf('.');
+			    if (index != -1) {
+			        extension = rutaOriginal.substring(index);
+			    }
+			    
+			    rutaFoto = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/" + nombre + extension;
+		    }
+	
+		    if (nombre.isEmpty() || entrenador.isEmpty() || estadio.isEmpty() || anioFundacion.getText().isEmpty()) {
+		        JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);
+		        return;
+		    }
+	
+		    if (logoFile != null) {
+		        try {
+		            String logoDestinationPath = String.format("src/imagenes/temporadas/Temporada %s/%s/%s.%s",
+		                this.temporada.getPeriodo(), nombre, nombre, selectedFileExtension);
+		            File logoDestinationFile = new File(logoDestinationPath);
+	
+		            logoDestinationFile.getParentFile().mkdirs();
+	
+		            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+		            
+		        } catch (IOException e) {
+		            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
+		                "Error", JOptionPane.ERROR_MESSAGE);
+		            
+		            // 🔴 Log del error al mover el logo
+		            logClase.logError("Error al mover la imagen del logo: " + e.getMessage(), e);
+		           
+		            return;
+		        }
+		    }
+		    
 	        try {
-	            String logoDestinationPath = String.format("src/imagenes/temporadas/Temporada %s/%s/%s.%s",
-	                this.temporada.getPeriodo(), nombre, nombre, selectedFileExtension);
-	            File logoDestinationFile = new File(logoDestinationPath);
-
-	            logoDestinationFile.getParentFile().mkdirs();
-
-	            Files.copy(logoFile.toPath(), logoDestinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-	            
-	        } catch (IOException e) {
-	            JOptionPane.showMessageDialog(this, "Error al mover la imagen del logo: " + e.getMessage(),
-	                "Error", JOptionPane.ERROR_MESSAGE);
-	            
-	            // 🔴 Log del error al mover el logo
-	            logClase.logError("Error al mover la imagen del logo: " + e.getMessage(), e);
-	           
-	            return;
-	        }
-	    }
-	    
-        try {
-            String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/";
-            Files.createDirectories(Paths.get(basePath));
-
-            for (Jugador jugador : jugadores) {
-            	String rutaAbsoluta = jugador.getRutaFoto();
-                String fotoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos();
-                String extensionJugador = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
-                String nuevoPath = fotoPath + extensionJugador;
-
-                Path source = Paths.get(rutaAbsoluta);
-                Path destination = Paths.get(nuevoPath);
-
-                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
-                
-                jugador.setRutaFoto(nuevoPath);
-            }
-
-        } catch (IOException e1) {
-        	 JOptionPane.showMessageDialog(this,"Error al mover las fotos de los jugadores: " + e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
-         
-            // 🔴 Log del error al mover las fotos de los jugadores
-            logClase.logError("Error al mover las fotos de los jugadores: " + e1.getMessage(), e1);
-        
-        }
-
-	    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
-
-	    try {
-	        String temporadaFilePath = String.format("data/temporada_%s.ser", this.temporada.getPeriodo());
-	        File temporadaFile = new File(temporadaFilePath);
-
-	        if (temporadaFile.exists()) {
-	            Temporada temporadaCargada = Temporada.cargarTemporada(this.temporada.getPeriodo());
-	            if (temporadaCargada != null) {
-	                boolean equipoExistente = false;
-	                for (Equipo equipo : temporadaCargada.getEquipos()) {
-	                    if (equipo.getNombre().equalsIgnoreCase(nombre)) {
-	                        equipoExistente = true;
-	                        break;
-	                    }
-	                }
-
-	                if (equipoExistente) {
-	                    JOptionPane.showMessageDialog(this, "Ya existe un equipo con ese nombre en la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
-	                } else {
-	                    List<Equipo> listaEquipos = temporadaCargada.getEquipos();
-	                    listaEquipos.add(nuevoEquipo);
-	                    temporadaCargada.setEquipos(listaEquipos);
-	                    temporadaCargada.guardarTemporada(temporadaCargada);
-	                    JOptionPane.showMessageDialog(this, "El equipo ha sido guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-	                    // 🔴 Log cuando se guarda el equipo correctamente
-	                    logClase.logAction(String.format(
-	                        "Equipo guardado: '%s', Entrenador: '%s', Estadio: '%s', Año de fundación: %d, Jugadores: %d",
-	                        nombre, entrenador, estadio, fundacion, jugadores.size()
-	                    ));
-	                    dispose();
-	                }
-	            } else {
-	                JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+	            String basePath = "src/imagenes/temporadas/Temporada " + temporada.getPeriodo() + "/" + nombre + "/";
+	            Files.createDirectories(Paths.get(basePath));
+	
+	            for (Jugador jugador : jugadores) {
+	            	String rutaAbsoluta = jugador.getRutaFoto();
+	                String fotoPath = basePath + jugador.getNombre() + " " + jugador.getApellidos();
+	                String extensionJugador = rutaAbsoluta.substring(rutaAbsoluta.lastIndexOf("."));
+	                String nuevoPath = fotoPath + extensionJugador;
+	
+	                Path source = Paths.get(rutaAbsoluta);
+	                Path destination = Paths.get(nuevoPath);
+	
+	                Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
 	                
-	                // 🔴 Log del error al cargar la temporada
-	                logClase.logError("No se pudo cargar la temporada: " + this.temporada.getPeriodo(), null);
+	                jugador.setRutaFoto(nuevoPath);
 	            }
-	        } else {
-	            JOptionPane.showMessageDialog(this, "No se encontró el archivo de la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
-	            
-	            // 🔴 Log del error al no encontrar el archivo de temporada
-	            logClase.logError("No se encontró el archivo de la temporada: " + temporadaFilePath, null);
-	        }
-	    } catch (IOException | ClassNotFoundException e) {
-	        JOptionPane.showMessageDialog(this, "Error al guardar el equipo en la temporada: " + e.getMessage(),
-	            "Error", JOptionPane.ERROR_MESSAGE);
+	
+	        } catch (IOException e1) {
+	        	 JOptionPane.showMessageDialog(this,"Error al mover las fotos de los jugadores: " + e1.getMessage(),"Error", JOptionPane.ERROR_MESSAGE);
+	         
+	            // 🔴 Log del error al mover las fotos de los jugadores
+	            logClase.logError("Error al mover las fotos de los jugadores: " + e1.getMessage(), e1);
 	        
-	        // 🔴 Log del error al guardar el equipo
-	        logClase.logError("Error al guardar el equipo en la temporada: " + e.getMessage(), e);
-	    }
-	    
+	        }
+	
+		    Equipo nuevoEquipo = new Equipo(nombre, entrenador, jugadores, estadio, fundacion, rutaFoto);
+	
+		    try {
+		        String temporadaFilePath = String.format("data/temporada_%s.ser", this.temporada.getPeriodo());
+		        File temporadaFile = new File(temporadaFilePath);
+	
+		        if (temporadaFile.exists()) {
+		            Temporada temporadaCargada = Temporada.cargarTemporada(this.temporada.getPeriodo());
+		            if (temporadaCargada != null) {
+		                boolean equipoExistente = false;
+		                for (Equipo equipo : temporadaCargada.getEquipos()) {
+		                    if (equipo.getNombre().equalsIgnoreCase(nombre)) {
+		                        equipoExistente = true;
+		                        break;
+		                    }
+		                }
+	
+		                if (equipoExistente) {
+		                    JOptionPane.showMessageDialog(this, "Ya existe un equipo con ese nombre en la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+		                } else {
+		                    List<Equipo> listaEquipos = temporadaCargada.getEquipos();
+		                    listaEquipos.add(nuevoEquipo);
+		                    temporadaCargada.setEquipos(listaEquipos);
+		                    temporadaCargada.guardarTemporada(temporadaCargada);
+		                    JOptionPane.showMessageDialog(this, "El equipo ha sido guardado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		                    // 🔴 Log cuando se guarda el equipo correctamente
+		                    logClase.logAction(String.format(
+		                        "Equipo guardado: '%s', Entrenador: '%s', Estadio: '%s', Año de fundación: %d, Jugadores: %d",
+		                        nombre, entrenador, estadio, fundacion, jugadores.size()
+		                    ));
+		                    dispose();
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(this, "No se pudo cargar la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+		                
+		                // 🔴 Log del error al cargar la temporada
+		                logClase.logError("No se pudo cargar la temporada: " + this.temporada.getPeriodo(), null);
+		            }
+		        } else {
+		            JOptionPane.showMessageDialog(this, "No se encontró el archivo de la temporada.", "Error", JOptionPane.ERROR_MESSAGE);
+		            
+		            // 🔴 Log del error al no encontrar el archivo de temporada
+		            logClase.logError("No se encontró el archivo de la temporada: " + temporadaFilePath, null);
+		        }
+		    } catch (IOException | ClassNotFoundException e) {
+		        JOptionPane.showMessageDialog(this, "Error al guardar el equipo en la temporada: " + e.getMessage(),
+		            "Error", JOptionPane.ERROR_MESSAGE);
+		        
+		        // 🔴 Log del error al guardar el equipo
+		        logClase.logError("Error al guardar el equipo en la temporada: " + e.getMessage(), e);
+		    }
+		}
 	}
 }

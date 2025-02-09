@@ -191,9 +191,52 @@ public class Login extends JFrame {
         panel.add(btnInvitado);
 
         btnInvitado.addActionListener(_ -> {
-            JOptionPane.showMessageDialog(null, "Bienvenido Invitado.");
-            new Menu("Invitado", "Invitado").setVisible(true);
-            dispose();
+            logClase.logAction("Se ha iniciado sesión como invitado");
+
+            loadingDialog = new JDialog();
+            loadingDialog.setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
+            loadingDialog.setSize(250, 100);
+            loadingDialog.setLocationRelativeTo(null);
+            loadingDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+            loadingDialog.setModal(false);
+
+            loadingLabel = new JLabel("Iniciando sesión...", SwingConstants.CENTER);
+            loadingLabel.setFont(new Font("SansSerif", Font.PLAIN, 14));
+
+            ImageIcon loadingGif = new ImageIcon(getClass().getResource("/imagenes/basketball.gif"));
+            ImageIcon scaledGif = new ImageIcon(loadingGif.getImage().getScaledInstance(60, 60, Image.SCALE_DEFAULT));
+            JLabel gifLabel = new JLabel(scaledGif, SwingConstants.LEFT);
+
+            JPanel panel = new JPanel(new GridBagLayout());
+            panel.setBackground(new Color(255, 243, 204));
+            GridBagConstraints gbc = new GridBagConstraints();
+            gbc.gridx = 0;
+            gbc.gridy = 0;
+            gbc.insets = new Insets(5, 5, 5, 5);
+            panel.add(loadingLabel, gbc);
+            
+            gbc.gridx = 1;
+            gbc.insets = new Insets(5, 5, 5, 10);
+            panel.add(gifLabel, gbc);
+
+            loadingDialog.add(panel);
+            loadingDialog.setVisible(true);
+
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    Thread.sleep(3000);
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    loadingDialog.dispose();
+                    new Menu("Usuario", "Invitado").setVisible(true);
+                    dispose();
+                }
+            };
+            worker.execute();
         });
     }
 }
