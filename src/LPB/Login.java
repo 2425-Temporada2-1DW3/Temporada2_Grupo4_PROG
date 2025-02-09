@@ -10,7 +10,6 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -32,15 +31,11 @@ public class Login extends JFrame {
     private static final long serialVersionUID = -410820418148204249L;
     private JPanel panel;
     private ImageIcon logo;
-    private JLabel labelLogo;
-    private JLabel userLabel;
-    private JLabel passwordLabel;
+    private JLabel labelLogo, userLabel, passwordLabel, loadingLabel;
     private JTextField txtUsuario;
     private JPasswordField txtPassword;
-    private JButton btnIniciarSesion;
-    private JButton btnInvitado;
+    private BotonRedondeado btnIniciarSesion, btnInvitado;
     private JDialog loadingDialog;
-    private JLabel loadingLabel;
 
 	/**
 	 * Launch the application.

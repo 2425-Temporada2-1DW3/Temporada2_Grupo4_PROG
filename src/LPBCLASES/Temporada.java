@@ -99,55 +99,6 @@ public class Temporada implements Serializable {
     public void setEquipos(List<Equipo> equipos) {
         this.equipos = new ArrayList<>(equipos);
     }
-
-    // Método para agregar un equipo
-    public void agregarEquipo(String periodo, Equipo nuevoEquipo) throws IOException, ClassNotFoundException {
-        // Cargar la temporada desde el archivo
-        Temporada temporada = cargarTemporada(periodo);
-
-        // Agregar el nuevo equipo a la lista de equipos
-        List<Equipo> equipos = temporada.getEquipos();
-        if (!equipos.contains(nuevoEquipo)) {
-            equipos.add(nuevoEquipo);
-            System.out.println("Equipo agregado: " + nuevoEquipo.getNombre());
-        } else {
-            System.out.println("El equipo ya existe en la temporada.");
-        }
-
-        // Guardar la temporada actualizada
-        guardarTemporada(temporada);
-    }
-    
-    // Método para agregar un jugador a un equipo
-    public void agregarJugador(String periodo, String nombreEquipo, Jugador nuevoJugador) throws IOException, ClassNotFoundException {
-        // Cargar la temporada desde el archivo
-        Temporada temporada = cargarTemporada(periodo);
-
-        // Buscar el equipo en la temporada
-        Equipo equipoEncontrado = null;
-        for (Equipo equipo : temporada.getEquipos()) {
-            if (equipo.getNombre().equalsIgnoreCase(nombreEquipo)) {
-                equipoEncontrado = equipo;
-                break;
-            }
-        }
-
-        if (equipoEncontrado != null) {
-            // Agregar el jugador al equipo si no existe ya
-            List<Jugador> jugadores = equipoEncontrado.getJugadores();
-            if (!jugadores.contains(nuevoJugador)) {
-                jugadores.add(nuevoJugador);
-                System.out.println("Jugador agregado: " + nuevoJugador.getNombre());
-            } else {
-                System.out.println("El jugador ya existe en el equipo.");
-            }
-
-            // Guardar la temporada actualizada
-            guardarTemporada(temporada);
-        } else {
-            System.out.println("El equipo no existe en esta temporada.");
-        }
-    }
     
     // Guarda los datos de la temporada
     public void guardarTemporada(Temporada temporada) throws IOException {

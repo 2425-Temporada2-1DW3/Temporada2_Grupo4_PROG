@@ -41,9 +41,6 @@ public class Menu extends JFrame {
 	private JLabel subtitulo;
 	private ImageIcon logo;
 
-	
-	
-
 	/**
 	 * Create the frame.
 	 */
@@ -193,7 +190,7 @@ public class Menu extends JFrame {
 		}
 	}
 	
-	public void exportarDatos() {
+	private void exportarDatos() {
         JnaFileChooser fileChooser = new JnaFileChooser();
         fileChooser.setTitle("Guardar como...");
         fileChooser.addFilter("XML (*.xml)", "xml");
