@@ -2,6 +2,7 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,10 +44,7 @@ import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 
 import javax.swing.SwingConstants;
-/*import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;*/
 
-import org.imgscalr.Scalr;
 
 public class MenuJugadores extends JFrame implements ActionListener, WindowListener, Serializable {
 
@@ -390,7 +388,7 @@ public class MenuJugadores extends JFrame implements ActionListener, WindowListe
 	    
 	    try {
 	        imagen = ImageIO.read(new File("src/imagenes/user.png"));
-	        fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
+	        fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
 
 	        if (jugador == null) {
 	            lblFoto.setIcon(fotoIcono);
@@ -404,12 +402,12 @@ public class MenuJugadores extends JFrame implements ActionListener, WindowListe
 
 	            if (fotoFile.exists() && fotoFile.isFile()) {
 	                imagen = ImageIO.read(fotoFile);
-	                fotoIcono = new ImageIcon(Scalr.resize(imagen, 80, 80));
+	                fotoIcono = new ImageIcon(imagen.getScaledInstance(80, 80, Image.SCALE_SMOOTH));
 	            } else {
-	                fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
+	                fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
 	            }
 	        } else {
-	            fotoIcono = new ImageIcon(Scalr.resize(imagen, 70, 70));
+	            fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
 	        }
 
 	        lblFoto.setIcon(fotoIcono);
@@ -434,10 +432,8 @@ public class MenuJugadores extends JFrame implements ActionListener, WindowListe
 	                if (imagen == null) {
 	                    throw new IOException("Formato de imagen no soportado o corrupto");
 	                }
-	                
-	                BufferedImage imagenEscalada = Scalr.resize(imagen, Scalr.Method.QUALITY, 70, 70);
 
-	                lblFoto.setIcon(new ImageIcon(imagenEscalada));
+	                lblFoto.setIcon(new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH)));
 	                
 	                datosModificados = true;
 	                actualizarTitulo();
