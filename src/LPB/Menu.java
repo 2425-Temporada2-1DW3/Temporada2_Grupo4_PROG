@@ -187,7 +187,10 @@ public class Menu extends JFrame {
 		btnExportarXML.setFocusPainted(false);
 		btnExportarXML.setBackground(new Color(84, 84, 84));
 		btnExportarXML.setBounds(48, 461, 150, 30);
-		panelDerecho.add(btnExportarXML);
+		
+		if ("Administrador".equals(rol)) {
+			panelDerecho.add(btnExportarXML);
+		}
 	}
 	
 	public void exportarDatos() {

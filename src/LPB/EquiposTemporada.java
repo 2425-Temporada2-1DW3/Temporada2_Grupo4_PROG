@@ -11,8 +11,8 @@ import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import LPBCLASES.Equipo;
 import LPBCLASES.Temporada;
 import LPBCLASES.logClase;
 
-public class EquiposTemporada extends JFrame implements WindowListener {
+public class EquiposTemporada extends JFrame {
 
 	private static final long serialVersionUID = -2296678961838970996L;
 	private JPanel panelSuperior;
@@ -72,10 +72,37 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	public EquiposTemporada(String rol, String usuario, Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(this);
 		setSize(850, 550);
 		setLocationRelativeTo(null);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+			    if (datosModificados) {
+			        int opcion = JOptionPane.showConfirmDialog(EquiposTemporada.this, "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+			        switch (opcion) {
+			        case JOptionPane.YES_OPTION:
+			            System.exit(0);
+		                try {
+		                	temporadaSeleccionada.setEquipos(equipos);
+							temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+						} catch (IOException e1) {
+							System.out.println("ERROR. No se han encontrado los datos de la temporada.");
+						}
+			            break;
+			        case JOptionPane.NO_OPTION:
+			            System.exit(0);
+			            break;
+			        case JOptionPane.CANCEL_OPTION:
+			        case JOptionPane.CLOSED_OPTION:
+			            return;
+			        }
+			    } else {
+			        System.exit(0);
+			    }
+			}
+		});
+
 		getContentPane().setLayout(null);
 		
 		this.rol = rol;
@@ -136,6 +163,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 		btnNuevo.addActionListener(e -> {
         	AgregarEquipo agregarEquipo = new AgregarEquipo(temporadaSeleccionada);
         	agregarEquipo.setVisible(true);
+			try {
+	        	temporadaSeleccionada.setEquipos(equipos);
+				temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+			} catch (IOException e1) {
+				System.out.println("Error al guardar los datos de la temporada.");
+			}
             
             agregarEquipo.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
@@ -156,11 +189,8 @@ public class EquiposTemporada extends JFrame implements WindowListener {
                 }
             });
 		});
-
-		
-		if ("Administrador".equals(rol)) {
-			panelInferior.add(btnNuevo);
-		}
+		panelInferior.add(btnNuevo);
+		btnNuevo.setVisible(false);
 
 		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
 		btnVolverMenu.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -223,6 +253,10 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        SelectTemporadas.setSelectedItem("Temporada " + temporadaActiva);
 	        actualizarPanelEquipos(temporadaActiva);
 	    }
+	    
+		if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
+			btnNuevo.setVisible(true);
+		}
 	}
 	
 	private List<String> listarTemporadas() {
@@ -283,6 +317,12 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 	        String periodo = selectedTemporada.replace("Temporada ", "");
 	        try {
 	            temporadaSeleccionada = Temporada.cargarTemporada(periodo);
+	            
+	    		if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
+	    			btnNuevo.setVisible(true);
+	    		} else {
+	    			btnNuevo.setVisible(false);
+	    		}
 	            
 	            if (temporadaSeleccionada != null) {
 	                equipos = temporadaSeleccionada.getEquipos();
@@ -379,7 +419,7 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 				}
 			});
 
-	        if ("Administrador".equals(rol)) {
+	        if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
         		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/papelera.png"));
         		Image originalImage = originalImageIcon.getImage();
         		Image scaledImage = originalImage.getScaledInstance(35, 35, Image.SCALE_SMOOTH);
@@ -432,56 +472,5 @@ public class EquiposTemporada extends JFrame implements WindowListener {
 
 	    panelEquipos.revalidate();
 	    panelEquipos.repaint();
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-	    if (datosModificados) {
-	        int opcion = JOptionPane.showConfirmDialog(this, "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
-	        switch (opcion) {
-	        case JOptionPane.YES_OPTION:
-	            System.exit(0);
-                try {
-                	temporadaSeleccionada.setEquipos(equipos);
-					temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
-				} catch (IOException e1) {
-					System.out.println("ERROR. No se han encontrado los datos de la temporada.");
-				}
-	            break;
-	        case JOptionPane.NO_OPTION:
-	            System.exit(0);
-	            break;
-	        case JOptionPane.CANCEL_OPTION:
-	        case JOptionPane.CLOSED_OPTION:
-	            return;
-	        }
-	    } else {
-	        System.exit(0);
-	    }
-	}
-
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
 	}
 }
