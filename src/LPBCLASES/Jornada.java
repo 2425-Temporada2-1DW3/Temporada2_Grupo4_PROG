@@ -66,16 +66,6 @@ public class Jornada implements Serializable {
         this.partidos = partidos; // Crea una copia de la lista
     }
 
-    // Añade un partido a la jornada
-    public void agregarPartido(Partido partido) {
-        this.partidos.add(partido);
-    }
-
-    // Elimina un partido de la jornada
-    public void eliminarPartido(Partido partido) {
-        this.partidos.remove(partido);
-    }
-
     // Representación en formato de cadena (toString)
     @Override
     public String toString() {

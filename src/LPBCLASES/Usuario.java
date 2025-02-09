@@ -6,7 +6,6 @@ import java.util.Objects;
 public class Usuario implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    public static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
 
     private String usuario;
     private String contrasena;
