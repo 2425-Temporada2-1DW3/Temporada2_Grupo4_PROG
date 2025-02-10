@@ -56,3 +56,71 @@
 [10/feb/2025:08:48:29 +0100] El usuario Admin ha iniciado sesión
 [10/feb/2025:08:49:08 +0100] El usuario 'Admin' ha creado una nueva temporada.
 [10/feb/2025:08:58:35 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:03:45 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:08:16 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:08:37 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:08:55 +0100] Equipo eliminado: 'Miami Heat' de la temporada 2023-2024.
+[10/feb/2025:09:12:20 +0100] Jugador agregado: Facundo, Posición: Base, Dorsal: 7
+[10/feb/2025:09:12:39 +0100] Jugador agregado: Sergio, Posición: Base, Dorsal: 13
+[10/feb/2025:09:12:53 +0100] Jugador agregado: Carlos, Posición: Base, Dorsal: 12
+[10/feb/2025:09:13:09 +0100] Jugador agregado: Sergio, Posición: Base, Dorsal: 23
+[10/feb/2025:09:13:25 +0100] Jugador agregado: Rudy, Posición: Escolta, Dorsal: 5
+[10/feb/2025:09:13:38 +0100] Jugador agregado: Hugo, Posición: Escolta, Dorsal: 9
+[10/feb/2025:09:13:55 +0100] Jugador agregado: Alberto, Posición: Escolta, Dorsal: 6
+[10/feb/2025:09:14:10 +0100] Jugador agregado: Mario, Posición: Escolta, Dorsal: 11
+[10/feb/2025:09:14:38 +0100] Jugador agregado: Eli, Posición: Ala-pívot, Dorsal: 30
+[10/feb/2025:09:14:55 +0100] Jugador agregado: Vincent, Posición: Pívot, Dorsal: 17
+[10/feb/2025:09:15:12 +0100] Jugador agregado: Walter, Posición: Pívot, Dorsal: 22
+[10/feb/2025:09:16:27 +0100] Jugador agregado: Gabriel, Posición: Alero, Dorsal: 14
+[10/feb/2025:09:16:33 +0100] Equipo guardado: 'Real Madrid', Entrenador: 'Chus Mateo', Estadio: 'WiZink Center', Año de fundación: 1931, Jugadores: 12
+[10/feb/2025:09:16:51 +0100] Temporada activada correctamente: 2023-2024. Jornadas generadas: 10
+[10/feb/2025:09:21:12 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:22:30 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Real Madrid | Resultado: 91 - 88
+[10/feb/2025:09:22:30 +0100] Se han guardado los resultados del partido: Boston Celtics vs Los Angeles Lakers | Resultado: 85 - 73
+[10/feb/2025:09:22:30 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Golden State Warriors | Resultado: 80 - 84
+[10/feb/2025:09:22:48 +0100] Se han guardado los resultados del partido: Boston Celtics vs Real Madrid | Resultado: 83 - 88
+[10/feb/2025:09:22:48 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Atlanta Hawks | Resultado: 88 - 87
+[10/feb/2025:09:22:48 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Los Angeles Lakers | Resultado: 92 - 80
+[10/feb/2025:09:23:10 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Real Madrid | Resultado: 91 - 80
+[10/feb/2025:09:23:10 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Boston Celtics | Resultado: 81 - 76
+[10/feb/2025:09:23:10 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Atlanta Hawks | Resultado: 93 - 79
+[10/feb/2025:09:23:43 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:24:11 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Real Madrid | Resultado: 85 - 84
+[10/feb/2025:09:24:11 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Chicago Bulls | Resultado: 80 - 70
+[10/feb/2025:09:24:11 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Boston Celtics | Resultado: 94 - 91
+[10/feb/2025:09:24:39 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Real Madrid | Resultado: 92 - 87
+[10/feb/2025:09:24:39 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Golden State Warriors | Resultado: 80 - 75
+[10/feb/2025:09:24:39 +0100] Se han guardado los resultados del partido: Boston Celtics vs Chicago Bulls | Resultado: 87 - 83
+[10/feb/2025:09:24:53 +0100] Se han guardado los resultados del partido: Real Madrid vs Atlanta Hawks | Resultado: 91 - 85
+[10/feb/2025:09:24:53 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Boston Celtics | Resultado: 100 - 74
+[10/feb/2025:09:24:53 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Chicago Bulls | Resultado: 89 - 77
+[10/feb/2025:09:25:15 +0100] Se han guardado los resultados del partido: Real Madrid vs Boston Celtics | Resultado: 79 - 85
+[10/feb/2025:09:25:15 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Chicago Bulls | Resultado: 82 - 90
+[10/feb/2025:09:25:15 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Golden State Warriors | Resultado: 88 - 79
+[10/feb/2025:09:25:26 +0100] Se han guardado los resultados del partido: Real Madrid vs Chicago Bulls | Resultado: 83 - 81
+[10/feb/2025:09:25:26 +0100] Se han guardado los resultados del partido: Boston Celtics vs Golden State Warriors | Resultado: 98 - 88
+[10/feb/2025:09:25:26 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Los Angeles Lakers | Resultado: 95 - 70
+[10/feb/2025:09:25:42 +0100] Se han guardado los resultados del partido: Real Madrid vs Golden State Warriors | Resultado: 76 - 78
+[10/feb/2025:09:25:42 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Los Angeles Lakers | Resultado: 91 - 74
+[10/feb/2025:09:25:42 +0100] Se han guardado los resultados del partido: Boston Celtics vs Atlanta Hawks | Resultado: 90 - 85
+[10/feb/2025:09:25:59 +0100] Se han guardado los resultados del partido: Real Madrid vs Los Angeles Lakers | Resultado: 80 - 82
+[10/feb/2025:09:25:59 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Atlanta Hawks | Resultado: 85 - 76
+[10/feb/2025:09:25:59 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Boston Celtics | Resultado: 92 - 78
+[10/feb/2025:09:26:02 +0100] La temporada 2023-2024 ha sido finalizada.
+[10/feb/2025:09:26:18 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:27:34 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:27:39 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
+[10/feb/2025:09:30:45 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:31:07 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:31:12 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
+[10/feb/2025:09:32:10 +0100] El usuario 'Entrenador' ha sido modificado (Rol: Entrenador, Equipo: null).
+[10/feb/2025:09:32:27 +0100] El usuario Entrenador ha iniciado sesión
+[10/feb/2025:09:34:36 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:34:58 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:35:03 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
+[10/feb/2025:09:36:43 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:37:02 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:37:06 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
+[10/feb/2025:09:37:43 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:09:38:01 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[10/feb/2025:09:38:06 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
