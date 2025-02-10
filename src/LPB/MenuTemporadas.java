@@ -23,7 +23,10 @@ import javax.swing.JScrollPane;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Temporada;
 import LPBCLASES.logClase;
-
+/**
+ * Clase MenuTemporadas que representa el menú de selección de temporadas en la aplicación LPB Basketball.
+ * Permite listar temporadas existentes, crear nuevas temporadas y eliminar temporadas según el rol del usuario.
+ */
 public class MenuTemporadas extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 	private JPanel panelIzquierdo;
@@ -45,6 +48,12 @@ public class MenuTemporadas extends JFrame {
 	private String rol;
 	private String usuario;
 
+  /**
+   * Constructor de la clase MenuTemporadas.
+   * 
+   * @param rol     Rol del usuario que accede al menú (Administrador o Usuario).
+   * @param usuario Nombre del usuario que ha iniciado sesión.
+   */
 	public MenuTemporadas(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
@@ -157,7 +166,10 @@ public class MenuTemporadas extends JFrame {
 		lblTemporadaEnProceso.setBounds(52, 470, 160, 20);
 		panelDerecho.add(lblTemporadaEnProceso);
 	}
-	
+	/**
+   * Lista las temporadas disponibles y las muestra en el panel de contenido.
+   * Si el usuario es administrador, permite agregar y eliminar temporadas.
+   */
     private void listarTemporadas() {
     	panelContenido.removeAll();
     	

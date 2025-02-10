@@ -11,8 +11,30 @@ import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import javax.swing.JOptionPane;
 
+/**
+ * Clase ExportarPDF que permite generar un archivo PDF con la clasificación de equipos de una temporada.
+ * Utiliza la biblioteca iText para la generación del documento.
+ */
 public class ExportarPDF {
 
+	/**
+     * Método que exporta los datos de una tabla JTable a un archivo PDF.
+     * Se genera un archivo PDF con la clasificación de equipos de la temporada actual.
+     * 
+     * Se incluye el logo de la aplicación, el título "Clasificación de Equipos" y el subtítulo con la temporada actual.
+     * Se muestra la fecha y hora de generación del archivo PDF.
+     * Se incluye una tabla con los datos de la JTable, con filas alternas en gris claro y gris medio claro.
+     * Se muestra el nombre de los equipos y su respectivo escudo (si está disponible).
+     * 
+     * El archivo PDF se guarda en la ruta especificada y se abre automáticamente al finalizar la exportación.
+     * 
+     * Se manejan excepciones en caso de error al exportar el archivo PDF.
+     * 
+     * 
+     * @param tabla     JTable que contiene los datos a exportar.
+     * @param ruta      Ruta donde se guardará el archivo PDF.
+     * @param temporada Objeto Temporada que proporciona información sobre la temporada actual.
+     */
     public void exportar(JTable tabla, String ruta, Temporada temporada) {
         // 🔹 Configurar el documento en horizontal (landscape) y color de fondo #FFF6C6
         BaseColor colorFondo = new BaseColor(255, 246, 198); // Color #FFF6C6
@@ -78,7 +100,6 @@ public class ExportarPDF {
             Paragraph fecha = new Paragraph("Generado el: " + new java.text.SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(new java.util.Date()), fontFecha);
             fecha.setAlignment(Element.ALIGN_RIGHT);
             documento.add(fecha);
-
             documento.add(new Paragraph("\n")); 
 
             // 🔹 Crear tabla PDF

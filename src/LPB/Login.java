@@ -1,3 +1,10 @@
+/**
+ * ==================================================
+ * Proyecto: LPB Basketball
+ * 
+ * @author ${author}
+ * ==================================================
+ */
 package LPB;
 
 import java.awt.Color;
@@ -27,6 +34,11 @@ import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 import LPBCLASES.logClase;
 
+/**
+ * Clase Login que representa la ventana de inicio de sesión de la aplicación.
+ * Permite a los usuarios ingresar su nombre y contraseña para autenticarse.
+ * También proporciona una opción para iniciar sesión como invitado.
+ */
 public class Login extends JFrame {
     private static final long serialVersionUID = -410820418148204249L;
     private JPanel panel;
@@ -37,9 +49,14 @@ public class Login extends JFrame {
     private BotonRedondeado btnIniciarSesion, btnInvitado;
     private JDialog loadingDialog;
 
-	/**
-	 * Launch the application.
-	 */
+    /**
+     * Método principal que inicia la aplicación.
+     * Crea una instancia de la clase Login y la hace visible.
+     * 
+     * Se establece el aspecto de la interfaz de usuario como el del sistema operativo.
+     *
+     * @param args Argumentos de la línea de comandos (no utilizados).
+     */
 	public static void main(String[] args) {
 	    try {
 	    	UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -60,8 +77,15 @@ public class Login extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
-	 */
+     * Constructor de la clase Login.
+     * Inicializa la ventana y sus componentes.
+     * 
+     * Se crea un panel con un logo, campos de texto para el usuario y la contraseña, y botones para iniciar sesión y entrar como invitado.
+     * Se añade un evento de clic al botón de iniciar sesión que valida las credenciales del usuario.
+     * Se añade un evento de tecla presionada al campo de contraseña para iniciar sesión al presionar Enter.
+     * Se añade un evento de clic al botón de invitado que inicia sesión como invitado.
+     * Se muestra un cuadro de diálogo con un mensaje de carga al iniciar sesión.
+     */
 	public Login() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setSize(850, 550);
@@ -112,6 +136,14 @@ public class Login extends JFrame {
 
 		MenuUsuarios.cargarUsuarios();
 		
+		/**
+         * Acción del botón de iniciar sesión.
+         * Valida las credenciales ingresadas y muestra una ventana de carga.
+         * 
+         * Si las credenciales son correctas, inicia sesión y muestra el menú principal.
+         * Si las credenciales son incorrectas, muestra un mensaje de error.
+         * Si ocurre un error durante la validación, muestra un mensaje de error.
+         */
 		btnIniciarSesion.addActionListener(e -> {
 		    String usuario = txtUsuario.getText().trim();
 		    String contrasena = new String(txtPassword.getPassword()).trim();
@@ -185,6 +217,10 @@ public class Login extends JFrame {
         btnInvitado.setFocusPainted(false);
         panel.add(btnInvitado);
 
+		/**
+		 * Acción del botón de invitado. Muestra una ventana de carga y, después de 3
+		 * segundos, inicia sesión como invitado y muestra el menú principal.
+		 */
         btnInvitado.addActionListener(_ -> {
             logClase.logAction("Se ha iniciado sesión como invitado");
 

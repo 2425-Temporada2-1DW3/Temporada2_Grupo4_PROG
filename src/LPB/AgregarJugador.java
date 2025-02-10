@@ -26,10 +26,14 @@ import jnafilechooser.api.JnaFileChooser;
 
 import javax.swing.SwingConstants;
 
+/**
+ * Clase AgregarJugador permite registrar un nuevo jugador en el equipo de baloncesto.
+ * Proporciona una interfaz gráfica para ingresar datos del jugador y cargar una imagen de perfil.
+ * 
+ * Extiende {@link JDialog} para ser una ventana emergente dentro de una aplicación principal.
+ */
 public class AgregarJugador extends JDialog {
-    /**
-	 * 
-	 */
+	
 	private static final long serialVersionUID = 5959789971456254669L;
 	private JTextField nombreField;
     private JTextField apellidosField;
@@ -50,6 +54,12 @@ public class AgregarJugador extends JDialog {
     private Jugador jugador;
     private int dorsal;
 
+    /**
+     * Constructor de la clase AgregarJugador.
+     * Inicializa la interfaz gráfica para agregar un nuevo jugador.
+     * 
+     * @param parent Ventana principal desde la cual se invoca el cuadro de diálogo.
+     */
     public AgregarJugador(JFrame parent) {
         super(parent, "Agregar Jugador", true);
         getContentPane().setLayout(new BorderLayout());
@@ -155,6 +165,15 @@ public class AgregarJugador extends JDialog {
         panel.add(btnCancelar);
     }
 
+	/**
+	 * Método para cargar una foto de perfil del jugador. Muestra un cuadro de
+	 * diálogo para seleccionar una imagen. Si la imagen es válida, se muestra el
+	 * nombre del archivo seleccionado.
+	 * 
+	 * Si la imagen no es válida, se muestra un mensaje de error y se reinicia el campo.
+	 * 
+	 * @see JnaFileChooser
+	 */
     private void cargarFoto() {
         JnaFileChooser fc = new JnaFileChooser();
 
@@ -189,6 +208,15 @@ public class AgregarJugador extends JDialog {
         }
     }
 
+	/**
+	 * Método para guardar los datos del jugador. Valida que los campos no estén
+	 * vacíos y que el dorsal sea un número válido entre 0 y 99.
+	 * 
+	 * Si los datos son correctos, se crea un nuevo objeto {@link Jugador} con los
+	 * datos ingresados y se cierra la ventana.
+	 * 
+	 * Si falta algún dato, se muestra un mensaje de error.
+	 */
     private void guardarJugador() {
     	if (nombreField.getText().isEmpty() || apellidosField.getText().isEmpty()) {
             JOptionPane.showMessageDialog(this, "Todos los campos son obligatorios.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -221,6 +249,11 @@ public class AgregarJugador extends JDialog {
     	}
     }
     
+	/**
+	 * Método para obtener el jugador creado.
+	 * 
+	 * @return Jugador creado con los datos ingresados.
+	 */
     public Jugador getJugador() {
         return jugador;
     }

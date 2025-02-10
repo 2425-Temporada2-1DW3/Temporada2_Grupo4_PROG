@@ -41,7 +41,10 @@ import LPBCLASES.TextoRedondeado;
 import LPBCLASES.Usuario;
 import jnafilechooser.api.JnaFileChooser;
 import LPBCLASES.logClase;
-
+/**
+ * Clase VerEquipo que representa la interfaz gráfica para la visualización y gestión de un equipo en la aplicación LPB Basketball.
+ * Permite ver detalles del equipo, editar información, agregar o eliminar jugadores y cambiar la foto del equipo.
+ */
 public class VerEquipo extends JFrame {
 	private JPanel panelIzquierdo;
 	private JLabel labelUsuario;
@@ -68,7 +71,14 @@ public class VerEquipo extends JFrame {
 	private BotonRedondeado btnCambiarFoto;
 
 	private static final long serialVersionUID = 1L;
-
+	 /**
+   * Constructor de la clase VerEquipo.
+   * 
+   * @param temporada La temporada en la que se encuentra el equipo.
+   * @param equipo El equipo a visualizar.
+   * @param rol El rol del usuario que accede a la vista.
+   * @param usuario El nombre del usuario que accede.
+   */
 	public VerEquipo(Temporada temporada, Equipo equipo, String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Detalles del Equipo");

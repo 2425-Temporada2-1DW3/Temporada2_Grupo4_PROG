@@ -13,7 +13,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 
-
+/**
+ * La clase Temporada representa una temporada de una liga deportiva, 
+ * gestionando información sobre su período, estado, equipos y jornadas.
+ * Permite generar jornadas de partidos con un método basado en el sistema Round Robin.
+ */
 public class Temporada implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -24,7 +28,10 @@ public class Temporada implements Serializable {
     private List<Jornada> jornadas; // Lista de jornadas de la temporada
     private List<Equipo> equipos; // Lista de equipos de la temporada
 
-    // Constructor por defecto
+
+    /**
+     * Constructor por defecto que inicializa la temporada con valores predeterminados.
+     */
     public Temporada() {
         // Inicializa los atributos con valores predeterminados
         this.periodo = "";
@@ -33,7 +40,11 @@ public class Temporada implements Serializable {
         this.equipos = new ArrayList<>();
     }
     
-    // Constructor personalizado
+    /**
+     * Constructor que permite definir el período y estado de la temporada.
+     * @param periodo Año de la temporada (ejemplo: "2023-2024").
+     * @param estado Estado de la temporada.
+     */
     public Temporada(String periodo, String estado) {
         this.periodo = periodo;
         this.estado = estado;
@@ -41,7 +52,13 @@ public class Temporada implements Serializable {
         this.equipos = new ArrayList<>();
     }
 
-    // Constructor personalizado con las jornadas y los equipos
+    /**
+     * Constructor que permite definir todos los atributos de la temporada.
+     * @param periodo Año de la temporada.
+     * @param estado Estado de la temporada.
+     * @param jornadas Lista de jornadas de la temporada.
+     * @param equipos Lista de equipos de la temporada.
+     */
     public Temporada(String periodo, String estado, List<Jornada> jornadas, List<Equipo> equipos) {
         this.periodo = periodo;
         this.estado = estado;
@@ -49,7 +66,10 @@ public class Temporada implements Serializable {
         this.equipos = new ArrayList<>(equipos);
     }
 
-    // Constructor copia
+    /**
+     * Constructor copia que crea una nueva temporada a partir de otra existente.
+     * @param t Temporada a copiar.
+     */
     public Temporada(Temporada t) {
         // Copia los valores de otra temporada
         this.periodo = t.periodo;
@@ -60,47 +80,51 @@ public class Temporada implements Serializable {
 
     // Getters y Setters
 
-    // Obtiene el año de la temporada
+    /** @return El período de la temporada. */
     public String getPeriodo() {
         return periodo;
     }
 
-    // Establece el año de la temporada
+    /** @param periodo Nuevo período de la temporada. */
     public void setPeriodo(String periodo) {
         this.periodo = periodo;
     }
     
-    // Obtiene el estado de la temporada
+    /** @return Estado actual de la temporada. */
     public String getEstado() {
         return estado;
     }
 
-    // Establece el estado de la temporada
+    /** @param estado Nuevo estado de la temporada. */
     public void setEstado(String estado) {
         this.estado = estado;
     }
 
-    // Obtiene la lista de jornadas
+    /** @return Lista de jornadas de la temporada. */
     public List<Jornada> getJornadas() {
         return new ArrayList<>(jornadas);
     }
 
-    // Establece la lista de jornadas
+    /** @param jornadas Nueva lista de jornadas de la temporada. */
     public void setJornadas(List<Jornada> jornadas) {
         this.jornadas = new ArrayList<>(jornadas);
     }
     
-    // Obtiene la lista de equipos
+    /** @return Lista de equipos de la temporada. */
     public List<Equipo> getEquipos() {
         return new ArrayList<>(equipos);
     }
 
-    // Establece la lista de equipos
+    /** @param equipos Nueva lista de equipos de la temporada. */
     public void setEquipos(List<Equipo> equipos) {
         this.equipos = new ArrayList<>(equipos);
     }
     
-    // Guarda los datos de la temporada
+    /**
+     * Guarda la temporada en un archivo serializado.
+     * @param temporada La temporada a guardar.
+     * @throws IOException Si ocurre un error al escribir el archivo.
+     */
     public void guardarTemporada(Temporada temporada) throws IOException {
         File directory = new File("data");
         if (!directory.exists()) {
@@ -112,14 +136,23 @@ public class Temporada implements Serializable {
         }
     }
     
-    // Carga los datos de la temporada
+    /**
+     * Carga una temporada desde un archivo serializado.
+     * @param periodo Período de la temporada a cargar.
+     * @return La temporada cargada.
+     * @throws IOException Si ocurre un error al leer el archivo.
+     * @throws ClassNotFoundException Si la clase no se encuentra.
+     */
     public static Temporada cargarTemporada(String periodo) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("data/temporada_" + periodo + ".ser"))) {
             return (Temporada) ois.readObject();
         }
     }
     
-    // Genera nuevas jornadas usando el método Round Robin
+    /**
+     * Genera nuevas jornadas para la temporada utilizando el método Round Robin.
+     * @return Número total de jornadas generadas.
+     */
     public int generarJornadas() {
         if (this.equipos == null || this.equipos.isEmpty()) {
             return 0;
@@ -200,6 +233,8 @@ public class Temporada implements Serializable {
     }
 
     // Representación en formato de cadena (toString)
+    /** @return Representación de la temporada en texto. */
+
     @Override
     public String toString() {
         // Devuelve una representación de los atributos de la temporada como texto
@@ -210,6 +245,8 @@ public class Temporada implements Serializable {
     }
 
     // Método hashCode
+    /** @return Código hash basado en los atributos de la temporada. */
+
     @Override
     public int hashCode() {
         // Calcula un código hash basado en los atributos de la temporada
@@ -217,6 +254,8 @@ public class Temporada implements Serializable {
     }
 
     // Método equals
+    /** @return true si dos temporadas tienen el mismo periodo. */
+
     @Override
     public boolean equals(Object obj) {
         // Comprueba si dos temporadas son iguales comparando sus atributos
@@ -227,6 +266,11 @@ public class Temporada implements Serializable {
     }
     
     // toXML
+    /**
+     * Convierte los datos de la temporada a formato XML.
+     * 
+     * @return Cadena con los datos de la temporada en formato XML.
+     */
     public String toXML() {
         String xml = "	<temporada>\r\n"
                    + "		<nombre>" + periodo + "</nombre>\r\n"
