@@ -194,7 +194,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
                                 for (File archivo : new File("data").listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"))) {
                                     try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
                                         Temporada temporada = (Temporada) ois.readObject();
-                                        if (temporada.getEstado().equals("En proceso")) {
+                                        if (temporada.getEstado().equals("En creación")) {
                                             List<Equipo> equipos = temporada.getEquipos();
                                             for (Equipo eq : equipos) {
                                                 if (eq.getNombre().equals(nombreEquipo)) {
@@ -435,11 +435,11 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
                 Temporada temporada = (Temporada) ois.readObject();
 
-                if ("Activa".equals(temporada.getEstado()) || "En proceso".equals(temporada.getEstado())) {
+                if ("Activa".equals(temporada.getEstado()) || "En creación".equals(temporada.getEstado())) {
                     List<Equipo> equipos = temporada.getEquipos();
 
                     for (Equipo equipo : equipos) {
-                        if ("En proceso".equals(temporada.getEstado())) {
+                        if ("En creación".equals(temporada.getEstado())) {
                             comboBoxEquipo.addItem(equipo.getNombre() + " (Nuevo)");
                         } else {
                             comboBoxEquipo.addItem(equipo.getNombre());

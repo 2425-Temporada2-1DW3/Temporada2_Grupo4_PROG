@@ -326,9 +326,9 @@ public class VerEquipo extends JFrame {
 
 		panelIzquierdo.add(btnEditar);
 	    
-	    if ("Administrador".equals(rol) && "En proceso".equals(temporada.getEstado())) {
+	    if ("Administrador".equals(rol) && "En creación".equals(temporada.getEstado())) {
 	        btnEditar.setVisible(true);
-	    } else if ("Entrenador".equals(rol) && "En proceso".equals(temporada.getEstado())) {
+	    } else if ("Entrenador".equals(rol) && "En creación".equals(temporada.getEstado())) {
 	        try {
 	            btnEditar.setVisible(verificarEquipoEntrenador(usuario, equipo));
 	        } catch (IOException | ClassNotFoundException e) {

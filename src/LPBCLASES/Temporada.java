@@ -24,7 +24,7 @@ public class Temporada implements Serializable {
 	
     // Atributos de la clase Temporada
     private String periodo; // Año de la temporada (20XX-20XX)7
-    private String estado; // Estado de la temporada (Activa, Finalizada, En proceso)
+    private String estado; // Estado de la temporada (Activa, Finalizada, En creación)
     private List<Jornada> jornadas; // Lista de jornadas de la temporada
     private List<Equipo> equipos; // Lista de equipos de la temporada
 
@@ -35,7 +35,7 @@ public class Temporada implements Serializable {
     public Temporada() {
         // Inicializa los atributos con valores predeterminados
         this.periodo = "";
-        this.estado = "En proceso";
+        this.estado = "En creación";
         this.jornadas = new ArrayList<>();
         this.equipos = new ArrayList<>();
     }

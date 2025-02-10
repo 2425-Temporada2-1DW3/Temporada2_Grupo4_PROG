@@ -61,7 +61,7 @@ public class AgregarTemporada extends JFrame {
         lblEstado.setBounds(21, 112, 200, 30);
         panel.add(lblEstado);
 
-        estadoComboBox = new JComboBox<>(new String[]{"Activa", "Finalizada", "En proceso"});
+        estadoComboBox = new JComboBox<>(new String[]{"Activa", "Finalizada", "En creación"});
         estadoComboBox.setFont(new Font("SansSerif", Font.PLAIN, 16));
         estadoComboBox.setBounds(241, 112, 200, 30);
         panel.add(estadoComboBox);
