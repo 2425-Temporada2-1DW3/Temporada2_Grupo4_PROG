@@ -28,6 +28,23 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.event.ActionEvent;
 
+/**
+ * Clase AgregarEquipo que permite agregar un nuevo equipo a la temporada seleccionada.
+ * 
+ * Se pueden ingresar datos del equipo como nombre, entrenador, estadio, año de fundación y agregar jugadores.
+ * 
+ * Se pueden agregar jugadores al equipo y se pueden eliminar jugadores del equipo.
+ * 
+ * Se pueden guardar los datos del equipo y los jugadores en la temporada seleccionada.
+ * 
+ * Se pueden seleccionar las fotos de los jugadores y el logo del equipo.
+ * 
+ * Se pueden visualizar los datos del equipo y los jugadores en una tabla.
+ * 
+ * Se pueden visualizar las fotos de los jugadores en la tabla.
+ * 
+ * Extiende {@link JFrame} para representar la ventana de interfaz gráfica.
+ */
 public class AgregarEquipo extends JFrame {
 
 	private static final long serialVersionUID = 4355224767970407050L;
@@ -58,7 +75,25 @@ public class AgregarEquipo extends JFrame {
 	private JTable tablaJugadores;
 	private DefaultTableModel tableModel;
 
-	
+	/**
+	 * Constructor de la clase AgregarEquipo.
+	 * 
+	 * Inicializa los componentes de la interfaz gráfica y agrega los campos para ingresar los datos del equipo.
+	 * 
+	 * Agrega un botón para cargar la foto del logo del equipo.
+	 * 
+	 * Agrega un botón para agregar jugadores al equipo.
+	 * 
+	 * Agrega un botón para guardar los datos del equipo y los jugadores en la temporada seleccionada.
+	 * 
+	 * Agrega una tabla para visualizar los datos de los jugadores.
+	 * 
+	 * Agrega un botón para eliminar jugadores
+	 * 
+	 * Inicializa una lista de jugadores.
+	 * 
+	 * @param temporada Temporada a la que se le agregará un nuevo equipo.
+	 */
 	public AgregarEquipo(Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		this.temporada = temporada;
@@ -138,6 +173,25 @@ public class AgregarEquipo extends JFrame {
 		btnAgregarJugador.setFont(new Font("SansSerif", Font.PLAIN, 16));
 		btnAgregarJugador.setFocusPainted(false);
 		
+		/*
+		 * Al hacer clic en el botón de agregar jugador, se abre la ventana de
+		 * AgregarJugador para ingresar los datos del jugador y agregarlo a la lista de
+		 * jugadores.
+		 * 
+		 * Se actualiza la tabla de jugadores con los datos del nuevo jugador.
+		 * 
+		 * Se actualiza la lista de jugadores con el nuevo jugador.
+		 * 
+		 * Se muestra la foto del jugador en la tabla.
+		 * 
+		 * Se cierra la ventana de AgregarJugador.
+		 * 
+		 * Se muestra un mensaje de advertencia si no se ingresan los datos del jugador.
+		 * 
+		 * @param e Evento de clic en el botón de agregar jugador.
+		 * 
+		 * @see AgregarJugador
+		 */
 		btnAgregarJugador.addActionListener(e -> {
 		    AgregarJugador agregarJugador = new AgregarJugador(this);
 		    agregarJugador.setVisible(true);
@@ -218,6 +272,9 @@ public class AgregarEquipo extends JFrame {
 	    tablaJugadores.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 16));
 	    tablaJugadores.getTableHeader().setPreferredSize(new Dimension(tablaJugadores.getTableHeader().getPreferredSize().width, 40));
 	    
+		/**
+		 * Personalización de la tabla de jugadores.
+		 */
 	    DefaultTableCellRenderer headerRenderer = new DefaultTableCellRenderer() {
 	        private static final long serialVersionUID = 1L;
 
@@ -305,8 +362,25 @@ public class AgregarEquipo extends JFrame {
 
 		jugadores = new ArrayList<>();
 	}
-
-	// Método para seleccionar la imagen
+	
+	/**
+	 * Método para seleccionar una imagen de un archivo.
+	 * 
+	 * Se abre un cuadro de diálogo para seleccionar un archivo de imagen.
+	 * 
+	 * Se muestra un mensaje de error si la imagen está corrupta o no es compatible.
+	 * 
+	 * Se muestra el nombre del archivo seleccionado en un label.
+	 * 
+	 * Se guarda la ruta de la imagen seleccionada.
+	 * 
+	 * Se guarda la extensión de la imagen seleccionada.
+	 * 
+	 * Se guarda el archivo seleccionado.
+	 * 
+	 * @param label  Label donde se mostrará el nombre del archivo seleccionado.
+	 * @param isLogo Indica si la imagen seleccionada es el logo del equipo.
+	 */
 	private void seleccionarImagen(JLabel label, boolean isLogo) {
 		JnaFileChooser fileChooser = new JnaFileChooser();
 		fileChooser.setTitle("Selecciona una foto");
@@ -341,6 +415,22 @@ public class AgregarEquipo extends JFrame {
 	    }
 	}
 
+	/**
+	 * Método para guardar los datos del equipo y los jugadores en la temporada
+	 * seleccionada.
+	 * 
+	 * Se valida que todos los campos estén completos.
+	 * 
+	 * Se guarda la ruta de la foto del equipo.
+	 * 
+	 * Se guarda la ruta de la foto del logo del equipo.
+	 * 
+	 * Se mueven las fotos de los jugadores a la carpeta de la temporada.
+	 * 
+	 * Se guarda el equipo en la temporada seleccionada.
+	 * 
+	 * Se muestra un mensaje de error si no se pudo guardar el equipo.
+	 */
 	private void guardarEquipo() {
 		if (nombreEquipoField.getText().isEmpty() || nombreEntrenadorField.getText().isEmpty() || estadioField.getText().isEmpty() || anioFundacion.getText().isEmpty()) {
 			JOptionPane.showMessageDialog(this, "Todos los campos deben estar completos", "Error", JOptionPane.ERROR_MESSAGE);

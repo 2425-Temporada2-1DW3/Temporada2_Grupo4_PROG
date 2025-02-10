@@ -37,6 +37,14 @@ import LPBCLASES.Equipo;
 import LPBCLASES.Temporada;
 import LPBCLASES.logClase;
 
+/**
+ * Clase EquiposTemporada representa la interfaz gráfica que gestiona la visualización y manipulación de equipos dentro de una temporada.
+ * 
+ * Permite listar temporadas, agregar y eliminar equipos, así como cambiar entre diferentes temporadas seleccionadas.
+ * Implementa funcionalidades específicas para usuarios con rol "Administrador". También permite visualizar los datos de un equipo en particular.
+ * 
+ * Extiende {@link JFrame} y maneja eventos relacionados con la gestión de temporadas y equipos.
+ */
 public class EquiposTemporada extends JFrame {
 
 	private static final long serialVersionUID = -2296678961838970996L;
@@ -67,8 +75,12 @@ public class EquiposTemporada extends JFrame {
 	private List<Equipo> equipos;
 
 	/**
-	 * Create the frame.
-	 */
+     * Constructor de la clase EquiposTemporada.
+     * 
+     * @param rol       Rol del usuario (Administrador, Usuario).
+     * @param usuario   Nombre del usuario que ha iniciado sesión.
+     * @param temporada Temporada seleccionada o activa.
+     */
 	public EquiposTemporada(String rol, String usuario, Temporada temporada) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Equipos");
@@ -259,6 +271,14 @@ public class EquiposTemporada extends JFrame {
 		}
 	}
 	
+	/**
+	 * Método que lista las temporadas disponibles en el sistema.
+	 * 
+	 * Carga las temporadas desde archivos serializados y las agrega al JComboBox de temporadas.
+	 * Si no se ha seleccionado una temporada, se busca la temporada activa y se selecciona automáticamente.
+	 * 
+	 * @return Lista de temporadas disponibles
+	 */
 	private List<String> listarTemporadas() {
 	    File carpetaData = new File("data");
 	    List<String> temporadas = new ArrayList<>();
@@ -311,6 +331,21 @@ public class EquiposTemporada extends JFrame {
 	    return temporadas;
 	}
 	
+	/**
+	 * Listener para el JComboBox de temporadas.
+	 * 
+	 * Carga los equipos de la temporada seleccionada y actualiza el panel de
+	 * equipos.
+	 * 
+	 * Muestra el botón para agregar un nuevo equipo si el usuario tiene rol "Administrador".
+	 * 
+	 * Si el usuario tiene rol "Administrador" y la temporada está "En proceso",
+	 * muestra el botón para agregar un nuevo equipo.
+	 * 
+	 * @param e Evento de selección de temporada.
+	 * 
+	 * @see ActionListener
+	 */
 	private ActionListener selectListener = e -> {
 	    String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
 	    if (selectedTemporada != null) {
@@ -342,6 +377,13 @@ public class EquiposTemporada extends JFrame {
 	    }
 	};
 	
+	/**
+	 * Método que actualiza el título de la ventana principal.
+	 * 
+	 * El título de la ventana se compone de "LPB Basketball - Equipos".
+	 * 
+	 * Si se han modificado los datos, se agrega un asterisco al título.
+	 */
 	private void actualizarTitulo() {
         String title = "LPB Basketball - Equipos";
         if (datosModificados) {
@@ -350,6 +392,20 @@ public class EquiposTemporada extends JFrame {
         setTitle(title);
 	}
 
+	/**
+	 * Método que actualiza el panel de equipos.
+	 * 
+	 * Elimina los componentes del panel de equipos y agrega los equipos de la
+	 * temporada seleccionada. Para cada equipo, se crea un botón con el nombre y el escudo del equipo.
+	 * 
+	 * Si el usuario tiene rol "Administrador" y la temporada está "En proceso", se agrega un botón para eliminar el equipo.
+	 * 
+	 * Se agrega un listener al botón de cada equipo para visualizar los datos del equipo.
+	 * 
+	 * Si no hay equipos disponibles, se muestra un mensaje de aviso.
+	 * 
+	 * @param temporada Temporada seleccionada
+	 */
 	private void actualizarPanelEquipos(String temporada) {
 	    panelEquipos.removeAll();
 	    equipos = equiposPorTemporada.get(temporada);

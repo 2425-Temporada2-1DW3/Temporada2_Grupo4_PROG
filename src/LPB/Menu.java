@@ -25,6 +25,12 @@ import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Temporada;
 import jnafilechooser.api.JnaFileChooser;
 
+/**
+ * Clase Menu que representa la interfaz principal de la aplicación.
+ * Proporciona opciones de navegación para administrar temporadas, equipos, jugadores y usuarios.
+ * Extiende {@link JFrame} para la interfaz gráfica.
+ * Implementa {@link ActionListener} para manejar eventos de los componentes.
+ */
 public class Menu extends JFrame {
 	private static final long serialVersionUID = -1200889095902166795L;
 	private BotonRedondeado btnTemporadas;
@@ -41,9 +47,17 @@ public class Menu extends JFrame {
 	private JLabel subtitulo;
 	private ImageIcon logo;
 
+	
 	/**
-	 * Create the frame.
-	 */
+     * Constructor de la clase Menu.
+     * 
+     * Se crea la interfaz gráfica del menú principal de la aplicación.
+     * Se muestran las opciones de navegación para administrar temporadas, equipos, jugadores y usuarios.
+     * El menú es diferente dependiendo del rol del usuario.
+     * 
+     * @param rol El rol del usuario (ej. "Administrador").
+     * @param usuario El nombre de usuario.
+     */
 	public Menu(String rol, String usuario) {
 		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
 		setTitle("LPB Basketball - Menú");
@@ -190,6 +204,15 @@ public class Menu extends JFrame {
 		}
 	}
 	
+	/**
+	 * Método para exportar los datos de las temporadas a un archivo XML.
+	 * 
+	 * Se muestra un cuadro de diálogo para seleccionar la ubicación y el nombre del
+	 * archivo XML. Se exportan los datos de las temporadas a un archivo XML. Se
+	 * pregunta si se desean exportar las imágenes de las temporadas.
+	 * 
+	 * @see JnaFileChooser
+	 */
 	private void exportarDatos() {
         JnaFileChooser fileChooser = new JnaFileChooser();
         fileChooser.setTitle("Guardar como...");
@@ -278,6 +301,15 @@ public class Menu extends JFrame {
 	    }
 	}
 	
+	/**
+	 * Método para copiar una carpeta y su contenido. 
+	 * 
+	 * Se copia una carpeta y su contenido a otra ubicación.
+	 * 
+	 * @param origen  La carpeta de origen.
+	 * @param destino La carpeta de destino.
+	 * @throws IOException Si ocurre un error al copiar la carpeta.
+	 */
 	private void copiarCarpeta(File origen, File destino) throws IOException {
 	    if (!destino.exists()) {
 	        destino.mkdirs();
