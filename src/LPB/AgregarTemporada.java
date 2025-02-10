@@ -11,6 +11,13 @@ import LPBCLASES.TextoRedondeado;
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Temporada;
 
+/**
+ * Clase AgregarTemporada representa una ventana para crear y gestionar nuevas temporadas en la liga.
+ * 
+ * Permite definir el período de la temporada, su estado y, opcionalmente, importar equipos de temporadas anteriores.
+ * 
+ * Extiende {@link JFrame} para su representación gráfica.
+ */
 public class AgregarTemporada extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -18,6 +25,11 @@ public class AgregarTemporada extends JFrame {
     private JComboBox<String> estadoComboBox;
     private BotonRedondeado btnGuardar, btnCancelar;
 
+	/**
+	 * Constructor de la clase AgregarTemporada.
+	 * 
+	 * Crea una nueva ventana para agregar una temporada a la liga.
+	 */
     public AgregarTemporada() {
     	setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
         setTitle("Agregar Temporada");
@@ -62,6 +74,28 @@ public class AgregarTemporada extends JFrame {
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnGuardar.setFocusPainted(false);
         btnGuardar.addActionListener(new ActionListener() {
+        	
+			/**
+			 * Método que se ejecuta al hacer clic en el botón Guardar.
+			 * 
+			 * Crea una nueva temporada con los datos ingresados y la guarda en un archivo.
+			 * 
+			 * Muestra un mensaje de confirmación y cierra la ventana.
+			 * 
+			 * Si se selecciona la opción de importar equipos de una temporada anterior, se muestra un diálogo para seleccionar la temporada de origen.
+			 * 
+			 * Si se selecciona una temporada, se cargan los equipos de la temporada seleccionada.
+			 * 
+			 * Si no hay temporadas disponibles para importar, se muestra un mensaje de advertencia.
+			 * 
+			 * Si ocurre un error al cargar la temporada seleccionada, se muestra un mensaje de error.
+			 * 
+			 * Si ocurre un error al guardar la temporada, se muestra un mensaje de error.
+			 * 
+			 * Finalmente, se muestra un mensaje de confirmación y se cierra la ventana.
+			 * 
+			 * @param ae evento de acción
+			 */
 		    public void actionPerformed(ActionEvent ae) {
 		    	try {
 		    	    Temporada nuevaTemporada = new Temporada();
