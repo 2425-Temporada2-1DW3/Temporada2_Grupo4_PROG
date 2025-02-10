@@ -266,7 +266,7 @@ public class EquiposTemporada extends JFrame {
 	        actualizarPanelEquipos(temporadaActiva);
 	    }
 	    
-		if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
+		if ("Administrador".equals(rol) && "En creación".equals(temporadaSeleccionada.getEstado())) {
 			btnNuevo.setVisible(true);
 		}
 	}
@@ -339,7 +339,7 @@ public class EquiposTemporada extends JFrame {
 	 * 
 	 * Muestra el botón para agregar un nuevo equipo si el usuario tiene rol "Administrador".
 	 * 
-	 * Si el usuario tiene rol "Administrador" y la temporada está "En proceso",
+	 * Si el usuario tiene rol "Administrador" y la temporada está "En creación",
 	 * muestra el botón para agregar un nuevo equipo.
 	 * 
 	 * @param e Evento de selección de temporada.
@@ -353,7 +353,7 @@ public class EquiposTemporada extends JFrame {
 	        try {
 	            temporadaSeleccionada = Temporada.cargarTemporada(periodo);
 	            
-	    		if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
+	    		if ("Administrador".equals(rol) && "En creación".equals(temporadaSeleccionada.getEstado())) {
 	    			btnNuevo.setVisible(true);
 	    		} else {
 	    			btnNuevo.setVisible(false);
@@ -398,7 +398,7 @@ public class EquiposTemporada extends JFrame {
 	 * Elimina los componentes del panel de equipos y agrega los equipos de la
 	 * temporada seleccionada. Para cada equipo, se crea un botón con el nombre y el escudo del equipo.
 	 * 
-	 * Si el usuario tiene rol "Administrador" y la temporada está "En proceso", se agrega un botón para eliminar el equipo.
+	 * Si el usuario tiene rol "Administrador" y la temporada está "En creación", se agrega un botón para eliminar el equipo.
 	 * 
 	 * Se agrega un listener al botón de cada equipo para visualizar los datos del equipo.
 	 * 
@@ -475,7 +475,7 @@ public class EquiposTemporada extends JFrame {
 				}
 			});
 
-	        if ("Administrador".equals(rol) && "En proceso".equals(temporadaSeleccionada.getEstado())) {
+	        if ("Administrador".equals(rol) && "En creación".equals(temporadaSeleccionada.getEstado())) {
         		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/papelera.png"));
         		Image originalImage = originalImageIcon.getImage();
         		Image scaledImage = originalImage.getScaledInstance(35, 35, Image.SCALE_SMOOTH);

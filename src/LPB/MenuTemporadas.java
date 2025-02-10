@@ -160,7 +160,7 @@ public class MenuTemporadas extends JFrame {
 		lblTemporadaActiva.setBounds(52, 450, 125, 20);
 		panelDerecho.add(lblTemporadaActiva);
 		
-		JLabel lblTemporadaEnProceso = new JLabel("Temporada En Proceso");
+		JLabel lblTemporadaEnProceso = new JLabel("Temporada En Creación");
 		lblTemporadaEnProceso.setForeground(new Color(31, 31, 31));
 		lblTemporadaEnProceso.setFont(new Font("SansSerif", Font.PLAIN, 14));
 		lblTemporadaEnProceso.setBounds(52, 470, 160, 20);

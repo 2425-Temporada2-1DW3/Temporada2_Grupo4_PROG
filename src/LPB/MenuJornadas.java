@@ -230,7 +230,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		    }
 		});
 		
-		if (rol.equals("Administrador") && temporada.getEstado().equals("En proceso")) {
+		if (rol.equals("Administrador") && temporada.getEstado().equals("En creación")) {
 			panelIzquierdo.add(btnActivarTemporada);
 		}
 		
@@ -442,7 +442,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		
 		verificarPuntosCompletados();
 		
-		if (temporada.getEstado().equals("En proceso")) {
+		if (temporada.getEstado().equals("En creación")) {
             btnAdelante.setVisible(false);
             btnAtras.setVisible(false);
             comboBoxJornadas.setVisible(false);
