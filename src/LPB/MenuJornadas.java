@@ -50,7 +50,10 @@ import java.awt.event.FocusListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 
-
+/**
+ * Esta clase representa el menú de jornadas de la Liga de Baloncesto Profesional (LPB).
+ * Permite gestionar las jornadas de una temporada, mostrar los partidos y registrar resultados.
+ */
 
 public class MenuJornadas extends JFrame implements MouseListener {
 
@@ -88,7 +91,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private LineaPanel linea_2;
 	private JLabel lblEquipoVisitante;
 	private Image imgVisitante;
-	private JLabel lblLogoVisitante;
+ 	private JLabel lblLogoVisitante;
 	private ImageIcon logoVisitante;
 	private JLabel lblFecha;
 	private JLabel lblHora;
@@ -104,10 +107,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	private String rol;
 	private boolean datosModificados = false;
 
-	/**
-	 * Create the frame.
-	 * @param temporada 
-	 */
+  /**
+   * Constructor de la clase. Inicializa la ventana con la información de la temporada.
+   * 
+   * @param rol       Rol del usuario (Administrador o Árbitro).
+   * @param usuario   Nombre del usuario.
+   * @param temporada Temporada actual de la liga.
+   */
 	public MenuJornadas(String rol, String usuario, Temporada temporada) {
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -451,6 +457,11 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	}
 	
 	// Método cargarPartidos()
+  /**
+   * Carga los partidos de la jornada seleccionada y los muestra en la interfaz.
+   *
+   * @param jornada Jornada de la temporada cuyos partidos se cargarán.
+   */
 	private void cargarPartidos(Temporada temporada, Jornada jornada) {		
 	    if (scrollPane == null) {
 	        scrollPane = new JScrollPane();
@@ -638,7 +649,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	    return panelPartido;
 	}
-	
+	 /**
+   * Muestra la clasificación de los equipos en la tabla.
+   */
 	private void mostrarClasificacion(Temporada temporada) {
 	    String[] columnNames = { "", "Equipo", "Ptos.", "PJ", "PG", "PP", "PF", "PC", "DP" };
 
@@ -840,6 +853,10 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	}
 	
 	// Método para comprobar si todos los puntos están rellenados
+	/**
+   * Verifica si todos los puntos de los partidos están registrados.
+   * Si es así, permite finalizar la temporada.
+   */
 	private void verificarPuntosCompletados() {
 	    boolean todosLosPuntosRellenados = true;
 	    for (Jornada jornada : temporada.getJornadas()) {
@@ -864,6 +881,9 @@ public class MenuJornadas extends JFrame implements MouseListener {
 
 	
 	// Método para guardar los resultados de los partidos
+	 /**
+   * Guarda los resultados de los partidos en la base de datos o en el sistema.
+   */
 	private void guardarResultados() {
 	    try {
 	        if (comboBoxJornadas.getSelectedIndex() < 0 || jornadaSeleccionada == null) {

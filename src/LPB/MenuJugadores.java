@@ -44,7 +44,10 @@ import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 
 import javax.swing.SwingConstants;
-
+/**
+ * Clase que representa el menú de gestión de jugadores de la Liga de Baloncesto Profesional (LPB).
+ * Permite agregar, editar, eliminar y visualizar jugadores, así como gestionar sus imágenes.
+ */
 
 public class MenuJugadores extends JFrame implements ActionListener, Serializable {
 
@@ -81,9 +84,9 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     private Temporada temporadaActiva;
     private File selectedFile;
 
-	/**
-	 * Create the frame.
-	 */
+    /**
+     * Constructor de la ventana de gestión de jugadores.
+     */
     public MenuJugadores() {
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("/imagenes/basketball.png")));
         setTitle("LPB Basketball - Menú de Jugadores");
@@ -136,8 +139,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         
         scrollPane = new JScrollPane();
         scrollPane.setBounds(20, 20, 407, 420);
+        /**
+         * Modelo de lista para almacenar y gestionar los jugadores disponibles.
+         */
         dlm = new DefaultListModel<>();
-        
+        /**
+         * Lista visual donde se muestran los jugadores disponibles.
+         */
         listJugadores = new JList<>();
         listJugadores.setModel(dlm);
         listJugadores.setFont(new Font("SansSerif", Font.PLAIN, 16));
@@ -313,7 +321,11 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         }
         setTitle(title);
 	}
-    
+	/**
+	 * Método que actualiza la imagen del jugador en la interfaz.
+	 *
+	 * @param jugador Jugador cuya imagen se actualizará.
+	 */
 	private void actualizarFoto(Jugador jugador) {
 	    BufferedImage imagen = null;
 	    ImageIcon fotoIcono = null;
@@ -384,6 +396,9 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     }
 
     // Método para cargas los jugadores al dlm
+    /**
+     * Carga los jugadores de la temporada activa en el modelo de lista.
+     */
     private void cargarJugadores() {
         File carpetaTemporadas = new File("data");
         File[] archivosTemporadas = carpetaTemporadas.listFiles((dir, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
@@ -444,7 +459,9 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         contador = dlm.getSize();
         lblContador.setText(String.valueOf(contador));
     }
-
+    /**
+     * Guarda los datos del jugador actual en la temporada activa.
+     */
     private void guardarDatos() {
     	if (listJugadores.getSelectedIndex() >= 0 || (textNombre.getText().length() > 0 && textApellido.getText().length() > 0 && textDorsal.getText().length() > 0)) {
 	        if (temporadaActiva == null) {
@@ -523,7 +540,9 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
             logClase.logError("Error al guardar la temporada", e);
         }
     }
-
+    /**
+     * Elimina el jugador seleccionado de la lista y del equipo correspondiente.
+     */
     private void eliminarJugador() {
         int[] indices = listJugadores.getSelectedIndices();
         

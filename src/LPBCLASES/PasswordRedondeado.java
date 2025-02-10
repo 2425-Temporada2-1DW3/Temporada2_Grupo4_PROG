@@ -9,10 +9,17 @@ import java.awt.event.FocusListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JPasswordField;
-
+/**
+ * Clase PasswordRedondeado que extiende JPasswordField para crear un campo de contraseña
+ * con bordes redondeados y efecto de enfoque. Se cambia el color del borde cuando el campo
+ * gana o pierde el foco.
+ */
 public class PasswordRedondeado extends JPasswordField {
     private static final long serialVersionUID = 1L;
-
+    /**
+     * Constructor que crea un campo de contraseña con el número de columnas especificado.
+     * @param columns Número de columnas (anchura del campo en caracteres).
+     */
     public PasswordRedondeado(int columns) {
         super(columns);
         setOpaque(false);
@@ -30,7 +37,10 @@ public class PasswordRedondeado extends JPasswordField {
             }
         });
     }
-
+    /**
+     * Sobrescribe el método paintComponent para dibujar un campo de contraseña con bordes redondeados.
+     * @param g Objeto Graphics utilizado para dibujar el campo.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         int width = getWidth();
