@@ -58,7 +58,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private JPasswordField passwordField;
     private JLabel lblEquipo;
     private JComboBox<String> comboBoxRol;
-    public JComboBox<String> comboBoxEquipo;
+    private JComboBox<String> comboBoxEquipo;
     private BotonRedondeado btnGuardar, btnEliminar, btnVolver, btnLimpiar;
     private JTable tablaUsuarios;
     private DefaultTableModel dtm;
@@ -76,8 +76,7 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
     private int usuarioSeleccionadoIndex = -1;
     private static boolean actualizacion = false;
 
-    public static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
-
+    private static final String ARCHIVO_USUARIOS = "data/usuarios.ser";
     /**
      * Constructor de la clase MenuUsuarios.
      * Inicializa la ventana y carga los componentes gráficos.
@@ -422,11 +421,10 @@ public class MenuUsuarios extends JFrame implements ActionListener,Serializable 
         
         }
     }
-  
     /**
      * Carga los equipos disponibles y los agrega al ComboBox de selección.
      */
-    public void cargarEquipos() {
+    private void cargarEquipos() {
         File dir = new File("data");
         
         File[] archivos = dir.listFiles((d, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
