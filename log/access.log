@@ -124,3 +124,66 @@
 [10/feb/2025:09:37:43 +0100] El usuario Admin ha iniciado sesión
 [10/feb/2025:09:38:01 +0100] El usuario 'Admin' ha creado una nueva temporada.
 [10/feb/2025:09:38:06 +0100] Temporada activada correctamente: 2028-2029. Jornadas generadas: 10
+[10/feb/2025:10:26:27 +0100] El usuario Admin ha iniciado sesión
+[10/feb/2025:10:27:16 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Miami Heat | Resultado: 105 - 103
+[10/feb/2025:10:27:16 +0100] Se han guardado los resultados del partido: Los Angeles Lakers vs Chicago Bulls | Resultado: 115 - 108
+[10/feb/2025:10:27:16 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Boston Celtics | Resultado: 90 - 88
+[10/feb/2025:10:28:51 +0100] El usuario Entrenador ha iniciado sesión
+[10/feb/2025:10:30:35 +0100] Se ha iniciado sesión como invitado
+[11/feb/2025:08:05:10 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:14:05 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:17:37 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:20:35 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:24:24 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:30:28 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:31:52 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:33:26 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:38:35 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:38:43 +0100] Equipo eliminado: 'Surne Bilbao Basket' de la temporada 2025-2026.
+[11/feb/2025:08:40:56 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:42:14 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:42:40 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:42:48 +0100] Equipo eliminado: 'Surne Bilbao Basket' de la temporada 2025-2026.
+[11/feb/2025:08:45:29 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:45:38 +0100] Equipo eliminado: 'Surne Bilbao Basket' de la temporada 2025-2026.
+[11/feb/2025:08:50:41 +0100] Equipo eliminado: 'Surne Bilbao Basket' de la temporada 2025-2026.
+[11/feb/2025:08:54:21 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:54:37 +0100] Se ha agregado un nuevo usuario: 'u1' (Rol: Usuario, Equipo: null).
+[11/feb/2025:08:54:53 +0100] El usuario u1 ha iniciado sesión
+[11/feb/2025:08:55:25 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:08:55:40 +0100] El usuario 'u1' ha sido modificado (Rol: Administrador, Equipo: null).
+[11/feb/2025:08:55:49 +0100] El usuario u1 ha iniciado sesión
+[11/feb/2025:09:02:02 +0100] Equipo eliminado: 'EQUIPO 1' de la temporada 2025-2026.
+[11/feb/2025:09:02:04 +0100] Equipo eliminado: 'EQUIPO 2' de la temporada 2025-2026.
+[11/feb/2025:09:02:46 +0100] Equipo eliminado: 'EQUIPO 1' de la temporada 2025-2026.
+[11/feb/2025:09:02:47 +0100] Equipo eliminado: 'EQUIPO 2' de la temporada 2025-2026.
+[11/feb/2025:09:03:07 +0100] Equipo eliminado: 'EQUIPO 1' de la temporada 2025-2026.
+[11/feb/2025:09:03:08 +0100] Equipo eliminado: 'EQUIPO 2' de la temporada 2025-2026.
+[11/feb/2025:09:03:55 +0100] Equipo eliminado: 'EQUIPO 1' de la temporada 2025-2026.
+[11/feb/2025:09:03:57 +0100] Equipo eliminado: 'EQUIPO 2' de la temporada 2025-2026.
+[11/feb/2025:09:06:13 +0100] Jugador agregado: J00, Posición: Ala-pívot, Dorsal: 0
+[11/feb/2025:09:06:13 +0100] Jugador agregado al equipo Surne Bilbao Basket: J00 Paco, Posición: Ala-pívot, Dorsal: 0
+[11/feb/2025:09:06:20 +0100] Equipo actualizado: Surne Bilbao Basket, Entrenador: Jaume Ponsarnau, Estadio: Bilbao Arena, Fundación: 2000
+[11/feb/2025:09:06:38 +0100] Temporada activada correctamente: 2025-2026. Jornadas generadas: 10
+[11/feb/2025:09:07:04 +0100] Se han guardado los resultados del partido: Boston Celtics vs Valencia Basket | Resultado: 50 - 60
+[11/feb/2025:09:07:04 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Surne Bilbao Basket | Resultado: 70 - 50
+[11/feb/2025:09:07:04 +0100] Se han guardado los resultados del partido: Golden State Warriors vs Real Madrid | Resultado: 90 - 100
+[11/feb/2025:09:21:35 +0100] Se han guardado los resultados del partido: Atlanta Hawks vs Miami Heat | Resultado: 77 - 89
+[11/feb/2025:09:21:35 +0100] Se han guardado los resultados del partido: Boston Celtics vs Los Angeles Lakers | Resultado: 130 - 110
+[11/feb/2025:09:21:35 +0100] Se han guardado los resultados del partido: Chicago Bulls vs Golden State Warriors | Resultado: 86 - 83
+[11/feb/2025:09:26:14 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:09:26:32 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[11/feb/2025:09:29:17 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:09:29:35 +0100] El usuario 'Admin' ha creado una nueva temporada.
+[11/feb/2025:09:48:49 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:09:55:18 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:13:41 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:16:04 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:19:43 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:24:16 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:24:35 +0100] Equipo eliminado: 'Surne Bilbao Basket' de la temporada TEST.
+[11/feb/2025:10:36:59 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:38:50 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:42:13 +0100] El usuario Admin ha iniciado sesión
+[11/feb/2025:10:43:31 +0100] Intento de inicio de sesión fallido para el usuario: Admin
+[11/feb/2025:10:43:33 +0100] El usuario Admin ha iniciado sesión

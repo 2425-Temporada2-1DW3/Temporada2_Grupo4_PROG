@@ -209,7 +209,7 @@ public class MenuTemporadas extends JFrame {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
 
         if (files != null) {
-            for (File file : files) {                
+            for (File file : files) {
                 String nombreTemporada = file.getName().replace("temporada_", "").replace(".ser", "");
                 btnTemporada = new BotonRedondeado("Temporada " + nombreTemporada, null);
                 btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -257,8 +257,7 @@ public class MenuTemporadas extends JFrame {
 
                 btnEliminar.addActionListener(e -> {
                     int confirm = JOptionPane.showConfirmDialog(this, 
-                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", 
-                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         if (file.delete()) {
                             JOptionPane.showMessageDialog(this, "Temporada eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
@@ -271,9 +270,14 @@ public class MenuTemporadas extends JFrame {
                 
                 panelContenido.add(btnTemporada);
                 
-                if ("Administrador".equals(rol)) {
-        			panelContenido.add(btnEliminar);
-        		}
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                    Temporada temporada = (Temporada) ois.readObject();
+                    if ("En creación".equals(temporada.getEstado()) && "Administrador".equals(rol)) {
+                    	panelContenido.add(btnEliminar);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 
                 yPosition += buttonHeight + buttonSpacing;
             }
