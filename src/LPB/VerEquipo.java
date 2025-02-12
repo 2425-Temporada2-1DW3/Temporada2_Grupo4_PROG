@@ -139,13 +139,13 @@ public class VerEquipo extends JFrame {
 
 		entrenadorLabel = new JLabel("Entrenador: " + equipo.getEntrenador());
 		entrenadorLabel.setFont(new Font("SansSerif", Font.PLAIN, 21));
-		entrenadorLabel.setBounds(52, 242, 277, 23);
+		entrenadorLabel.setBounds(52, 242, 395, 23);
 		entrenadorLabel.setForeground(new Color(60, 60, 60));
 		panelIzquierdo.add(entrenadorLabel);
 
 		estadioLabel = new JLabel("Estadio: " + equipo.getEstadio());
 		estadioLabel.setFont(new Font("SansSerif", Font.PLAIN, 21));
-		estadioLabel.setBounds(52, 328, 277, 30);
+		estadioLabel.setBounds(52, 328, 395, 30);
 		estadioLabel.setForeground(new Color(60, 60, 60));
 		panelIzquierdo.add(estadioLabel);
 

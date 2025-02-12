@@ -184,49 +184,75 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnActivarTemporada.setBackground(new Color(244, 107, 32));
 		btnActivarTemporada.setBounds(285, 82, 165, 30);
 		btnActivarTemporada.addActionListener(new ActionListener() {
-		    public void actionPerformed(ActionEvent e) {		        
-		        int contador = 0;
-		        for (int i = 0; i < temporada.getEquipos().size(); i++) {
-		        	contador++;
-		        }
-		        
-		        if (contador < 6) {
-		            logClase.logError("No se puede activar la temporada: La cantidad de equipos es insuficiente.", null);
-		            JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque debe haber mínimo 6 equipos.", "Error", JOptionPane.ERROR_MESSAGE);
-		            return; // Detener la ejecución
-		        }
+		    public void actionPerformed(ActionEvent e) {
+		        File carpetaTemporadas = new File("data/");
+		        File[] archivosTemporadas = carpetaTemporadas.listFiles((dir, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
 
-		        int generacionJornadas = temporada.generarJornadas();
+		        if (archivosTemporadas != null) {
+		            for (File archivo : archivosTemporadas) {
+		                try {
+		                    Temporada temp = Temporada.cargarTemporada(archivo.getName().replace("temporada_", "").replace(".ser", ""));
+		                    if (temp.getEstado().equals("Activa")) {
+		                        JOptionPane.showMessageDialog(getContentPane(), "No se puede activar la temporada porque ya existe una temporada activa.", "Error", JOptionPane.ERROR_MESSAGE);
+		                        return;
+		                    }
+		                } catch (Exception ex) {
+		                    System.out.println("Error al cargar una de las temporadas.");
+		                }
+		            }
+		        }
 		        
-		        if (generacionJornadas == 0) {
-		        	// === INICIO: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
-		        	logClase.logError("No se puede activar la temporada: No hay equipos registrados.", null);
-		            // === FIN: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
-		        	JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque no hay equipos registrados.", "Error", JOptionPane.ERROR_MESSAGE);
-		        } else {		            
-			        comboBoxJornadas.removeAllItems();
-			        
-			        for (Jornada jornada : temporada.getJornadas()) {
-			            comboBoxJornadas.addItem("Jornada " + jornada.getNumero());
+		    	int dialogResult = JOptionPane.showConfirmDialog(null, "Vas a iniciar la temporada. No podrás modificar los equipos ni sus jugadores.", "Aviso", JOptionPane.OK_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
+		    	if (dialogResult == JOptionPane.YES_OPTION) {			        
+			        int contador = 0;
+			        for (int i = 0; i < temporada.getEquipos().size(); i++) {
+			        	contador++;
 			        }
-		
-			        lblEstado2.setText("Activa");
-			        temporada.setEstado("Activa");
-			        try {
-						temporada.guardarTemporada(temporada);
-						 // === INICIO: LOGGING PARA TEMPORADA ACTIVADA ===
-		                logClase.logAction("Temporada activada correctamente: " + temporada.getPeriodo() + ". Jornadas generadas: " + temporada.getJornadas().size());
-		                // === FIN: LOGGING PARA TEMPORADA ACTIVADA ===
-					} catch (IOException e1) {
-						 // === INICIO: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
-		                logClase.logError("Error al guardar la temporada después de activarla.", e1);
-		                // === FIN: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
-						System.out.println("ERROR. No se han encontrado datos de la temporada.");
-					}
-			        cargarPartidos(temporada, jornadaSeleccionada);
-			        panelIzquierdo.remove(btnActivarTemporada);
-			        panelIzquierdo.add(btnFinalizarTemporada);
-	        	}
+			        
+			        if (contador < 6) {
+			            logClase.logError("No se puede activar la temporada: La cantidad de equipos es insuficiente.", null);
+			            JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque debe haber mínimo 6 equipos.", "Error", JOptionPane.ERROR_MESSAGE);
+			            return; // Detener la ejecución
+			        }
+
+			        int generacionJornadas = temporada.generarJornadas();
+			        
+			        if (generacionJornadas == 0) {
+			        	// === INICIO: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
+			        	logClase.logError("No se puede activar la temporada: No hay equipos registrados.", null);
+			            // === FIN: LOGGING PARA ERROR AL ACTIVAR TEMPORADA ===
+			        	JOptionPane.showMessageDialog(getContentPane(), "No se puede iniciar la temporada porque no hay equipos registrados.", "Error", JOptionPane.ERROR_MESSAGE);
+			        } else {		            
+				        comboBoxJornadas.removeAllItems();
+				        
+				        for (Jornada jornada : temporada.getJornadas()) {
+				            comboBoxJornadas.addItem("Jornada " + jornada.getNumero());
+				        }
+			
+				        lblEstado2.setText("Activa");
+				        temporada.setEstado("Activa");
+			            btnAdelante.setVisible(true);
+			            btnAtras.setVisible(true);
+			            comboBoxJornadas.setVisible(true);
+				        btnEquipos.setVisible(false);
+				        btnGuardar.setVisible(true);
+				        btnRestablecer.setVisible(true);
+				        try {
+							temporada.guardarTemporada(temporada);
+							 // === INICIO: LOGGING PARA TEMPORADA ACTIVADA ===
+			                logClase.logAction("Temporada activada correctamente: " + temporada.getPeriodo() + ". Jornadas generadas: " + temporada.getJornadas().size());
+			                // === FIN: LOGGING PARA TEMPORADA ACTIVADA ===
+						} catch (IOException e1) {
+							 // === INICIO: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
+			                logClase.logError("Error al guardar la temporada después de activarla.", e1);
+			                // === FIN: LOGGING PARA ERROR AL GUARDAR TEMPORADA ===
+							System.out.println("ERROR. No se han encontrado datos de la temporada.");
+						}
+				        cargarPartidos(temporada, jornadaSeleccionada);
+				        mostrarClasificacion(temporada);
+				        btnActivarTemporada.setVisible(false);
+		        	}
+		    	}
 		    }
 		});
 		
@@ -325,9 +351,11 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnGuardar.setForeground(Color.WHITE);
         btnGuardar.setFocusPainted(false);
         btnGuardar.addMouseListener(this);
+        panelIzquierdo.add(btnGuardar);
+        btnGuardar.setVisible(false);
         
         if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
-    		panelIzquierdo.add(btnGuardar);
+        	btnGuardar.setVisible(true);
         }
 		
 		btnRestablecer = new BotonRedondeado("Restablecer", null);
@@ -378,9 +406,11 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		        }
 		    }
 		});
+		panelIzquierdo.add(btnRestablecer);
+		btnRestablecer.setVisible(false);
 		
 		if (temporada.getEstado().equals("Activa") && ("Administrador".equals(rol) || "Árbitro".equals(rol))) {
-    		panelIzquierdo.add(btnRestablecer);
+			btnRestablecer.setVisible(true);
         }
 		
 		// Panel para la clasificación
@@ -397,7 +427,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		lblClasificacion.setFont(new Font("SansSerif", Font.BOLD, 30));
 		panelDerecho.add(lblClasificacion);
 		
-		btnVolverMenu = new BotonRedondeado("Volver al Menú", null);
+		btnVolverMenu = new BotonRedondeado("Volver a Temporadas", null);
 		btnVolverMenu.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			    if (datosModificados) {
@@ -421,7 +451,7 @@ public class MenuJornadas extends JFrame implements MouseListener {
 		btnVolverMenu.setFont(new Font("SansSerif", Font.BOLD, 16));
 		btnVolverMenu.setFocusPainted(false);
 		btnVolverMenu.setBackground(new Color(84, 84, 84));
-		btnVolverMenu.setBounds(300, 496, 150, 29);
+		btnVolverMenu.setBounds(239, 496, 210, 29);
 		btnVolverMenu.addMouseListener(this);
 		panelDerecho.add(btnVolverMenu);
 		
@@ -821,7 +851,13 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	    scrollPaneClasificacion.setBorder(BorderFactory.createEmptyBorder());
 	    panelDerecho.add(scrollPaneClasificacion);
 	    
-	    btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);
+	    btnExportarPDF = new BotonRedondeado("Volver al Menú", (ImageIcon) null);	  
+	    btnExportarPDF.setText("Exportar PDF");
+	    btnExportarPDF.setForeground(Color.WHITE);
+	    btnExportarPDF.setFont(new Font("SansSerif", Font.BOLD, 16));
+	    btnExportarPDF.setFocusPainted(false);
+	    btnExportarPDF.setBackground(new Color(84, 84, 84));
+	    btnExportarPDF.setBounds(80, 496, 145, 29);
 	    btnExportarPDF.addActionListener(e -> {
 	        if (tablaClasificacion.getRowCount() == 0) {
 	            JOptionPane.showMessageDialog(null, "No hay datos en la tabla para exportar.", "Advertencia", JOptionPane.WARNING_MESSAGE);
@@ -841,14 +877,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	            exportador.exportar(tablaClasificacion, archivo.getAbsolutePath(), temporada);
 	        }
 	    });
-
-	  
-	    btnExportarPDF.setText("Exportar PDF");
-	    btnExportarPDF.setForeground(Color.WHITE);
-	    btnExportarPDF.setFont(new Font("SansSerif", Font.BOLD, 16));
-	    btnExportarPDF.setFocusPainted(false);
-	    btnExportarPDF.setBackground(new Color(84, 84, 84));
-	    btnExportarPDF.setBounds(140, 496, 145, 29);
 	    panelDerecho.add(btnExportarPDF);
 	}
 	
@@ -1084,7 +1112,6 @@ public class MenuJornadas extends JFrame implements MouseListener {
 	                // === FIN: LOGGING PARA GUARDAR RESULTADOS ===
 	            }
 
-	            JOptionPane.showMessageDialog(null, "Resultados guardados correctamente.");
 	            datosModificados = false;
 	            actualizarTitulo();
 	        }

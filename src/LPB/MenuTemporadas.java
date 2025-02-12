@@ -209,7 +209,7 @@ public class MenuTemporadas extends JFrame {
         File[] files = folder.listFiles((dir, name) -> name.endsWith(".ser") && name.startsWith("temporada_"));
 
         if (files != null) {
-            for (File file : files) {                
+            for (File file : files) {
                 String nombreTemporada = file.getName().replace("temporada_", "").replace(".ser", "");
                 btnTemporada = new BotonRedondeado("Temporada " + nombreTemporada, null);
                 btnTemporada.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -257,10 +257,15 @@ public class MenuTemporadas extends JFrame {
 
                 btnEliminar.addActionListener(e -> {
                     int confirm = JOptionPane.showConfirmDialog(this, 
-                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", 
-                        "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
+                        "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         if (file.delete()) {
+                            File temporadaCarpeta = new File("src/imagenes/temporadas/Temporada " + nombreTemporada);
+
+                            if (temporadaCarpeta.exists()) {
+                                eliminarCarpeta(temporadaCarpeta);
+                            }
+
                             JOptionPane.showMessageDialog(this, "Temporada eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                             listarTemporadas();
                         } else {
@@ -271,9 +276,14 @@ public class MenuTemporadas extends JFrame {
                 
                 panelContenido.add(btnTemporada);
                 
-                if ("Administrador".equals(rol)) {
-        			panelContenido.add(btnEliminar);
-        		}
+                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+                    Temporada temporada = (Temporada) ois.readObject();
+                    if ("En creación".equals(temporada.getEstado()) && "Administrador".equals(rol)) {
+                    	panelContenido.add(btnEliminar);
+                    }
+                } catch (IOException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
                 
                 yPosition += buttonHeight + buttonSpacing;
             }
@@ -281,5 +291,26 @@ public class MenuTemporadas extends JFrame {
 
         panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
         panelContenido.revalidate();
-    }	
+    }
+    
+	/**
+	 * Método para eliminar una carpeta y todo su contenido
+	 * 
+	 * Elimina la carpeta de imágenes de todos los equipos de la temporada eliminada.
+	 * 
+	 * @param carpeta File a eliminar
+	 */
+    private void eliminarCarpeta(File carpeta) {
+        File[] archivos = carpeta.listFiles();
+        if (archivos != null) {
+            for (File archivo : archivos) {
+                if (archivo.isDirectory()) {
+                    eliminarCarpeta(archivo);
+                } else {
+                    archivo.delete();
+                }
+            }
+        }
+        carpeta.delete();
+    }
 }

@@ -17,10 +17,16 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -34,6 +40,7 @@ import javax.swing.SwingConstants;
 
 import LPBCLASES.BotonRedondeado;
 import LPBCLASES.Equipo;
+import LPBCLASES.Jugador;
 import LPBCLASES.Temporada;
 import LPBCLASES.logClase;
 
@@ -94,13 +101,8 @@ public class EquiposTemporada extends JFrame {
 			        int opcion = JOptionPane.showConfirmDialog(EquiposTemporada.this, "Los datos han sido modificados. ¿Desea guardar antes de salir?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			        switch (opcion) {
 			        case JOptionPane.YES_OPTION:
+			            guardarDatos();
 			            System.exit(0);
-		                try {
-		                	temporadaSeleccionada.setEquipos(equipos);
-							temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
-						} catch (IOException e1) {
-							System.out.println("ERROR. No se han encontrado los datos de la temporada.");
-						}
 			            break;
 			        case JOptionPane.NO_OPTION:
 			            System.exit(0);
@@ -152,11 +154,11 @@ public class EquiposTemporada extends JFrame {
 		labelUsuario.setBounds(20, 360, 200, 20);
 		panelInferior.add(labelUsuario);
 
-	    SelectTemporadas = new JComboBox<>();
+	    SelectTemporadas = new JComboBox<String>();
 	    SelectTemporadas.setBackground(new Color(0, 64, 128));
 	    SelectTemporadas.setForeground(new Color(40, 40, 40));
 	    SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
-	    SelectTemporadas.setBounds(545, 27, 200, 40);	    
+	    SelectTemporadas.setBounds(545, 27, 200, 40);
 	    panelInferior.add(SelectTemporadas);
 	    
 		ImageIcon originalImageIcon = new ImageIcon(getClass().getResource("/imagenes/plus.png"));
@@ -173,33 +175,202 @@ public class EquiposTemporada extends JFrame {
 		btnNuevo.setIcon(scaledImageIcon);
 		
 		btnNuevo.addActionListener(e -> {
-        	AgregarEquipo agregarEquipo = new AgregarEquipo(temporadaSeleccionada);
-        	agregarEquipo.setVisible(true);
-			try {
-	        	temporadaSeleccionada.setEquipos(equipos);
-				temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
-			} catch (IOException e1) {
-				System.out.println("Error al guardar los datos de la temporada.");
-			}
-            
-            agregarEquipo.addWindowListener(new java.awt.event.WindowAdapter() {
-                @Override
-                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                    try {
-                    	String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
-                    	String periodo = selectedTemporada.replace("Temporada ", "");
-                    	temporadaSeleccionada = Temporada.cargarTemporada(periodo);
-                        equipos = temporadaSeleccionada.getEquipos();
-                        equiposPorTemporada.put(periodo, equipos);
-						actualizarPanelEquipos(periodo);
-						
-					} catch (ClassNotFoundException e) {
-						System.out.println("ERROR. No se ha encontrado la clase Temporada.");
-					} catch (IOException e) {
-						System.out.println("ERROR. No se han encontrado los datos de la temporada.");
-					}
-                }
-            });
+            guardarDatos();
+		    int opcion = JOptionPane.showConfirmDialog(null, "¿Deseas añadir un equipo de una temporada anterior?", "Añadir equipo", JOptionPane.YES_NO_OPTION);
+
+		    if (opcion == JOptionPane.YES_OPTION) {
+		        String periodoActual = temporadaSeleccionada.getPeriodo();
+
+		        File carpeta = new File("data/");
+		        File[] archivos = carpeta.listFiles((dir, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
+
+		        if (archivos != null) {
+		            Map<String, List<String>> equiposPorTemporada2 = new HashMap<>();
+		            List<String> temporadas = new ArrayList<>();
+		            Set<String> nombresEquiposActuales = temporadaSeleccionada.getEquipos().stream()
+		                .map(Equipo::getNombre)
+		                .collect(Collectors.toSet());
+		            
+		            List<String> equiposTempActuales = temporadaSeleccionada.getEquipos().stream()
+		                    .map(Equipo::getNombre)
+		                    .sorted()
+		                    .collect(Collectors.toList());
+		                equiposPorTemporada2.put(periodoActual, equiposTempActuales);
+
+		            for (File archivo : archivos) {
+		                String nombreArchivo = archivo.getName();
+		                String periodo = nombreArchivo.replace("temporada_", "").replace(".ser", "");
+
+		                if (periodo.equals(periodoActual)) {
+		                    continue;
+		                }
+
+		                temporadas.add(periodo);
+
+		                try {
+		                    Temporada temp = Temporada.cargarTemporada(periodo);
+		                    List<String> equiposTemp = temp.getEquipos().stream()
+		                        .map(Equipo::getNombre)
+		                        .filter(nombre -> !nombresEquiposActuales.contains(nombre))
+		                        .map(nombre -> nombre + " (" + periodo + ")")
+		                        .sorted()
+		                        .collect(Collectors.toList());
+
+		                    if (!equiposTemp.isEmpty()) {
+		                        equiposPorTemporada2.put(periodo, equiposTemp);
+		                    }
+		                } catch (Exception ex) {
+		                    System.out.println("No se pudo cargar la temporada " + periodo);
+		                }
+		            }
+
+		            temporadas.sort(Comparator.comparing((String periodo) -> periodo.substring(0, 4)).reversed());
+
+		            List<String> opcionesEquipos = new ArrayList<>();
+		            for (String periodo : temporadas) {
+		                opcionesEquipos.addAll(equiposPorTemporada2.getOrDefault(periodo, Collections.emptyList()));
+		            }
+
+		            if (!opcionesEquipos.isEmpty()) {
+		                String equipoSeleccionado = (String) JOptionPane.showInputDialog(null, 
+		                    "Selecciona un equipo:", "Seleccionar equipo", JOptionPane.QUESTION_MESSAGE, null, opcionesEquipos.toArray(), opcionesEquipos.get(0));
+
+		                if (equipoSeleccionado != null) {
+		                    String[] partes = equipoSeleccionado.split(" \\(");
+		                    String nombreEquipo = partes[0];
+		                    String periodoOrigen = partes[1].replace(")", "");
+
+		                    try {
+		                        Temporada tempOrigen = Temporada.cargarTemporada(periodoOrigen);
+		                        Equipo equipo = tempOrigen.getEquipos().stream()
+		                            .filter(eq -> eq.getNombre().equals(nombreEquipo))
+		                            .findFirst()
+		                            .orElse(null);
+
+		                        if (equipo != null) {
+		                        	String carpetaOrigen = "src/imagenes/temporadas/Temporada " + periodoOrigen + "/" + equipo.getNombre() + "/";
+		                        	String carpetaDestino = "src/imagenes/temporadas/Temporada " + temporadaSeleccionada.getPeriodo() + "/" + equipo.getNombre() + "/";
+
+		                        	File carpetaOrigenFile = new File(carpetaOrigen);
+		                        	File carpetaDestinoFile = new File(carpetaDestino);
+		                        	String rutaFotoEquipo = null;
+
+		                        	if (carpetaOrigenFile.exists() && carpetaOrigenFile.isDirectory()) {
+		                        	    if (!carpetaDestinoFile.exists()) {
+		                        	        carpetaDestinoFile.mkdirs();
+		                        	    }
+
+		                        	    File[] archivosTemp = carpetaOrigenFile.listFiles();
+		                        	    if (archivosTemp != null) {
+		                        	        for (File archivo : archivosTemp) {
+		                        	            File destino = new File(carpetaDestinoFile, archivo.getName());
+		                        	            if (archivo.isDirectory()) {
+		                        	                destino.mkdirs();
+		                        	                File[] subArchivos = archivo.listFiles();
+		                        	                if (subArchivos != null) {
+		                        	                    for (File subArchivo : subArchivos) {
+		                        	                        Files.copy(subArchivo.toPath(), new File(destino, subArchivo.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+		                        	                    }
+		                        	                }
+		                        	            } else {
+		                        	                Files.copy(archivo.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+		                        	                if (archivo.getName().startsWith(equipo.getNombre() + ".")) {
+		                        	                    String extension = archivo.getName().substring(archivo.getName().lastIndexOf("."));
+		                        	                    rutaFotoEquipo = carpetaDestino + equipo.getNombre() + extension;
+		                        	                }
+		                        	            }
+		                        	        }
+		                        	    }
+		                        	}
+
+		                        	if (rutaFotoEquipo == null) {
+		                        	    rutaFotoEquipo = carpetaDestino + equipo.getNombre() + ".png";
+		                        	}
+
+		                            Equipo nuevoEquipo = new Equipo(
+		                                equipo.getNombre(),
+		                                equipo.getEntrenador(),
+		                                equipo.getJugadores(),
+		                                equipo.getEstadio(),
+		                                equipo.getFundacion(),
+		                                rutaFotoEquipo
+		                            );
+
+		                            nuevoEquipo.setRutaFoto(rutaFotoEquipo);
+
+		                            for (Jugador jugador : nuevoEquipo.getJugadores()) {
+		                                String rutaFotoJugador = null;
+
+		                                File archivoFoto = new File(carpetaDestino, jugador.getNombre() + " " + jugador.getApellidos());
+
+		                                String extension = "";
+		                                if (archivoFoto.exists()) {
+		                                    int posicionExtension = archivoFoto.getName().lastIndexOf(".");
+		                                    if (posicionExtension != -1) {
+		                                        extension = archivoFoto.getName().substring(posicionExtension);
+		                                    }
+		                                }
+
+		                                rutaFotoJugador = carpetaDestino + jugador.getNombre() + " " + jugador.getApellidos() + extension;
+		                                jugador.setRutaFoto(rutaFotoJugador);
+		                            }
+
+
+		                            List<Equipo> listaEquipos = temporadaSeleccionada.getEquipos();
+		                            listaEquipos.add(nuevoEquipo);
+		                            temporadaSeleccionada.setEquipos(listaEquipos);
+		                            temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+
+		                            temporadaSeleccionada = Temporada.cargarTemporada(temporadaSeleccionada.getPeriodo());
+		                            equipos = temporadaSeleccionada.getEquipos();
+		                            equiposPorTemporada.put(temporadaSeleccionada.getPeriodo(), equipos);
+		                            actualizarPanelEquipos(temporadaSeleccionada.getPeriodo());
+
+		                            JOptionPane.showMessageDialog(null, "Equipo añadido correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+		                        } else {
+		                            System.out.println("No se encontró la carpeta del equipo.");
+		                        }
+		                    } catch (IOException e1) {
+		                        System.out.println("Error al copiar la carpeta: " + e1.getMessage());
+		                    } catch (Exception ex) {
+		                        System.out.println("Error al cargar el equipo.");
+		                    }
+		                }
+		            } else {
+		                JOptionPane.showMessageDialog(null, 
+		                    "No hay equipos disponibles en temporadas anteriores.", "Información", JOptionPane.INFORMATION_MESSAGE);
+		            }
+		        }
+		    } else {
+		        AgregarEquipo agregarEquipo = new AgregarEquipo(temporadaSeleccionada);
+		        agregarEquipo.setVisible(true);
+
+		        try {
+		            temporadaSeleccionada.setEquipos(equipos);
+		            temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+		        } catch (IOException e1) {
+		            System.out.println("Error al guardar los datos de la temporada.");
+		        }
+		        
+		        agregarEquipo.addWindowListener(new java.awt.event.WindowAdapter() {
+		            @Override
+		            public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+		                try {
+		                    String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
+		                    String periodo = selectedTemporada.replace("Temporada ", "");
+		                    temporadaSeleccionada = Temporada.cargarTemporada(periodo);
+		                    equipos = temporadaSeleccionada.getEquipos();
+		                    actualizarPanelEquipos(periodo);
+		                    
+		                } catch (ClassNotFoundException e) {
+		                    System.out.println("ERROR. No se ha encontrado la clase Temporada.");
+		                } catch (IOException e) {
+		                    System.out.println("ERROR. No se han encontrado los datos de la temporada.");
+		                }
+		            }
+		        });
+		    }
 		});
 		panelInferior.add(btnNuevo);
 		btnNuevo.setVisible(false);
@@ -219,12 +390,7 @@ public class EquiposTemporada extends JFrame {
 			        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de volver?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
 			        switch (opcion) {
 				        case JOptionPane.YES_OPTION:
-			                try {
-		                        temporadaSeleccionada.setEquipos(equipos);
-		                        temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
-							} catch (IOException e1) {
-								System.out.println("ERROR. No se han encontrado los datos de la temporada.");
-							}
+				            guardarDatos();
 				            new Menu(rol, usuario).setVisible(true);
 				            dispose();
 				            break;
@@ -347,6 +513,21 @@ public class EquiposTemporada extends JFrame {
 	 * @see ActionListener
 	 */
 	private ActionListener selectListener = e -> {
+	    if (datosModificados) {
+	        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de volver?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+	        switch (opcion) {
+	            case JOptionPane.YES_OPTION:
+	                guardarDatos();
+	                break;
+	            case JOptionPane.NO_OPTION:
+	                break;
+	            case JOptionPane.CANCEL_OPTION:
+	            case JOptionPane.CLOSED_OPTION:
+	                SelectTemporadas.setSelectedItem(temporadaSeleccionada);
+	                return;
+	        }
+	    }
+	    
 	    String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
 	    if (selectedTemporada != null) {
 	        String periodo = selectedTemporada.replace("Temporada ", "");
@@ -528,5 +709,58 @@ public class EquiposTemporada extends JFrame {
 
 	    panelEquipos.revalidate();
 	    panelEquipos.repaint();
+	}
+	
+	/**
+	 * Método para eliminar una carpeta y todo su contenido
+	 * 
+	 * Elimina la carpeta de imágenes del equipo que se ha eliminado.
+	 * 
+	 * @param carpeta File a eliminar
+	 */
+	private void eliminarCarpeta(File carpeta) {
+	    File[] archivos = carpeta.listFiles();
+	    if (archivos != null) {
+	        for (File archivo : archivos) {
+	            if (archivo.isDirectory()) {
+	                eliminarCarpeta(archivo);
+	            } else {
+	                archivo.delete();
+	            }
+	        }
+	    }
+	    carpeta.delete();
+	}
+	
+	private void guardarDatos() {
+        try {
+            temporadaSeleccionada.setEquipos(equipos);
+            temporadaSeleccionada.guardarTemporada(temporadaSeleccionada);
+            
+            List<Equipo> equiposActuales = new ArrayList<>(temporadaSeleccionada.getEquipos());
+
+            String rutaTemporada = "src/imagenes/temporadas/Temporada " + temporadaSeleccionada.getPeriodo() + "/";
+            File carpetaTemporada = new File(rutaTemporada);
+            
+            if (carpetaTemporada.exists() && carpetaTemporada.isDirectory()) {
+                File[] carpetasEquipos = carpetaTemporada.listFiles(File::isDirectory);
+                if (carpetasEquipos != null) {
+                    for (File carpetaEquipo : carpetasEquipos) {
+                        String nombreEquipo = carpetaEquipo.getName();
+                        boolean equipoExiste = equiposActuales.stream()
+                            .anyMatch(equipo -> equipo.getNombre().equals(nombreEquipo));
+                        
+                        if (!equipoExiste) {
+                            eliminarCarpeta(carpetaEquipo);
+                        }
+                    }
+                }
+            }
+            
+            datosModificados = false;
+            actualizarTitulo();
+        } catch (IOException e1) {
+            System.out.println("ERROR. No se han encontrado los datos de la temporada.");
+        }
 	}
 }
