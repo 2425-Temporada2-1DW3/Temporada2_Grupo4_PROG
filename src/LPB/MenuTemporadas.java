@@ -260,6 +260,12 @@ public class MenuTemporadas extends JFrame {
                         "¿Estás seguro de que deseas eliminar la temporada " + nombreTemporada + "?", "Confirmar eliminación", JOptionPane.YES_NO_OPTION);
                     if (confirm == JOptionPane.YES_OPTION) {
                         if (file.delete()) {
+                            File temporadaCarpeta = new File("src/imagenes/temporadas/Temporada " + nombreTemporada);
+
+                            if (temporadaCarpeta.exists()) {
+                                eliminarCarpeta(temporadaCarpeta);
+                            }
+
                             JOptionPane.showMessageDialog(this, "Temporada eliminada correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
                             listarTemporadas();
                         } else {
@@ -285,5 +291,26 @@ public class MenuTemporadas extends JFrame {
 
         panelContenido.setPreferredSize(new Dimension(300, yPosition + buttonHeight + buttonSpacing));
         panelContenido.revalidate();
-    }	
+    }
+    
+	/**
+	 * Método para eliminar una carpeta y todo su contenido
+	 * 
+	 * Elimina la carpeta de imágenes de todos los equipos de la temporada eliminada.
+	 * 
+	 * @param carpeta File a eliminar
+	 */
+    private void eliminarCarpeta(File carpeta) {
+        File[] archivos = carpeta.listFiles();
+        if (archivos != null) {
+            for (File archivo : archivos) {
+                if (archivo.isDirectory()) {
+                    eliminarCarpeta(archivo);
+                } else {
+                    archivo.delete();
+                }
+            }
+        }
+        carpeta.delete();
+    }
 }
