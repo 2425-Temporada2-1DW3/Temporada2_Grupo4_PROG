@@ -11,7 +11,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
@@ -66,18 +65,16 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     private JTextField textApellido;
     private JComboBox<String> comboBoxPosicion;
     private JComboBox<Equipo> comboBoxEquipos;
+    private JComboBox<String> SelectTemporadas;
     private BotonRedondeado btnGuardar, btnEliminar, btnLimpiar, btnVolver, btnSeleccionarImagen;
     private DefaultListModel<String> dlm;
     private JList<String> listJugadores;
     private JScrollPane scrollPane;
-    private JLabel lblNombre;
-    private JLabel lblDorsal;
-    private JLabel lblPosicion;
-    private JLabel lblEquipo;
-    private JLabel lblApellido;
-    private JLabel lblFoto;
-    private JLabel lblJugadoresTotales;
-    private JLabel lblContador;
+    private JLabel lblNombre, lblApellido, lblDorsal, lblPosicion, lblEquipo, lblNombreTXT, lblApellidoTXT, lblDorsalTXT, lblPosicionTXT, lblEquipoTXT, lblFoto, lblJugadoresTotales, lblContador;
+    private Temporada temporadaSeleccionada = null;
+    private String temporadaActiva = null;
+    private Jugador jugadorSeleccionado = null;
+    private Equipo equipoJugador = null;
     
     private int contador = 0;
     private boolean datosModificados = false;
@@ -118,7 +115,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
  
         panelSuperior = new JPanel();
         panelSuperior.setBackground(new Color(255, 243, 205));
-        panelSuperior.setBounds(0, 0, 1188, 110);
+        panelSuperior.setBounds(0, 0, 786, 110);
         panelSuperior.setLayout(null);
 
         logo = new ImageIcon(getClass().getResource("/imagenes/logo150.png"));
@@ -132,6 +129,47 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         titulo.setForeground(new Color(0x13427e));
         panelSuperior.add(titulo);
         getContentPane().add(panelSuperior);
+        
+	    SelectTemporadas = new JComboBox<String>();
+	    SelectTemporadas.setBackground(new Color(0, 64, 128));
+	    SelectTemporadas.setForeground(new Color(40, 40, 40));
+	    SelectTemporadas.setFont(new Font("SansSerif", Font.PLAIN, 16));
+	    SelectTemporadas.setBounds(640, 40, 125, 30);
+		SelectTemporadas.addActionListener(e -> {
+		    if (datosModificados) {
+		        int opcion = JOptionPane.showConfirmDialog(getContentPane(), "Los datos han sido modificados. ¿Desea guardar antes de volver?", "Confirmar salida", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE);
+		        switch (opcion) {
+		            case JOptionPane.YES_OPTION:
+		                guardarDatos();
+		                break;
+		            case JOptionPane.NO_OPTION:
+		                break;
+		            case JOptionPane.CANCEL_OPTION:
+		            case JOptionPane.CLOSED_OPTION:
+		                SelectTemporadas.setSelectedItem(temporadaSeleccionada);
+		                return;
+		        }
+		    }
+		    
+		    String selectedTemporada = (String) SelectTemporadas.getSelectedItem();
+		    if (selectedTemporada != null) {
+		        String periodo = selectedTemporada.replace("Temporada ", "");
+		        try {
+		            temporadaSeleccionada = Temporada.cargarTemporada(periodo);
+		            
+		            if (temporadaSeleccionada != null) {
+						cargarJugadores();
+						temporadaActiva = periodo;
+		            } else {
+		                JOptionPane.showMessageDialog(null, "No se pudo cargar la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+		            }
+		        } catch (ClassNotFoundException | IOException e1) {
+		            e1.printStackTrace();
+		            JOptionPane.showMessageDialog(null, "Error al cargar los datos de la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
+		        }
+		    }
+		});
+	    panelSuperior.add(SelectTemporadas);
 
         panelInferior = new JPanel();
         panelInferior.setBackground(new Color(204, 153, 102));
@@ -155,17 +193,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
             if (!e.getValueIsAdjusting()) {
                 String jugadorSeleccionadoInfo = listJugadores.getSelectedValue();
                 if (jugadorSeleccionadoInfo != null) {
-                    Jugador jugadorSeleccionado = jugadoresMap.get(jugadorSeleccionadoInfo);
-                    Temporada temporada = null;
-
-                    String periodoJugador = jugadorSeleccionadoInfo.substring(jugadorSeleccionadoInfo.lastIndexOf("(") + 1, jugadorSeleccionadoInfo.lastIndexOf(")"));
-                    
-                    for (Temporada temp : temporadasEnCreacion) {
-                        if (temp.getPeriodo().equals(periodoJugador)) {
-                            temporada = temp;
-                            break;
-                        }
-                    }
+                    jugadorSeleccionado = jugadoresMap.get(jugadorSeleccionadoInfo);
                     
                     if (jugadorSeleccionado != null) {
                         textNombre.setText(jugadorSeleccionado.getNombre());
@@ -173,8 +201,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
                         textDorsal.setText(String.valueOf(jugadorSeleccionado.getDorsal()));
                         comboBoxPosicion.setSelectedItem(jugadorSeleccionado.getPosicion());
 
-                        Equipo equipoJugador = null;
-                        List<Equipo> equipos = temporada.getEquipos();
+                        List<Equipo> equipos = temporadaSeleccionada.getEquipos();
                         for (Equipo equipo : equipos) {
                             if (equipo.getJugadores().contains(jugadorSeleccionado)) {
                                 equipoJugador = equipo;
@@ -222,6 +249,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textNombre.setFont(new Font("SansSerif", Font.PLAIN, 16));
         textNombre.setBounds(561, 120, 200, 30);
         panelInferior.add(textNombre);
+        
+        lblNombreTXT = new JLabel(jugadorSeleccionado.getNombre());
+        lblNombreTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblNombreTXT.setForeground(new Color(0, 0, 0));
+        lblNombreTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblNombreTXT.setBounds(561, 120, 200, 30);
+        panelInferior.add(lblNombreTXT);
 
         lblApellido = new JLabel("Apellidos:");
         lblApellido.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -235,6 +269,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textApellido.setFont(new Font("SansSerif", Font.PLAIN, 16));
         textApellido.setBounds(561, 170, 200, 30);
         panelInferior.add(textApellido);
+        
+        lblApellidoTXT = new JLabel(jugadorSeleccionado.getApellidos());
+        lblApellidoTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblApellidoTXT.setForeground(Color.BLACK);
+        lblApellidoTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblApellidoTXT.setBounds(561, 170, 200, 30);
+        panelInferior.add(lblApellidoTXT);
 
         lblDorsal = new JLabel("Dorsal:");
         lblDorsal.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -248,6 +289,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textDorsal.setFont(new Font("SansSerif", Font.PLAIN, 16));
         textDorsal.setBounds(561, 220, 200, 30);
         panelInferior.add(textDorsal);
+        
+        lblDorsalTXT = new JLabel("" + jugadorSeleccionado.getDorsal());
+        lblDorsalTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblDorsalTXT.setForeground(Color.BLACK);
+        lblDorsalTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblDorsalTXT.setBounds(561, 220, 200, 30);
+        panelInferior.add(lblDorsalTXT);
 
         lblPosicion = new JLabel("Posición:");
         lblPosicion.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -265,6 +313,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         comboBoxPosicion.setBounds(561, 270, 200, 30);
         panelInferior.add(comboBoxPosicion);
         
+        lblPosicionTXT = new JLabel(jugadorSeleccionado.getPosicion());
+        lblPosicionTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblPosicionTXT.setForeground(Color.BLACK);
+        lblPosicionTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblPosicionTXT.setBounds(561, 270, 200, 30);
+        panelInferior.add(lblPosicionTXT);
+        
         lblEquipo = new JLabel("Equipo:");
         lblEquipo.setHorizontalAlignment(SwingConstants.RIGHT);
         lblEquipo.setForeground(new Color(84, 84, 84));
@@ -276,6 +331,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         comboBoxEquipos.setFont(new Font("SansSerif", Font.PLAIN, 16));
         comboBoxEquipos.setBounds(561, 320, 200, 30);
         panelInferior.add(comboBoxEquipos);
+        
+        lblEquipoTXT = new JLabel(equipoJugador.getNombre());
+        lblEquipoTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblEquipoTXT.setForeground(Color.BLACK);
+        lblEquipoTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblEquipoTXT.setBounds(561, 320, 200, 30);
+        panelInferior.add(lblEquipoTXT);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
         btnGuardar.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -308,7 +370,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         btnVolver.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnVolver.setBackground(new Color(0x404040));
         btnVolver.setForeground(Color.WHITE);
-        btnVolver.setBounds(671, 420, 90, 40);
+        btnVolver.setBounds(660, 420, 100, 40);
         btnVolver.setFocusPainted(false);
         btnVolver.addActionListener(this);
         panelInferior.add(btnVolver);
@@ -327,6 +389,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         getContentPane().add(panelInferior);
         
         actualizarFoto(null);
+        listarTemporadas();
         cargarJugadores();
     }
     
@@ -410,76 +473,109 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 	        }
 	    }
     }
+    
+	/**
+	 * Método que lista las temporadas disponibles en el sistema.
+	 * 
+	 * Carga las temporadas desde archivos serializados y las agrega al JComboBox de temporadas.
+	 * Si no se ha seleccionado una temporada, se busca la temporada activa y se selecciona automáticamente.
+	 * 
+	 * @return Lista de temporadas disponibles
+	 */
+	private List<String> listarTemporadas() {
+	    File carpetaData = new File("data");
+	    List<String> temporadas = new ArrayList<>();
 
-    // Método para cargas los jugadores al dlm
+	    SelectTemporadas.removeAllItems();
+
+	    if (carpetaData.exists() && carpetaData.isDirectory()) {
+	        for (File archivo : carpetaData.listFiles()) {
+	            if (archivo.isFile() && archivo.getName().endsWith(".ser") && archivo.getName().startsWith("temporada_")) {
+	                try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+	                    Temporada temporada = (Temporada) ois.readObject();
+	                    SelectTemporadas.addItem(temporada.getPeriodo()); 
+	                    temporadas.add(temporada.getPeriodo());
+	                } catch (IOException | ClassNotFoundException ex) {
+	                    System.err.println("Error al deserializar el archivo: " + archivo.getName());
+	                    ex.printStackTrace();
+	                }
+	            }
+	        }
+	    } else {
+	        System.out.println("La carpeta 'data' no existe o está vacía.");
+	    }
+
+	    if (temporadaSeleccionada == null) {
+		    for (String temporada : temporadas) {
+		        try {
+		            Temporada temp = Temporada.cargarTemporada(temporada);
+		            if (temp != null && temp.getEstado().equals("Activa")) {
+		                temporadaActiva = temporada;
+		                temporadaSeleccionada = temp;
+		                break;
+		            }
+		        } catch (ClassNotFoundException | IOException e) {
+		            System.out.println("Error al cargar los datos de la temporada: " + temporada);
+		            e.printStackTrace();
+		        }
+		    }
+	    } else {
+	    	temporadaActiva = temporadaSeleccionada.getPeriodo();
+	    }
+
+	    SelectTemporadas.removeAllItems();
+	    for (String temporada : temporadas) {
+	        SelectTemporadas.addItem(temporada);
+	    }
+
+	    if (temporadaActiva != null) {
+	        SelectTemporadas.setSelectedItem(temporadaActiva);
+	    }
+
+	    return temporadas;
+	}
+
     /**
-     * Carga los jugadores de la temporada activa en el modelo de lista.
+     * Carga los jugadores de la temporada seleccionada en el modelo de lista.
      */
-    private void cargarJugadores() {
-        File carpetaTemporadas = new File("data");
-        File[] archivosTemporadas = carpetaTemporadas.listFiles((dir, name) -> name.startsWith("temporada_") && name.endsWith(".ser"));
+	private void cargarJugadores() {
+	    if (temporadaSeleccionada == null) {
+	        System.out.println("No hay ninguna temporada seleccionada.");
+	        return;
+	    }
 
-        if (archivosTemporadas == null || archivosTemporadas.length == 0) {
-            System.out.println("No se han encontrado archivos de temporada.");
-            return;
-        }
+	    dlm.clear();
+	    textNombre.setText("");
+	    textApellido.setText("");
+	    textDorsal.setText("");
+	    comboBoxPosicion.setSelectedItem(0);
+	    comboBoxEquipos.setSelectedItem(0);
+	    actualizarFoto(null);
 
-        List<Temporada> temporadasEnCreacion = new ArrayList<>();
-        
-        for (File archivo : archivosTemporadas) {
-            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
-                Temporada temporada = (Temporada) ois.readObject();
-                if ("En creación".equals(temporada.getEstado())) {
-                    temporadasEnCreacion.add(temporada);
-                }
-            } catch (FileNotFoundException e) {
-                System.err.println("Archivo no encontrado: " + e.getMessage());
-            } catch (IOException e) {
-                System.err.println("Error al leer el archivo de temporada: " + e.getMessage());
-            } catch (ClassNotFoundException e) {
-                System.err.println("Error al cargar la temporada: " + e.getMessage());
-            }
-        }
+	    List<String> jugadoresTemp = new ArrayList<>();
+	    List<Equipo> equipos = temporadaSeleccionada.getEquipos();
 
-        if (temporadasEnCreacion.isEmpty()) {
-            System.out.println("No se ha encontrado ninguna temporada en creación.");
-            return;
-        }
-        
-        dlm.clear();
-        textNombre.setText("");
-        textApellido.setText("");
-        textDorsal.setText("");
-        comboBoxPosicion.setSelectedItem(0);
-        comboBoxEquipos.setSelectedItem(0);
-        actualizarFoto(null);
+	    for (Equipo equipo : equipos) {
+	        comboBoxEquipos.addItem(equipo);
+	        List<Jugador> jugadores = equipo.getJugadores();
+	        for (Jugador jugador : jugadores) {
+	            String jugadorInfo = jugador.getNombre() + " " + jugador.getApellidos() + " - " + equipo.getNombre();
+	            jugadoresTemp.add(jugadorInfo);
+	            jugadoresMap.put(jugadorInfo, jugador);
+	        }
+	    }
 
-        List<String> jugadoresTemp = new ArrayList<>();
+	    jugadoresTemp.sort(String::compareTo);
 
-        for (Temporada temporada : temporadasEnCreacion) {
-            List<Equipo> equipos = temporada.getEquipos();
-            // Recorrer los equipos de cada temporada
-            for (Equipo equipo : equipos) {
-                comboBoxEquipos.addItem(equipo);
-                List<Jugador> jugadores = equipo.getJugadores();
-                // Recorrer los jugadores de cada equipo
-                for (Jugador jugador : jugadores) {
-                    String jugadorInfo = jugador.getNombre() + " " + jugador.getApellidos() + " - " + equipo.getNombre() + " (" + temporada.getPeriodo() + ")";
-                    jugadoresTemp.add(jugadorInfo);
-                    jugadoresMap.put(jugadorInfo, jugador);
-                }
-            }
-        }
+	    for (String jugadorInfo : jugadoresTemp) {
+	        dlm.addElement(jugadorInfo);
+	    }
 
-        jugadoresTemp.sort(String::compareTo);
-
-        for (String jugadorInfo : jugadoresTemp) {
-            dlm.addElement(jugadorInfo);
-        }
-        
-        contador = dlm.getSize();
-        lblContador.setText(String.valueOf(contador));
-    }
+	    contador = dlm.getSize();
+	    lblContador.setText(String.valueOf(contador));
+	    actualizarCampos();
+	}
+    
     /**
      * Guarda los datos del jugador actual en la temporada activa.
      */
@@ -501,8 +597,6 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
                 JOptionPane.showMessageDialog(this, "Debe seleccionar un equipo válido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return;
             }
-
-            Jugador jugadorSeleccionado = null;
 
             if (listJugadores.getSelectedIndex() >= 0) {
                 String jugadorSeleccionadoInfo = listJugadores.getSelectedValue();
@@ -614,6 +708,50 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         } else {
             JOptionPane.showMessageDialog(this, "Seleccione un jugador para eliminarlo.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         }
+    }
+    
+    private void actualizarCampos() {
+    	if ("Finalizada".equals(temporadaSeleccionada.getPeriodo()) || "En creación".equals(temporadaSeleccionada.getPeriodo())) {
+            btnGuardar.setVisible(false);
+            btnEliminar.setVisible(false);
+            btnLimpiar.setVisible(false);
+            btnSeleccionarImagen.setVisible(false);
+            
+    		textNombre.setVisible(false);
+    		textApellido.setVisible(false);
+    		textDorsal.setVisible(false);
+    		comboBoxPosicion.setVisible(false);
+    		comboBoxEquipos.setVisible(false);
+    		
+    		lblNombreTXT.setVisible(true);
+    		lblApellidoTXT.setVisible(true);
+    		lblDorsalTXT.setVisible(true);
+    		lblPosicionTXT.setVisible(true);
+    		lblEquipoTXT.setVisible(true);
+
+            panelInferior.revalidate();
+            panelInferior.repaint();
+    	} else {
+            btnGuardar.setVisible(true);
+            btnEliminar.setVisible(true);
+            btnLimpiar.setVisible(true);
+            btnSeleccionarImagen.setVisible(true);
+            
+            panelInferior.remove(lblNombre);
+            panelInferior.remove(lblApellido);
+            panelInferior.remove(lblDorsal);
+
+            textNombre.setText(lblNombre.getText());
+            textApellido.setText(lblApellido.getText());
+            textDorsal.setText(lblDorsal.getText());
+
+    		textNombre.setVisible(true);
+    		textApellido.setVisible(true);
+    		textDorsal.setVisible(true);
+
+            panelInferior.revalidate();
+            panelInferior.repaint();
+    	}
     }
     
 	@Override
