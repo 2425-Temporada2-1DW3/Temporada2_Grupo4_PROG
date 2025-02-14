@@ -70,7 +70,8 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     private DefaultListModel<String> dlm;
     private JList<String> listJugadores;
     private JScrollPane scrollPane;
-    private JLabel lblNombre, lblApellido, lblDorsal, lblPosicion, lblEquipo, lblNombreTXT, lblApellidoTXT, lblDorsalTXT, lblPosicionTXT, lblEquipoTXT, lblFoto, lblJugadoresTotales, lblContador;
+    private JLabel lblTemporada, lblNombre, lblApellido, lblDorsal, lblPosicion, lblEquipo, lblNombreApellido, lblPosicionTXT, lblLogoEquipo, lblEquipoTXT, lblFoto, lblJugadoresTotales, lblContador;
+    private ImageIcon logoEquipo;
     private Temporada temporadaSeleccionada = null;
     private String temporadaActiva = null;
     private Jugador jugadorSeleccionado = null;
@@ -129,6 +130,13 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         titulo.setForeground(new Color(0x13427e));
         panelSuperior.add(titulo);
         getContentPane().add(panelSuperior);
+        
+	    lblTemporada = new JLabel("Temporada:");
+	    lblTemporada.setHorizontalAlignment(SwingConstants.RIGHT);
+	    lblTemporada.setForeground(new Color(84, 84, 84));
+	    lblTemporada.setFont(new Font("SansSerif", Font.PLAIN, 18));
+	    lblTemporada.setBounds(521, 40, 109, 30);
+	    panelSuperior.add(lblTemporada);
         
 	    SelectTemporadas = new JComboBox<String>();
 	    SelectTemporadas.setBackground(new Color(0, 64, 128));
@@ -216,6 +224,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 
                         // Actualizar la foto del jugador
                         actualizarFoto(jugadorSeleccionado);
+                        actualizarCampos();
                     }
                 }
             }
@@ -250,12 +259,12 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textNombre.setBounds(561, 120, 200, 30);
         panelInferior.add(textNombre);
         
-        lblNombreTXT = new JLabel(jugadorSeleccionado.getNombre());
-        lblNombreTXT.setHorizontalAlignment(SwingConstants.LEFT);
-        lblNombreTXT.setForeground(new Color(0, 0, 0));
-        lblNombreTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblNombreTXT.setBounds(561, 120, 200, 30);
-        panelInferior.add(lblNombreTXT);
+        lblNombreApellido = new JLabel("");
+        lblNombreApellido.setHorizontalAlignment(SwingConstants.LEFT);
+        lblNombreApellido.setForeground(new Color(0, 0, 0));
+        lblNombreApellido.setFont(new Font("SansSerif", Font.BOLD, 18));
+        lblNombreApellido.setBounds(574, 45, 187, 30);
+        panelInferior.add(lblNombreApellido);
 
         lblApellido = new JLabel("Apellidos:");
         lblApellido.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -269,13 +278,6 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textApellido.setFont(new Font("SansSerif", Font.PLAIN, 16));
         textApellido.setBounds(561, 170, 200, 30);
         panelInferior.add(textApellido);
-        
-        lblApellidoTXT = new JLabel(jugadorSeleccionado.getApellidos());
-        lblApellidoTXT.setHorizontalAlignment(SwingConstants.LEFT);
-        lblApellidoTXT.setForeground(Color.BLACK);
-        lblApellidoTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblApellidoTXT.setBounds(561, 170, 200, 30);
-        panelInferior.add(lblApellidoTXT);
 
         lblDorsal = new JLabel("Dorsal:");
         lblDorsal.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -289,13 +291,6 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textDorsal.setFont(new Font("SansSerif", Font.PLAIN, 16));
         textDorsal.setBounds(561, 220, 200, 30);
         panelInferior.add(textDorsal);
-        
-        lblDorsalTXT = new JLabel("" + jugadorSeleccionado.getDorsal());
-        lblDorsalTXT.setHorizontalAlignment(SwingConstants.LEFT);
-        lblDorsalTXT.setForeground(Color.BLACK);
-        lblDorsalTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblDorsalTXT.setBounds(561, 220, 200, 30);
-        panelInferior.add(lblDorsalTXT);
 
         lblPosicion = new JLabel("Posición:");
         lblPosicion.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -313,11 +308,11 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         comboBoxPosicion.setBounds(561, 270, 200, 30);
         panelInferior.add(comboBoxPosicion);
         
-        lblPosicionTXT = new JLabel(jugadorSeleccionado.getPosicion());
-        lblPosicionTXT.setHorizontalAlignment(SwingConstants.LEFT);
+        lblPosicionTXT = new JLabel("");
+        lblPosicionTXT.setHorizontalAlignment(SwingConstants.CENTER);
         lblPosicionTXT.setForeground(Color.BLACK);
         lblPosicionTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblPosicionTXT.setBounds(561, 270, 200, 30);
+        lblPosicionTXT.setBounds(520, 120, 200, 30);
         panelInferior.add(lblPosicionTXT);
         
         lblEquipo = new JLabel("Equipo:");
@@ -332,11 +327,15 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         comboBoxEquipos.setBounds(561, 320, 200, 30);
         panelInferior.add(comboBoxEquipos);
         
-        lblEquipoTXT = new JLabel(equipoJugador.getNombre());
+	    lblLogoEquipo = new JLabel();
+	    lblLogoEquipo.setBounds(474, 205, 60, 60);
+	    panelInferior.add(lblLogoEquipo);
+        
+        lblEquipoTXT = new JLabel("");
         lblEquipoTXT.setHorizontalAlignment(SwingConstants.LEFT);
         lblEquipoTXT.setForeground(Color.BLACK);
         lblEquipoTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblEquipoTXT.setBounds(561, 320, 200, 30);
+        lblEquipoTXT.setBounds(561, 220, 200, 30);
         panelInferior.add(lblEquipoTXT);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
@@ -710,8 +709,8 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         }
     }
     
-    private void actualizarCampos() {
-    	if ("Finalizada".equals(temporadaSeleccionada.getPeriodo()) || "En creación".equals(temporadaSeleccionada.getPeriodo())) {
+    private void actualizarCampos() {        
+    	if (("Finalizada".equals(temporadaSeleccionada.getEstado()) || "Activa".equals(temporadaSeleccionada.getEstado())) && listJugadores.getSelectedIndex() >= 0) {
             btnGuardar.setVisible(false);
             btnEliminar.setVisible(false);
             btnLimpiar.setVisible(false);
@@ -722,10 +721,24 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     		textDorsal.setVisible(false);
     		comboBoxPosicion.setVisible(false);
     		comboBoxEquipos.setVisible(false);
+            
+    		lblNombre.setVisible(false);
+    		lblApellido.setVisible(false);
+    		lblDorsal.setVisible(false);
+    		lblPosicion.setVisible(false);
+    		lblEquipo.setVisible(false);
     		
-    		lblNombreTXT.setVisible(true);
-    		lblApellidoTXT.setVisible(true);
-    		lblDorsalTXT.setVisible(true);
+    		lblNombreApellido.setText(jugadorSeleccionado.getNombre() + " " + jugadorSeleccionado.getApellidos() + " (" + jugadorSeleccionado.getDorsal() + ")");
+    		lblPosicionTXT.setText(jugadorSeleccionado.getPosicion());
+    		lblEquipoTXT.setText(equipoJugador.getNombre());
+    		
+    		logoEquipo = new ImageIcon(equipoJugador.getRutaFoto());
+    	    Image originalImageEquipo = logoEquipo.getImage();
+    	    Image imgEquipo = originalImageEquipo.getScaledInstance(60, (int) ((double) originalImageEquipo.getWidth(null) / originalImageEquipo.getHeight(null) * 60), Image.SCALE_SMOOTH);
+    	    logoEquipo = new ImageIcon(imgEquipo);
+    	    lblLogoEquipo = new JLabel(logoEquipo);
+    		
+    		lblNombreApellido.setVisible(true);
     		lblPosicionTXT.setVisible(true);
     		lblEquipoTXT.setVisible(true);
 
@@ -737,17 +750,22 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
             btnLimpiar.setVisible(true);
             btnSeleccionarImagen.setVisible(true);
             
-            panelInferior.remove(lblNombre);
-            panelInferior.remove(lblApellido);
-            panelInferior.remove(lblDorsal);
-
-            textNombre.setText(lblNombre.getText());
-            textApellido.setText(lblApellido.getText());
-            textDorsal.setText(lblDorsal.getText());
-
+    		lblNombre.setVisible(true);
+    		lblApellido.setVisible(true);
+    		lblDorsal.setVisible(true);
+    		lblPosicion.setVisible(true);
+    		lblEquipo.setVisible(true);
+            
     		textNombre.setVisible(true);
     		textApellido.setVisible(true);
     		textDorsal.setVisible(true);
+    		comboBoxPosicion.setVisible(true);
+    		comboBoxEquipos.setVisible(true);
+    		
+    		lblNombreApellido.setVisible(false);
+    		lblPosicionTXT.setVisible(false);
+    		lblEquipoTXT.setVisible(false);
+    		lblLogoEquipo.setVisible(false);
 
             panelInferior.revalidate();
             panelInferior.repaint();
