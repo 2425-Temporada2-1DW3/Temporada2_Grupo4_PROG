@@ -2,12 +2,15 @@ package LPB;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.Ellipse2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
@@ -70,7 +73,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     private DefaultListModel<String> dlm;
     private JList<String> listJugadores;
     private JScrollPane scrollPane;
-    private JLabel lblTemporada, lblNombre, lblApellido, lblDorsal, lblPosicion, lblEquipo, lblNombreApellido, lblPosicionTXT, lblLogoEquipo, lblEquipoTXT, lblFoto, lblJugadoresTotales, lblContador;
+    private JLabel lblTemporada, lblNombre, lblApellido, lblDorsal, lblPosicion, lblEquipo, lblNombreApellido, lblPosicionTXT, lblLogoEquipo, lblEquipoTXT, lblFoto, lblFoto2, lblJugadoresTotales, lblContador;
     private ImageIcon logoEquipo;
     private Temporada temporadaSeleccionada = null;
     private String temporadaActiva = null;
@@ -176,6 +179,8 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 		            JOptionPane.showMessageDialog(null, "Error al cargar los datos de la temporada seleccionada.", "Error", JOptionPane.ERROR_MESSAGE);
 		        }
 		    }
+		    
+		    System.out.println("Temporada: " + temporadaSeleccionada.getPeriodo());
 		});
 	    panelSuperior.add(SelectTemporadas);
 
@@ -259,11 +264,17 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         textNombre.setBounds(561, 120, 200, 30);
         panelInferior.add(textNombre);
         
+        lblFoto2 = new JLabel("");
+        lblFoto2.setBounds(563, 50, 100, 100);
+        lblFoto2.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblFoto2.setHorizontalAlignment(SwingConstants.CENTER);
+        panelInferior.add(lblFoto2);
+        
         lblNombreApellido = new JLabel("");
-        lblNombreApellido.setHorizontalAlignment(SwingConstants.LEFT);
+        lblNombreApellido.setHorizontalAlignment(SwingConstants.CENTER);
         lblNombreApellido.setForeground(new Color(0, 0, 0));
         lblNombreApellido.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblNombreApellido.setBounds(574, 45, 187, 30);
+        lblNombreApellido.setBounds(520, 170, 187, 30);
         panelInferior.add(lblNombreApellido);
 
         lblApellido = new JLabel("Apellidos:");
@@ -312,7 +323,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         lblPosicionTXT.setHorizontalAlignment(SwingConstants.CENTER);
         lblPosicionTXT.setForeground(Color.BLACK);
         lblPosicionTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblPosicionTXT.setBounds(520, 120, 200, 30);
+        lblPosicionTXT.setBounds(513, 220, 200, 30);
         panelInferior.add(lblPosicionTXT);
         
         lblEquipo = new JLabel("Equipo:");
@@ -328,14 +339,14 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
         panelInferior.add(comboBoxEquipos);
         
 	    lblLogoEquipo = new JLabel();
-	    lblLogoEquipo.setBounds(474, 205, 60, 60);
+	    lblLogoEquipo.setBounds(460, 245, 80, 80);
 	    panelInferior.add(lblLogoEquipo);
         
         lblEquipoTXT = new JLabel("");
         lblEquipoTXT.setHorizontalAlignment(SwingConstants.LEFT);
         lblEquipoTXT.setForeground(Color.BLACK);
         lblEquipoTXT.setFont(new Font("SansSerif", Font.BOLD, 18));
-        lblEquipoTXT.setBounds(561, 220, 200, 30);
+        lblEquipoTXT.setBounds(560, 270, 200, 30);
         panelInferior.add(lblEquipoTXT);
 
         btnGuardar = new BotonRedondeado("Guardar", null);
@@ -407,40 +418,48 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 	private void actualizarFoto(Jugador jugador) {
 	    BufferedImage imagen = null;
 	    ImageIcon fotoIcono = null;
-	    
+	    ImageIcon fotoIcono2 = null;
+
 	    try {
 	        imagen = ImageIO.read(new File("src/imagenes/user.png"));
 	        fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
+	        fotoIcono2 = new ImageIcon(imagen.getScaledInstance(90, 90, Image.SCALE_SMOOTH));
 
-	        if (jugador == null) {
-	            lblFoto.setIcon(fotoIcono);
-	            return;
-	        }
-
-	        String rutaFoto = jugador.getRutaFoto();
-	        
-	        if (rutaFoto != null && !rutaFoto.isEmpty()) {
-	            File fotoFile = new File(rutaFoto);
+	        if (jugador != null && jugador.getRutaFoto() != null && !jugador.getRutaFoto().isEmpty()) {
+	            File fotoFile = new File(jugador.getRutaFoto());
 
 	            if (fotoFile.exists() && fotoFile.isFile()) {
 	                imagen = ImageIO.read(fotoFile);
-	    			int height = 80;
-	    			int width = (int) (imagen.getWidth(null) * ((double) height / imagen.getHeight(null)));
-
-	    			Image scaledPlayerImage = imagen.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-	    	        fotoIcono = new ImageIcon(scaledPlayerImage);
-	            } else {
-	                fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
 	            }
-	        } else {
-	            fotoIcono = new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH));
 	        }
 
+	        int altura1 = 80;
+	        int altura2 = 100;
+
+	        int ancho1 = (int) (imagen.getWidth() * ((double) altura1 / imagen.getHeight()));
+	        int ancho2 = (int) (imagen.getWidth() * ((double) altura2 / imagen.getHeight()));
+
+	        Image scaledImage1 = imagen.getScaledInstance(ancho1, altura1, Image.SCALE_SMOOTH);
+	        Image scaledImage2 = imagen.getScaledInstance(ancho2, altura2, Image.SCALE_SMOOTH);
+
+	        BufferedImage circularImage = new BufferedImage(ancho2, altura2, BufferedImage.TYPE_INT_ARGB);
+	        Graphics2D g2 = circularImage.createGraphics();
+
+	        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	        g2.setClip(new Ellipse2D.Float(0, 0, ancho2, altura2));
+	        g2.drawImage(scaledImage2, 0, 0, ancho2, altura2, null);
+	        g2.dispose();
+
+	        fotoIcono = new ImageIcon(scaledImage1);
+	        fotoIcono2 = new ImageIcon(circularImage);
+
 	        lblFoto.setIcon(fotoIcono);
+	        lblFoto2.setIcon(fotoIcono2);
 
 	    } catch (IOException ex) {
 	        System.err.println("Error al cargar la foto del jugador: " + ex.getMessage());
 	        lblFoto.setIcon(fotoIcono);
+	        lblFoto2.setIcon(fotoIcono2);
 	    }
 	}
 
@@ -460,6 +479,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 	                }
 
 	                lblFoto.setIcon(new ImageIcon(imagen.getScaledInstance(70, 70, Image.SCALE_SMOOTH)));
+	                lblFoto2.setIcon(new ImageIcon(imagen.getScaledInstance(100, 100, Image.SCALE_SMOOTH)));
 	                
 	                datosModificados = true;
 	                actualizarTitulo();
@@ -710,7 +730,7 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     }
     
     private void actualizarCampos() {        
-    	if (("Finalizada".equals(temporadaSeleccionada.getEstado()) || "Activa".equals(temporadaSeleccionada.getEstado())) && listJugadores.getSelectedIndex() >= 0) {
+    	if ("Finalizada".equals(temporadaSeleccionada.getEstado()) || "Activa".equals(temporadaSeleccionada.getEstado())) {
             btnGuardar.setVisible(false);
             btnEliminar.setVisible(false);
             btnLimpiar.setVisible(false);
@@ -728,15 +748,30 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
     		lblPosicion.setVisible(false);
     		lblEquipo.setVisible(false);
     		
-    		lblNombreApellido.setText(jugadorSeleccionado.getNombre() + " " + jugadorSeleccionado.getApellidos() + " (" + jugadorSeleccionado.getDorsal() + ")");
-    		lblPosicionTXT.setText(jugadorSeleccionado.getPosicion());
-    		lblEquipoTXT.setText(equipoJugador.getNombre());
+    		lblFoto.setVisible(false);
+    		lblFoto2.setVisible(true);
     		
-    		logoEquipo = new ImageIcon(equipoJugador.getRutaFoto());
-    	    Image originalImageEquipo = logoEquipo.getImage();
-    	    Image imgEquipo = originalImageEquipo.getScaledInstance(60, (int) ((double) originalImageEquipo.getWidth(null) / originalImageEquipo.getHeight(null) * 60), Image.SCALE_SMOOTH);
-    	    logoEquipo = new ImageIcon(imgEquipo);
-    	    lblLogoEquipo = new JLabel(logoEquipo);
+    		if (listJugadores.getSelectedIndex() >= 0) {
+        		lblNombreApellido.setText(jugadorSeleccionado.getNombre() + " " + jugadorSeleccionado.getApellidos() + " (" + jugadorSeleccionado.getDorsal() + ")");
+        		lblPosicionTXT.setText(jugadorSeleccionado.getPosicion());
+        		lblEquipoTXT.setText(equipoJugador.getNombre());
+        		
+        		logoEquipo = new ImageIcon(equipoJugador.getRutaFoto());
+        	    Image originalImageEquipo = logoEquipo.getImage();
+        	    Image imgEquipo = originalImageEquipo.getScaledInstance(80, (int) ((double) originalImageEquipo.getWidth(null) / originalImageEquipo.getHeight(null) * 80), Image.SCALE_SMOOTH);
+        	    logoEquipo = new ImageIcon(imgEquipo);
+        	    lblLogoEquipo.setIcon(logoEquipo);
+    		} else {
+        		lblNombreApellido.setText("Nombre y apellidos");
+        		lblPosicionTXT.setText("Posición");
+        		lblEquipoTXT.setText("Equipo");
+        		
+        		logoEquipo = new ImageIcon("src/imagenes/imagen_por_defecto.png");
+        	    Image originalImageEquipo = logoEquipo.getImage();
+        	    Image imgEquipo = originalImageEquipo.getScaledInstance(80, (int) ((double) originalImageEquipo.getWidth(null) / originalImageEquipo.getHeight(null) * 80), Image.SCALE_SMOOTH);
+        	    logoEquipo = new ImageIcon(imgEquipo);
+        	    lblLogoEquipo.setIcon(logoEquipo);
+    		}
     		
     		lblNombreApellido.setVisible(true);
     		lblPosicionTXT.setVisible(true);
@@ -750,6 +785,8 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
             btnLimpiar.setVisible(true);
             btnSeleccionarImagen.setVisible(true);
             
+    		lblFoto.setVisible(true);
+    		lblFoto2.setVisible(false);
     		lblNombre.setVisible(true);
     		lblApellido.setVisible(true);
     		lblDorsal.setVisible(true);
@@ -808,4 +845,5 @@ public class MenuJugadores extends JFrame implements ActionListener, Serializabl
 			dispose();
         }
     }
+
 }
